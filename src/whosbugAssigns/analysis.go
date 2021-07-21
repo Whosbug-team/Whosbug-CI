@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func analysis(repoPath string, branchName string, projectId string) []map[string]string {
+func analysis(repoPath string, branchName string, projectId string) []map[string]interface{} {
 	releaseDiff := getDiff(repoPath, branchName, projectId)
 	commits := parseCommit(releaseDiff["diff"], strings.Split(releaseDiff["commit_info"], "\n"))
 	// allCommits:interface实际存储的内容为
@@ -58,11 +58,11 @@ func analyzeCommitDiff(projectId string, commitDiffs []map[string]interface{}, c
 
 		commitDiff["diff_content"] = objects
 		// TODO 重构addObjectFromChangeLineNumber()方法，使得commit["commit_diffs"]值作为切片类型生效
-		commit["commit_diffs"] = append(commit["commit_diffs"], commitDiff)
+		//commit["commit_diffs"] = append(commit["commit_diffs"], commitDiff)
 	}
 }
 
-func addObjectFromChangeLineNumber(projectId string, filePath string, objects map[string]string, changeLineNumber map[string]string, antlrAnalyzeRes string) {
+func addObjectFromChangeLineNumber(projectId string, filePath string, objects map[string]interface{}, changeLineNumber map[string]string, antlrAnalyzeRes string) {
 	// TODO 重构findChangedMethod
 	//changeMethod := findChangeMethod()
 }

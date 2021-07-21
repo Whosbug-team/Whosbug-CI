@@ -16,7 +16,6 @@ import (
 // @param lines []string 传入diff中的所有代码行(完整文件代码行)
 // @return changeLineNumbers []map[string]string:{ {"line_number":xxx,"change_type":xxx}... }
 func findAllChangedLineNumbers(lines []string) []map[string]string {
-
 	markCompile, err := regexp.Compile(`^[\+\-]`)
 	errorHandler(err)
 	changeLineNumbers := make([]map[string]string, 0)

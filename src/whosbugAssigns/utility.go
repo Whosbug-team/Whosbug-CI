@@ -6,7 +6,7 @@ import (
 	"path"
 )
 
-var supportLans = []string{"*.java"}
+var supportLans = []string{".java"}
 
 // @title execCommandOutput
 // @description 执行输入的字符串命令并返回标准输出

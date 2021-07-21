@@ -28,7 +28,7 @@ func toIso8601(timeList []string) string {
 }
 
 func parseCommit(data string, commitInfos []string) []map[string]interface{} {
-	patCommit, err := regexp.Compile(`commit\ ([a-f0-9]{40})\n`)
+	patCommit, err := regexp.Compile(`(commit\ ([a-f0-9]{40}))`)
 	errorHandler(err)
 	rawCommits := patCommit.FindAllStringSubmatch(data, -1)
 	var parsedCommits []map[string]interface{}
@@ -50,33 +50,39 @@ func parseCommit(data string, commitInfos []string) []map[string]interface{} {
 	return parsedCommits
 }
 
+func ParseDiff(data string) []map[string]interface{} {
+	return parseDiff(data)
+}
+
 // @title parseDiff
 // @description 将git log的信息的diff部分分解提取
 // @param data string
 // @author KevinMatt
+// @mark: Pass
 func parseDiff(data string) []map[string]interface{} {
-	patDiff, err := regexp.Compile(`diff\ \-\-git\ a/(.*)\ b/.+\n`)
+	patDiff, err := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
 	errorHandler(err)
-	patDiffPart, err := regexp.Compile(`@@\ .*?\ @@\n`)
+	patDiffPart, err := regexp.Compile(`(@@\ .*?\ @@)`)
 	errorHandler(err)
 	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
-
 	// 输出变量
-	diffParsed := make([]map[string]interface{}, 0)
+	//var diffParsed []map[string]interface{}
+	diffParsed := make([]map[string]interface{}, len(rawDiffs))
 	for index := 0; index < len(rawDiffs); index++ {
 		// 正则匹配的三维结果
 		rawCommit := rawDiffs[index]
+		//fmt.Println(rawCommit)
 		// 完整的整行匹配
-		fullCommit := rawCommit[0]
+		//fullCommit := rawCommit[0]
 		// 子匹配(sub_match)
 		parts := rawCommit[2]
-		leftDiffIndex := patDiff.FindStringIndex(fullCommit)[0]
+		leftDiffIndex := patDiff.FindAllStringIndex(data, -1)[index][0]
 		var diffPartsContent string
 		var rightDiffIndex int
 		if index == len(rawDiffs)-1 {
 			diffPartsContent = data[leftDiffIndex:]
 		} else {
-			rightDiffIndex = patDiff.FindStringIndex(rawDiffs[index+1][0])[0]
+			rightDiffIndex = (patDiff.FindAllStringIndex(data, -1)[index+1])[0]
 			diffPartsContent = data[leftDiffIndex:rightDiffIndex]
 		}
 		diffHeadMatch := patDiffPart.FindAllString(diffPartsContent, -1)
@@ -87,19 +93,26 @@ func parseDiff(data string) []map[string]interface{} {
 		// @@部分的左下标
 		rightDiffHeadIndex := patDiffPart.FindStringIndex(diffPartsContent)[1]
 		tempFileContent := diffPartsContent[rightDiffHeadIndex:]
-		lines := strings.Split(tempFileContent, "\n")
+		lines := (strings.SplitAfter(tempFileContent[0:], "\n"))[1:]
 		var changeLineNumbers interface{}
 		changeLineNumbers = findAllChangedLineNumbers(lines)
 		// 循环替换每一变动行的第一位
 		for index := 0; index < len(lines); index++ {
-			//strings.Replace(lines[index], string(lines[index][0]), " ", 1)
-			lines[index] = " " + lines[index][1:]
+			if len(lines[index]) > 1 {
+				//strings.Replace(lines[index], string(lines[index][0]), "", 1)
+				lines[index] = "" + lines[index][1:]
+				if lines[0] == "+" {
+					strings.Replace(lines[index], "+", "", 1)
+				} else if lines[0] == "-" {
+					lines[index] = ""
+				}
+			}
 		}
-		sourceCode := strings.Join(lines, "\n")
+		sourceCode := strings.Join(lines, "")
 		fileName := path.Base(parts)
 
 		if lanFilter(fileName) {
-			fmt.Println(fileName)
+			//fmt.Println(fileName)
 			commitDicName := data[7:17]
 			diffFilePath := fmt.Sprintf("SourceCode/%s/%s", commitDicName, fileName)
 
@@ -107,15 +120,19 @@ func parseDiff(data string) []map[string]interface{} {
 				err := os.MkdirAll(path.Dir(diffFilePath), os.ModePerm)
 				errorHandler(err)
 			}
-			fd, err := os.OpenFile(diffFilePath, os.O_RDWR, os.ModePerm)
+			fd, err := os.OpenFile(diffFilePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
 			errorHandler(err)
 			_, err = fd.WriteString(sourceCode)
 			errorHandler(err)
 			err = fd.Close()
 			errorHandler(err)
-			diffParsed[index]["diff_file"] = parts
-			diffParsed[index]["diff_file_path"] = diffFilePath
-			diffParsed[index]["change_line_numbers"] = changeLineNumbers
+			diffParsed[index] = make(map[string]interface{})
+			diffParsed[index] = map[string]interface{}{
+				"diff_file":           parts,
+				"diff_file_path":      diffFilePath,
+				"change_line_numbers": changeLineNumbers,
+			}
+			//fmt.Println(diffParsed[index])
 		}
 	}
 	return diffParsed
