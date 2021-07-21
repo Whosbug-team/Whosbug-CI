@@ -66,12 +66,12 @@ func findAllChangedLines(lines []string) []map[string]string {
 	return ChangedLineInfos
 }
 
-// @title findAllDiffInfo
+// @title getDiff
 // @description 匹配并返回所有diff行内容
 // @author KevinMatt
 // @param lines string 抽取的原始git log数据
 // @return 返回release_diff_map
-func findAllDiffInfo(repoPath string, branceName string, projectId string) map[string]string {
+func getDiff(repoPath string, branceName string, projectId string) map[string]string {
 
 	secret := os.Getenv("WHOSBUG_SECRET")
 	originPath, err := os.Getwd()
