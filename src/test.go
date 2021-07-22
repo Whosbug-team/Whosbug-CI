@@ -5,7 +5,7 @@ import (
 	"whosbugAssigns"
 )
 
-func main() {
+func main1() {
 	for _, temp := range TestParseCommit() {
 		for name, temp1 := range temp {
 			fmt.Printf("%s: %v\n", name, temp1)

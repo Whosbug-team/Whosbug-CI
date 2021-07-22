@@ -126,6 +126,13 @@ func getDiff(repoPath, branchName, projectId string) map[string]string {
 	return releaseDiff
 }
 
+/** getLatestRelease
+ * @Description: 获得最新的Release信息
+ * @param projectId 项目ID
+ * @return string Release信息
+ * @author KevinMatt 2021-07-22 16:50:26
+ * @function_mark
+ */
 func getLatestRelease(projectId string) string {
 	token := genToken()
 	urls := HOST + "/release/last/"

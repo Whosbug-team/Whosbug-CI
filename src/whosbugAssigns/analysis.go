@@ -82,3 +82,13 @@ func addObjectFromChangeLineNumber(projectId string, filePath string, objects ma
 	// TODO 重构findChangedMethod
 	//changeMethod := findChangeMethod()
 }
+
+/** findChangedMethod
+ * @Description:
+ * @author KevinMatt 2021-07-22 14:47:36
+ * @function_mark
+ */
+func findChangedMethod(changeLineNumber map[string]string, antlrAnalyzeRes) {
+	//TODO 重构
+
+}
