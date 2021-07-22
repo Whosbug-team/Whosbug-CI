@@ -4,6 +4,20 @@ import (
 	"strings"
 )
 
+func TestParseCommit() []map[string]interface{} {
+	releaseDiff := getDiff("C:\\Users\\KevinMatt\\Desktop\\java-test\\", "master", "whosbug_test_1")
+	return parseCommit(releaseDiff["diff"], strings.Split(releaseDiff["commit_info"], "\n"))
+}
+
+/** analysis
+ * @Description: 分析逻辑主函数
+ * @param repoPath 仓库地址
+ * @param branchName 分支
+ * @param projectId projectID
+ * @return []map[string]interface{} 分析结果
+ * @author KevinMatt 2021-07-22 13:24:31
+ * @function_mark
+ */
 func analysis(repoPath string, branchName string, projectId string) []map[string]interface{} {
 	releaseDiff := getDiff(repoPath, branchName, projectId)
 	commits := parseCommit(releaseDiff["diff"], strings.Split(releaseDiff["commit_info"], "\n"))
@@ -31,13 +45,15 @@ func analysis(repoPath string, branchName string, projectId string) []map[string
 	return allCommits
 }
 
-// @title analyzeCommitDiff
-// @description 分析commit diff情况
-// @author KevinMatt
-// @param projectId:项目唯一标识
-// @param commitDiffs 一次commit的所有变更文件（一个diff对应一个变更文件）
-// @param commitId 该次commit的版本号
-// @param commit 包含该次commit的所有diff objects的map（commit['commit_diffs']即为该次commit的所有diff objects）
+/** analyzeCommitDiff
+ * @Description:
+ * @param projectId
+ * @param commitDiffs
+ * @param commitId
+ * @param commit
+ * @author KevinMatt 2021-07-22 13:24:09
+ * @function_mark
+ */
 func analyzeCommitDiff(projectId string, commitDiffs []map[string]interface{}, commitId string, commit map[string]interface{}) {
 	for index := 0; index < len(commitDiffs); index++ {
 		commitDiff := commitDiffs[index]

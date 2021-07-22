@@ -64,16 +64,21 @@ func findAllChangedLines(lines []string) []map[string]string {
 	}
 	return ChangedLineInfos
 }
+
 func GetDiffTest(repoPath string, branchName string, projectId string) map[string]string {
 	return getDiff(repoPath, branchName, projectId)
 }
 
-// @title getDiff
-// @description 匹配并返回所有diff行内容
-// @author KevinMatt
-// @param lines string 抽取的原始git log数据
-// @return 返回release_diff_map
-func getDiff(repoPath string, branchName string, projectId string) map[string]string {
+/** getDiff
+ * @Description:
+ * @param repoPath
+ * @param branchName
+ * @param projectId
+ * @return map[string]string
+ * @author KevinMatt 2021-07-22 13:56:12
+ * @function_mark PASS
+ */
+func getDiff(repoPath, branchName, projectId string) map[string]string {
 
 	secret := os.Getenv("WHOSBUG_SECRET")
 	originPath, err := os.Getwd()
@@ -82,19 +87,29 @@ func getDiff(repoPath string, branchName string, projectId string) map[string]st
 	errorHandler(err)
 	fmt.Println("Work path changed to:", repoPath)
 
-	newReleaseCommitHash := execCommandOutput("git rev-parse HEAD")
-	originHash := getLatestRelease(encrypt(projectId, secret, projectId))
-	lastReleaseCommitHash := decrypt(projectId, secret, originHash)
-	fmt.Println("last release's commit hash: ", lastReleaseCommitHash)
+	newReleaseCommitHash := execCommandOutput("git", "rev-parse", "HEAD")
+
+	originHash := make([]byte, len(projectId))
+	err = encrypt([]byte(projectId), originHash, []byte(secret), []byte(projectId))
+	errorHandler(err)
+	getLatestRelease(string(originHash))
+	lastReleaseCommitHash := make([]byte, len(originHash))
+
+	err = decrypt([]byte(projectId), lastReleaseCommitHash, []byte(secret), originHash)
+	if string(lastReleaseCommitHash) != string(originHash) {
+		lastReleaseCommitHash = nil
+	}
+	errorHandler(err)
+	fmt.Println("last release's commit hash: ", string(lastReleaseCommitHash))
 	fmt.Println("new release's commit hash: ", newReleaseCommitHash)
 
 	var diff, commitInfo string
-	if lastReleaseCommitHash != "" {
-		diff = execCommandOutput(fmt.Sprintf("git log --full-diff -p -U1000 --pretty=raw %s..%s", lastReleaseCommitHash, newReleaseCommitHash))
-		commitInfo = execCommandOutput(fmt.Sprintf("git log --pretty=format:%%H,%%ce,%%cn,%%cd %s..%s", lastReleaseCommitHash, newReleaseCommitHash))
+	if string(lastReleaseCommitHash) != "" {
+		diff = execCommandOutput("git", "log", "--full-diff", "-p", "-U1000", "--pretty=raw", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
+		commitInfo = execCommandOutput("git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
 	} else {
-		diff = execCommandOutput("git log --full-diff -p -U1000 --pretty=raw'")
-		commitInfo = execCommandOutput("git log --pretty=format:%H,%ce,%cn,%cd")
+		diff = execCommandOutput("git", "log", "--full-diff", "-p", "-U1000", "--pretty=raw")
+		commitInfo = execCommandOutput("git", "log", "--pretty=format:%H,%ce,%cn,%cd")
 	}
 
 	releaseDiff := make(map[string]string)

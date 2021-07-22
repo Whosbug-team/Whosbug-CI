@@ -13,9 +13,9 @@ var supportLans = []string{".java"}
 // @author KevinMatt
 // @param command string 输入的命令
 // @return output.String() string输出信息
-func execCommandOutput(command string) string {
+func execCommandOutput(command string, args ...string) string {
 
-	cmd := exec.Command(command)
+	cmd := exec.Command(command, args...)
 	output := bytes.Buffer{}
 	cmd.Stdout = &output
 	err := cmd.Run()

@@ -33,12 +33,13 @@ func toIso8601(timeList []string) string {
 	return fmt.Sprintf("%s-%s-%sT%s%s:%s", timeList[3], month_correspond[timeList[0]], timeList[1], timeList[2], timeList[4][3:], timeList[4][3:])
 }
 
-/**parseCommit
+/** parseCommit
  * @Description: 转换commit信息
  * @param data 传入数据的diff部分(git log元数据)
  * @param commitInfos  log元数据分片
  * @return []map[string]interface{}
- * @author KevinMatt
+ * @author KevinMatt 2021-07-22 13:25:00
+ * @function_mark PASS
  */
 func parseCommit(data string, commitInfos []string) []map[string]interface{} {
 	patCommit, err := regexp.Compile(`(commit\ ([a-f0-9]{40}))`)
@@ -48,7 +49,7 @@ func parseCommit(data string, commitInfos []string) []map[string]interface{} {
 	for index, commitInfoLine := 0, commitInfos[0]; index < len(rawCommits) && index < len(commitInfos); index++ {
 		commitInfoLine = commitInfos[index]
 		infoList := strings.Split(commitInfoLine, ",")
-		timeList := strings.Split(infoList[0][4:], " ")
+		timeList := strings.Split(infoList[3][4:], " ")
 		parsedCommit := map[string]interface{}{
 			"commit_left_index": patCommit.FindAllStringSubmatchIndex(data, -1)[index][0],
 			"commit":            infoList[0],
@@ -71,7 +72,8 @@ func ParseDiff(data string) []map[string]interface{} {
  * @Description: 将git log的信息的diff部分分解提取
  * @param data
  * @return []map[string]interface{}
- * @author KevinMatt
+ * @author KevinMatt 2021-07-22 13:25:06
+ * @function_mark PASS
  */
 func parseDiff(data string) []map[string]interface{} {
 	patDiff, err := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
@@ -140,6 +142,8 @@ func parseDiff(data string) []map[string]interface{} {
  * @Description: 清除+/-符号并移除-行和No newline提示
  * @param lines 传入行集合
  * @return []string
+ * @author KevinMatt 2021-07-22 13:25:13
+ * @function_mark PASS
  */
 func replaceLines(lines []string) []string {
 	for index := 0; index < len(lines); index++ {
