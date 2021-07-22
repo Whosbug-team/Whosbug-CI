@@ -7,7 +7,7 @@ import (
 func analysis(repoPath string, branchName string, projectId string) []map[string]interface{} {
 	releaseDiff := getDiff(repoPath, branchName, projectId)
 	commits := parseCommit(releaseDiff["diff"], strings.Split(releaseDiff["commit_info"], "\n"))
-	// allCommits:interface实际存储的内容为
+	// allCommits:interface实际存储的内容为string
 	var allCommits []map[string]interface{}
 
 	for index := range commits {

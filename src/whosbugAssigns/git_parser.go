@@ -23,10 +23,23 @@ var month_correspond = map[string]string{
 	"Dec": "12",
 }
 
+/**toIso8601
+ * @Description: 转换时间戳格式
+ * @param timeList
+ * @return string
+ * @author KevinMatt
+ */
 func toIso8601(timeList []string) string {
 	return fmt.Sprintf("%s-%s-%sT%s%s:%s", timeList[3], month_correspond[timeList[0]], timeList[1], timeList[2], timeList[4][3:], timeList[4][3:])
 }
 
+/**parseCommit
+ * @Description: 转换commit信息
+ * @param data 传入数据的diff部分(git log元数据)
+ * @param commitInfos  log元数据分片
+ * @return []map[string]interface{}
+ * @author KevinMatt
+ */
 func parseCommit(data string, commitInfos []string) []map[string]interface{} {
 	patCommit, err := regexp.Compile(`(commit\ ([a-f0-9]{40}))`)
 	errorHandler(err)
@@ -54,11 +67,12 @@ func ParseDiff(data string) []map[string]interface{} {
 	return parseDiff(data)
 }
 
-// @title parseDiff
-// @description 将git log的信息的diff部分分解提取
-// @param data string
-// @author KevinMatt
-// @mark: Pass
+/** parseDiff
+ * @Description: 将git log的信息的diff部分分解提取
+ * @param data
+ * @return []map[string]interface{}
+ * @author KevinMatt
+ */
 func parseDiff(data string) []map[string]interface{} {
 	patDiff, err := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
 	errorHandler(err)
@@ -69,12 +83,8 @@ func parseDiff(data string) []map[string]interface{} {
 	//var diffParsed []map[string]interface{}
 	diffParsed := make([]map[string]interface{}, len(rawDiffs))
 	for index := 0; index < len(rawDiffs); index++ {
-		// 正则匹配的三维结果
+		// 正则匹配的结果集
 		rawCommit := rawDiffs[index]
-		//fmt.Println(rawCommit)
-		// 完整的整行匹配
-		//fullCommit := rawCommit[0]
-		// 子匹配(sub_match)
 		parts := rawCommit[2]
 		leftDiffIndex := patDiff.FindAllStringIndex(data, -1)[index][0]
 		var diffPartsContent string
@@ -97,22 +107,11 @@ func parseDiff(data string) []map[string]interface{} {
 		var changeLineNumbers interface{}
 		changeLineNumbers = findAllChangedLineNumbers(lines)
 		// 循环替换每一变动行的第一位
-		for index := 0; index < len(lines); index++ {
-			if len(lines[index]) > 1 {
-				//strings.Replace(lines[index], string(lines[index][0]), "", 1)
-				lines[index] = "" + lines[index][1:]
-				if lines[0] == "+" {
-					strings.Replace(lines[index], "+", "", 1)
-				} else if lines[0] == "-" {
-					lines[index] = ""
-				}
-			}
-		}
+		lines = replaceLines(lines)
 		sourceCode := strings.Join(lines, "")
 		fileName := path.Base(parts)
 
 		if lanFilter(fileName) {
-			//fmt.Println(fileName)
 			commitDicName := data[7:17]
 			diffFilePath := fmt.Sprintf("SourceCode/%s/%s", commitDicName, fileName)
 
@@ -132,8 +131,28 @@ func parseDiff(data string) []map[string]interface{} {
 				"diff_file_path":      diffFilePath,
 				"change_line_numbers": changeLineNumbers,
 			}
-			//fmt.Println(diffParsed[index])
 		}
 	}
 	return diffParsed
+}
+
+/** replaceLines
+ * @Description: 清除+/-符号并移除-行和No newline提示
+ * @param lines 传入行集合
+ * @return []string
+ */
+func replaceLines(lines []string) []string {
+	for index := 0; index < len(lines); index++ {
+		if len(lines[index]) > 1 {
+			if string(lines[index][0]) == "+" {
+				lines[index] = "" + lines[index][1:]
+				//strings.Replace(lines[index], string(lines[index][0]), "", 1)
+			} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file\r\n" {
+				lines[index] = ""
+			} else {
+				lines[index] = "" + lines[index][1:]
+			}
+		}
+	}
+	return lines
 }

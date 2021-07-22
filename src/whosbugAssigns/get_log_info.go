@@ -64,13 +64,16 @@ func findAllChangedLines(lines []string) []map[string]string {
 	}
 	return ChangedLineInfos
 }
+func GetDiffTest(repoPath string, branchName string, projectId string) map[string]string {
+	return getDiff(repoPath, branchName, projectId)
+}
 
 // @title getDiff
 // @description 匹配并返回所有diff行内容
 // @author KevinMatt
 // @param lines string 抽取的原始git log数据
 // @return 返回release_diff_map
-func getDiff(repoPath string, branceName string, projectId string) map[string]string {
+func getDiff(repoPath string, branchName string, projectId string) map[string]string {
 
 	secret := os.Getenv("WHOSBUG_SECRET")
 	originPath, err := os.Getwd()
@@ -97,7 +100,7 @@ func getDiff(repoPath string, branceName string, projectId string) map[string]st
 	releaseDiff := make(map[string]string)
 	releaseDiff["commit_info"] = commitInfo
 	releaseDiff["diff"] = diff
-	releaseDiff["branch_name"] = branceName
+	releaseDiff["branch_name"] = branchName
 	releaseDiff["head_commit_id"] = newReleaseCommitHash
 
 	// 返回原工作目录
