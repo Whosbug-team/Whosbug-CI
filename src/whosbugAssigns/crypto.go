@@ -8,57 +8,58 @@ import (
 	"crypto/sha256"
 )
 
-/** generateKIV
- * @Description:
- * @param projectId
- * @param secret
- * @author KevinMatt
+/**
+ * @Description: 生成AES-CFB需要的Key和IV
+ * @param projectId 项目ID
+ * @param key 加密密钥
+ * @return []byte K密钥
+ * @return []byte IV偏移密钥
+ * @author KevinMatt (he_yuheng@163.com)
  */
-func generateKIV(projectId, key string) ([]byte, []byte) {
-	hK := hmac.New(sha256.New, []byte(key))
-	hIV := hmac.New(md5.New, []byte(key))
-	hK.Write([]byte(projectId))
-	hIV.Write([]byte(projectId))
+func generateKIV(projectId, key []byte) ([]byte, []byte) {
+	hK := hmac.New(sha256.New, key)
+	hIV := hmac.New(md5.New, key)
+	hK.Write(projectId)
+	hIV.Write(projectId)
 	return hK.Sum(nil), hIV.Sum(nil)
 }
 
 /**
  * @Description: AES-CFB加密
- * @param src 传入的待加密字符串
+ * @param projectId 项目ID
  * @param Dest 输出的加密后字符串
  * @param key 加密密钥
- * @param plainText
- * @return error
- * @author KevinMatt
+ * @param plainText 需要加密的文本
+ * @return error 错误抛出
+ * @author KevinMatt (he_yuheng@163.com)
  */
-func encrypt(projectId string, key string, plainText string) (string, error) {
+func encrypt(projectId, Dest, key, plainText []byte) error {
 	K, IV := generateKIV(projectId, key)
 	aesBlockEncryptor, err := aes.NewCipher(K)
 	if err != nil {
-		return "", err
+		return err
 	}
-	var Dest string
 	aesEncryptor := cipher.NewCFBEncrypter(aesBlockEncryptor, IV)
-	aesEncryptor.XORKeyStream([]byte(plainText), []byte(Dest))
-	return Dest, nil
+	aesEncryptor.XORKeyStream(plainText, Dest)
+	return nil
 }
 
 /**
  * @Description: AES-CFB解密
- * @param src 需要解密的字符串
+ * @param projectId 项目ID
  * @param Dest 解密完成的字符串
  * @param key 解密密钥
- * @return error
- * @author KevinMatt
+ * @param plainText 需要解密的文本
+ * @return error 错误抛出
+ * @author KevinMatt (he_yuheng@163.com)
  */
-func decrypt(src string, key string, plainText string) (string, error) {
-	K, IV := generateKIV(src, key)
+func decrypt(projectId, Dest, key, plainText []byte) error {
+	K, IV := generateKIV(projectId, key)
 	aesBlockDescriptor, err := aes.NewCipher(K)
 	if err != nil {
-		return "", err
+		return err
 	}
-	var Dest string
 	aesDescriptor := cipher.NewCFBDecrypter(aesBlockDescriptor, IV)
-	aesDescriptor.XORKeyStream([]byte(plainText), []byte(Dest))
-	return Dest, nil
+	aesDescriptor.XORKeyStream(plainText, Dest)
+	return nil
 }
