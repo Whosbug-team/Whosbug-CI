@@ -187,7 +187,48 @@ func (s *BaseJavaParserListener) EnterVariableModifier(ctx *VariableModifierCont
 func (s *BaseJavaParserListener) ExitVariableModifier(ctx *VariableModifierContext) {}
 
 // EnterClassDeclaration is called when production classDeclaration is entered.
-func (s *BaseJavaParserListener) EnterClassDeclaration(ctx *ClassDeclarationContext) {}
+func (s *BaseJavaParserListener) EnterClassDeclaration(ctx *ClassDeclarationContext) {
+	var classInfo classInfoType
+	classInfo.StartLine = ctx.GetStart().GetLine()
+	if ctx.ClassBody() != nil {
+		classInfo.EndLine = ctx.ClassBody().GetStop().GetLine()
+	}
+	childCount := ctx.GetChildCount()
+
+	if childCount == 7 {
+		// class Foo extends Bar implements Hoge
+		// c1 = ctx.getChild(0)  # ---> class
+		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+		extendsClassName := ctx.GetChild(3).GetChild(0).(*antlr.TerminalNodeImpl).GetText()
+		classInfo.ClassName = className
+		classInfo.Extends = extendsClassName
+		classInfo.Implements = findImplements(ctx.GetChild(5).(*antlr.TerminalNodeImpl))
+		classInfo.MasterObject = findMasterObject()
+	}
+}
+
+func findImplements(ctx *antlr.TerminalNodeImpl) []string {
+	implementsCount := ctx.GetChildCount()
+	var implements []string
+	if implementsCount == 1 {
+		implementClass := ctx.GetChild(0).(*antlr.TerminalNodeImpl).GetText()
+		implements = append(implements, implementClass)
+	} else if implementsCount > 1 {
+		for index := 0; index < implementsCount; index++ {
+			if index%2 == 0 {
+				implementClass := ctx.GetChild(0).(*antlr.TerminalNodeImpl).GetText()
+				implements = append(implements, implementClass)
+			}
+		}
+	}
+	return implements
+}
+func findMasterObject(ctx *ClassDeclarationContext, classInfo classInfoType) {
+	// TODO 重构实现
+	//parCtx := ctx.GetParent()
+	//masterCtx := parCtx.GetParent().GetParent().GetParent()
+
+}
 
 // ExitClassDeclaration is called when production classDeclaration is exited.
 func (s *BaseJavaParserListener) ExitClassDeclaration(ctx *ClassDeclarationContext) {}
