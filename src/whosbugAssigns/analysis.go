@@ -36,7 +36,7 @@ func analysis(repoPath string, branchName string, projectId string) []map[string
 		}
 
 		commitDiffs := parseDiff(diffPark)
-		//TODO 重构 analyze_commit_diff函数
+
 		//commit["commit_diffs"] = interface {}
 		analyzeCommitDiff(projectId, commitDiffs, commitId.(string), commit)
 		allCommits = append(allCommits, commit)
@@ -88,7 +88,7 @@ func addObjectFromChangeLineNumber(projectId string, filePath string, objects ma
  * @author KevinMatt 2021-07-22 14:47:36
  * @function_mark
  */
-func findChangedMethod(changeLineNumber map[string]string, antlrAnalyzeRes) {
+func findChangedMethod(changeLineNumber map[string]string, antlrAnalyzeRes []string) {
 	//TODO 重构
 
 }

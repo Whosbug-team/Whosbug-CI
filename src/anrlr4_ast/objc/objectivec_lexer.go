@@ -1,6 +1,6 @@
 // Generated from ObjectiveCLexer.g4 by ANTLR 4.7.
 
-package parser
+package objcParser
 
 import (
 	"fmt"

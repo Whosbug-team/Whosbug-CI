@@ -1,6 +1,6 @@
-// Generated from JavaParser.g4 by ANTLR 4.7.
+// Code generated from JavaParser.g4 by ANTLR 4.9.2. DO NOT EDIT.
 
-package parser // JavaParser
+package javaParser // JavaParser
 
 import (
 	"fmt"
@@ -717,9 +717,6 @@ var parserATN = []uint16{
 	1302, 1307, 1311, 1315, 1319, 1329, 1341, 1348, 1351, 1355, 1363, 1368,
 	1379, 1385, 1390, 1395, 1402, 1413, 1422, 1424, 1430, 1434,
 }
-var deserializer = antlr.NewATNDeserializer(nil)
-var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
-
 var literalNames = []string{
 	"", "'abstract'", "'assert'", "'boolean'", "'break'", "'byte'", "'case'",
 	"'catch'", "'char'", "'class'", "'const'", "'continue'", "'default'", "'do'",
@@ -784,21 +781,25 @@ var ruleNames = []string{
 	"typeType", "primitiveType", "typeArguments", "superSuffix", "explicitGenericInvocationSuffix",
 	"arguments",
 }
-var decisionToDFA = make([]*antlr.DFA, len(deserializedATN.DecisionToState))
-
-func init() {
-	for index, ds := range deserializedATN.DecisionToState {
-		decisionToDFA[index] = antlr.NewDFA(ds, index)
-	}
-}
 
 type JavaParser struct {
 	*antlr.BaseParser
 }
 
+// NewJavaParser produces a new parser instance for the optional input antlr.TokenStream.
+//
+// The *JavaParser instance produced may be reused by calling the SetInputStream method.
+// The initial parser configuration is expensive to construct, and the object is not thread-safe;
+// however, if used within a Golang sync.Pool, the construction cost amortizes well and the
+// objects can be used in a thread-safe manner.
 func NewJavaParser(input antlr.TokenStream) *JavaParser {
 	this := new(JavaParser)
-
+	deserializer := antlr.NewATNDeserializer(nil)
+	deserializedATN := deserializer.DeserializeFromUInt16(parserATN)
+	decisionToDFA := make([]*antlr.DFA, len(deserializedATN.DecisionToState))
+	for index, ds := range deserializedATN.DecisionToState {
+		decisionToDFA[index] = antlr.NewDFA(ds, index)
+	}
 	this.BaseParser = antlr.NewBaseParser(input)
 
 	this.Interpreter = antlr.NewParserATNSimulator(this, deserializedATN, decisionToDFA, antlr.NewPredictionContextCache())
@@ -1273,6 +1274,10 @@ func (s *PackageDeclarationContext) QualifiedName() IQualifiedNameContext {
 	return t.(IQualifiedNameContext)
 }
 
+func (s *PackageDeclarationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
+}
+
 func (s *PackageDeclarationContext) AllAnnotation() []IAnnotationContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IAnnotationContext)(nil)).Elem())
 	var tst = make([]IAnnotationContext, len(ts))
@@ -1420,8 +1425,20 @@ func (s *ImportDeclarationContext) QualifiedName() IQualifiedNameContext {
 	return t.(IQualifiedNameContext)
 }
 
+func (s *ImportDeclarationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
+}
+
 func (s *ImportDeclarationContext) STATIC() antlr.TerminalNode {
 	return s.GetToken(JavaParserSTATIC, 0)
+}
+
+func (s *ImportDeclarationContext) DOT() antlr.TerminalNode {
+	return s.GetToken(JavaParserDOT, 0)
+}
+
+func (s *ImportDeclarationContext) MUL() antlr.TerminalNode {
+	return s.GetToken(JavaParserMUL, 0)
 }
 
 func (s *ImportDeclarationContext) GetRuleContext() antlr.RuleContext {
@@ -1607,6 +1624,10 @@ func (s *TypeDeclarationContext) ClassOrInterfaceModifier(i int) IClassOrInterfa
 	}
 
 	return t.(IClassOrInterfaceModifierContext)
+}
+
+func (s *TypeDeclarationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
 }
 
 func (s *TypeDeclarationContext) GetRuleContext() antlr.RuleContext {
@@ -2400,6 +2421,10 @@ func NewTypeParametersContext(parser antlr.Parser, parent antlr.ParserRuleContex
 
 func (s *TypeParametersContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *TypeParametersContext) LT() antlr.TerminalNode {
+	return s.GetToken(JavaParserLT, 0)
+}
+
 func (s *TypeParametersContext) AllTypeParameter() []ITypeParameterContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*ITypeParameterContext)(nil)).Elem())
 	var tst = make([]ITypeParameterContext, len(ts))
@@ -2421,6 +2446,18 @@ func (s *TypeParametersContext) TypeParameter(i int) ITypeParameterContext {
 	}
 
 	return t.(ITypeParameterContext)
+}
+
+func (s *TypeParametersContext) GT() antlr.TerminalNode {
+	return s.GetToken(JavaParserGT, 0)
+}
+
+func (s *TypeParametersContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *TypeParametersContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
 }
 
 func (s *TypeParametersContext) GetRuleContext() antlr.RuleContext {
@@ -2738,6 +2775,14 @@ func (s *TypeBoundContext) TypeType(i int) ITypeTypeContext {
 	return t.(ITypeTypeContext)
 }
 
+func (s *TypeBoundContext) AllBITAND() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserBITAND)
+}
+
+func (s *TypeBoundContext) BITAND(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserBITAND, i)
+}
+
 func (s *TypeBoundContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -2852,6 +2897,14 @@ func (s *EnumDeclarationContext) IDENTIFIER() antlr.TerminalNode {
 	return s.GetToken(JavaParserIDENTIFIER, 0)
 }
 
+func (s *EnumDeclarationContext) LBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACE, 0)
+}
+
+func (s *EnumDeclarationContext) RBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACE, 0)
+}
+
 func (s *EnumDeclarationContext) IMPLEMENTS() antlr.TerminalNode {
 	return s.GetToken(JavaParserIMPLEMENTS, 0)
 }
@@ -2874,6 +2927,10 @@ func (s *EnumDeclarationContext) EnumConstants() IEnumConstantsContext {
 	}
 
 	return t.(IEnumConstantsContext)
+}
+
+func (s *EnumDeclarationContext) COMMA() antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, 0)
 }
 
 func (s *EnumDeclarationContext) EnumBodyDeclarations() IEnumBodyDeclarationsContext {
@@ -3055,6 +3112,14 @@ func (s *EnumConstantsContext) EnumConstant(i int) IEnumConstantContext {
 	}
 
 	return t.(IEnumConstantContext)
+}
+
+func (s *EnumConstantsContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *EnumConstantsContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
 }
 
 func (s *EnumConstantsContext) GetRuleContext() antlr.RuleContext {
@@ -3340,6 +3405,10 @@ func NewEnumBodyDeclarationsContext(parser antlr.Parser, parent antlr.ParserRule
 }
 
 func (s *EnumBodyDeclarationsContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *EnumBodyDeclarationsContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
+}
 
 func (s *EnumBodyDeclarationsContext) AllClassBodyDeclaration() []IClassBodyDeclarationContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IClassBodyDeclarationContext)(nil)).Elem())
@@ -3630,6 +3699,14 @@ func NewClassBodyContext(parser antlr.Parser, parent antlr.ParserRuleContext, in
 
 func (s *ClassBodyContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *ClassBodyContext) LBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACE, 0)
+}
+
+func (s *ClassBodyContext) RBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACE, 0)
+}
+
 func (s *ClassBodyContext) AllClassBodyDeclaration() []IClassBodyDeclarationContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IClassBodyDeclarationContext)(nil)).Elem())
 	var tst = make([]IClassBodyDeclarationContext, len(ts))
@@ -3759,6 +3836,14 @@ func NewInterfaceBodyContext(parser antlr.Parser, parent antlr.ParserRuleContext
 
 func (s *InterfaceBodyContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *InterfaceBodyContext) LBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACE, 0)
+}
+
+func (s *InterfaceBodyContext) RBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACE, 0)
+}
+
 func (s *InterfaceBodyContext) AllInterfaceBodyDeclaration() []IInterfaceBodyDeclarationContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IInterfaceBodyDeclarationContext)(nil)).Elem())
 	var tst = make([]IInterfaceBodyDeclarationContext, len(ts))
@@ -3887,6 +3972,10 @@ func NewClassBodyDeclarationContext(parser antlr.Parser, parent antlr.ParserRule
 }
 
 func (s *ClassBodyDeclarationContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *ClassBodyDeclarationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
+}
 
 func (s *ClassBodyDeclarationContext) Block() IBlockContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IBlockContext)(nil)).Elem(), 0)
@@ -4345,6 +4434,22 @@ func (s *MethodDeclarationContext) MethodBody() IMethodBodyContext {
 	return t.(IMethodBodyContext)
 }
 
+func (s *MethodDeclarationContext) AllLBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserLBRACK)
+}
+
+func (s *MethodDeclarationContext) LBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACK, i)
+}
+
+func (s *MethodDeclarationContext) AllRBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserRBRACK)
+}
+
+func (s *MethodDeclarationContext) RBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACK, i)
+}
+
 func (s *MethodDeclarationContext) THROWS() antlr.TerminalNode {
 	return s.GetToken(JavaParserTHROWS, 0)
 }
@@ -4500,6 +4605,10 @@ func (s *MethodBodyContext) Block() IBlockContext {
 	}
 
 	return t.(IBlockContext)
+}
+
+func (s *MethodBodyContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
 }
 
 func (s *MethodBodyContext) GetRuleContext() antlr.RuleContext {
@@ -5127,6 +5236,10 @@ func (s *FieldDeclarationContext) VariableDeclarators() IVariableDeclaratorsCont
 	return t.(IVariableDeclaratorsContext)
 }
 
+func (s *FieldDeclarationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
+}
+
 func (s *FieldDeclarationContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -5253,6 +5366,10 @@ func (s *InterfaceBodyDeclarationContext) Modifier(i int) IModifierContext {
 	}
 
 	return t.(IModifierContext)
+}
+
+func (s *InterfaceBodyDeclarationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
 }
 
 func (s *InterfaceBodyDeclarationContext) GetRuleContext() antlr.RuleContext {
@@ -5614,6 +5731,18 @@ func (s *ConstDeclarationContext) ConstantDeclarator(i int) IConstantDeclaratorC
 	return t.(IConstantDeclaratorContext)
 }
 
+func (s *ConstDeclarationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
+}
+
+func (s *ConstDeclarationContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *ConstDeclarationContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
+}
+
 func (s *ConstDeclarationContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -5732,6 +5861,10 @@ func (s *ConstantDeclaratorContext) IDENTIFIER() antlr.TerminalNode {
 	return s.GetToken(JavaParserIDENTIFIER, 0)
 }
 
+func (s *ConstantDeclaratorContext) ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserASSIGN, 0)
+}
+
 func (s *ConstantDeclaratorContext) VariableInitializer() IVariableInitializerContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IVariableInitializerContext)(nil)).Elem(), 0)
 
@@ -5740,6 +5873,22 @@ func (s *ConstantDeclaratorContext) VariableInitializer() IVariableInitializerCo
 	}
 
 	return t.(IVariableInitializerContext)
+}
+
+func (s *ConstantDeclaratorContext) AllLBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserLBRACK)
+}
+
+func (s *ConstantDeclaratorContext) LBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACK, i)
+}
+
+func (s *ConstantDeclaratorContext) AllRBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserRBRACK)
+}
+
+func (s *ConstantDeclaratorContext) RBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACK, i)
 }
 
 func (s *ConstantDeclaratorContext) GetRuleContext() antlr.RuleContext {
@@ -5921,6 +6070,22 @@ func (s *InterfaceMethodDeclarationContext) InterfaceMethodModifier(i int) IInte
 	}
 
 	return t.(IInterfaceMethodModifierContext)
+}
+
+func (s *InterfaceMethodDeclarationContext) AllLBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserLBRACK)
+}
+
+func (s *InterfaceMethodDeclarationContext) LBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACK, i)
+}
+
+func (s *InterfaceMethodDeclarationContext) AllRBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserRBRACK)
+}
+
+func (s *InterfaceMethodDeclarationContext) RBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACK, i)
 }
 
 func (s *InterfaceMethodDeclarationContext) THROWS() antlr.TerminalNode {
@@ -6441,6 +6606,14 @@ func (s *VariableDeclaratorsContext) VariableDeclarator(i int) IVariableDeclarat
 	return t.(IVariableDeclaratorContext)
 }
 
+func (s *VariableDeclaratorsContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *VariableDeclaratorsContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
+}
+
 func (s *VariableDeclaratorsContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -6555,6 +6728,10 @@ func (s *VariableDeclaratorContext) VariableDeclaratorId() IVariableDeclaratorId
 	}
 
 	return t.(IVariableDeclaratorIdContext)
+}
+
+func (s *VariableDeclaratorContext) ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserASSIGN, 0)
 }
 
 func (s *VariableDeclaratorContext) VariableInitializer() IVariableInitializerContext {
@@ -6672,6 +6849,22 @@ func (s *VariableDeclaratorIdContext) GetParser() antlr.Parser { return s.parser
 
 func (s *VariableDeclaratorIdContext) IDENTIFIER() antlr.TerminalNode {
 	return s.GetToken(JavaParserIDENTIFIER, 0)
+}
+
+func (s *VariableDeclaratorIdContext) AllLBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserLBRACK)
+}
+
+func (s *VariableDeclaratorIdContext) LBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACK, i)
+}
+
+func (s *VariableDeclaratorIdContext) AllRBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserRBRACK)
+}
+
+func (s *VariableDeclaratorIdContext) RBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACK, i)
 }
 
 func (s *VariableDeclaratorIdContext) GetRuleContext() antlr.RuleContext {
@@ -6903,6 +7096,14 @@ func NewArrayInitializerContext(parser antlr.Parser, parent antlr.ParserRuleCont
 
 func (s *ArrayInitializerContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *ArrayInitializerContext) LBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACE, 0)
+}
+
+func (s *ArrayInitializerContext) RBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACE, 0)
+}
+
 func (s *ArrayInitializerContext) AllVariableInitializer() []IVariableInitializerContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IVariableInitializerContext)(nil)).Elem())
 	var tst = make([]IVariableInitializerContext, len(ts))
@@ -6924,6 +7125,14 @@ func (s *ArrayInitializerContext) VariableInitializer(i int) IVariableInitialize
 	}
 
 	return t.(IVariableInitializerContext)
+}
+
+func (s *ArrayInitializerContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *ArrayInitializerContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
 }
 
 func (s *ArrayInitializerContext) GetRuleContext() antlr.RuleContext {
@@ -7093,6 +7302,14 @@ func (s *ClassOrInterfaceTypeContext) TypeArguments(i int) ITypeArgumentsContext
 	return t.(ITypeArgumentsContext)
 }
 
+func (s *ClassOrInterfaceTypeContext) AllDOT() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserDOT)
+}
+
+func (s *ClassOrInterfaceTypeContext) DOT(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserDOT, i)
+}
+
 func (s *ClassOrInterfaceTypeContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -7232,6 +7449,10 @@ func (s *TypeArgumentContext) TypeType() ITypeTypeContext {
 	return t.(ITypeTypeContext)
 }
 
+func (s *TypeArgumentContext) QUESTION() antlr.TerminalNode {
+	return s.GetToken(JavaParserQUESTION, 0)
+}
+
 func (s *TypeArgumentContext) AllAnnotation() []IAnnotationContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IAnnotationContext)(nil)).Elem())
 	var tst = make([]IAnnotationContext, len(ts))
@@ -7339,14 +7560,16 @@ func (p *JavaParser) TypeArgument() (localctx ITypeArgumentContext) {
 		_la = p.GetTokenStream().LA(1)
 
 		if _la == JavaParserEXTENDS || _la == JavaParserSUPER {
-			p.SetState(625)
-			_la = p.GetTokenStream().LA(1)
+			{
+				p.SetState(625)
+				_la = p.GetTokenStream().LA(1)
 
-			if !(_la == JavaParserEXTENDS || _la == JavaParserSUPER) {
-				p.GetErrorHandler().RecoverInline(p)
-			} else {
-				p.GetErrorHandler().ReportMatch(p)
-				p.Consume()
+				if !(_la == JavaParserEXTENDS || _la == JavaParserSUPER) {
+					p.GetErrorHandler().RecoverInline(p)
+				} else {
+					p.GetErrorHandler().ReportMatch(p)
+					p.Consume()
+				}
 			}
 			{
 				p.SetState(626)
@@ -7419,6 +7642,14 @@ func (s *QualifiedNameListContext) QualifiedName(i int) IQualifiedNameContext {
 	}
 
 	return t.(IQualifiedNameContext)
+}
+
+func (s *QualifiedNameListContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *QualifiedNameListContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
 }
 
 func (s *QualifiedNameListContext) GetRuleContext() antlr.RuleContext {
@@ -7526,6 +7757,14 @@ func NewFormalParametersContext(parser antlr.Parser, parent antlr.ParserRuleCont
 }
 
 func (s *FormalParametersContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *FormalParametersContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
+func (s *FormalParametersContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
+}
 
 func (s *FormalParametersContext) FormalParameterList() IFormalParameterListContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IFormalParameterListContext)(nil)).Elem(), 0)
@@ -7661,6 +7900,14 @@ func (s *FormalParameterListContext) FormalParameter(i int) IFormalParameterCont
 	}
 
 	return t.(IFormalParameterContext)
+}
+
+func (s *FormalParameterListContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *FormalParameterListContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
 }
 
 func (s *FormalParameterListContext) LastFormalParameter() ILastFormalParameterContext {
@@ -7973,6 +8220,10 @@ func (s *LastFormalParameterContext) TypeType() ITypeTypeContext {
 	return t.(ITypeTypeContext)
 }
 
+func (s *LastFormalParameterContext) ELLIPSIS() antlr.TerminalNode {
+	return s.GetToken(JavaParserELLIPSIS, 0)
+}
+
 func (s *LastFormalParameterContext) VariableDeclaratorId() IVariableDeclaratorIdContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IVariableDeclaratorIdContext)(nil)).Elem(), 0)
 
@@ -8163,6 +8414,14 @@ func (s *QualifiedNameContext) AllIDENTIFIER() []antlr.TerminalNode {
 
 func (s *QualifiedNameContext) IDENTIFIER(i int) antlr.TerminalNode {
 	return s.GetToken(JavaParserIDENTIFIER, i)
+}
+
+func (s *QualifiedNameContext) AllDOT() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserDOT)
+}
+
+func (s *QualifiedNameContext) DOT(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserDOT, i)
 }
 
 func (s *QualifiedNameContext) GetRuleContext() antlr.RuleContext {
@@ -8499,14 +8758,16 @@ func (p *JavaParser) IntegerLiteral() (localctx IIntegerLiteralContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(701)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(701)
+		_la = p.GetTokenStream().LA(1)
 
-	if !(((_la-51)&-(0x1f+1)) == 0 && ((1<<uint((_la-51)))&((1<<(JavaParserDECIMAL_LITERAL-51))|(1<<(JavaParserHEX_LITERAL-51))|(1<<(JavaParserOCT_LITERAL-51))|(1<<(JavaParserBINARY_LITERAL-51)))) != 0) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !(((_la-51)&-(0x1f+1)) == 0 && ((1<<uint((_la-51)))&((1<<(JavaParserDECIMAL_LITERAL-51))|(1<<(JavaParserHEX_LITERAL-51))|(1<<(JavaParserOCT_LITERAL-51))|(1<<(JavaParserBINARY_LITERAL-51)))) != 0) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
 
 	return localctx
@@ -8600,14 +8861,16 @@ func (p *JavaParser) FloatLiteral() (localctx IFloatLiteralContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(703)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(703)
+		_la = p.GetTokenStream().LA(1)
 
-	if !(_la == JavaParserFLOAT_LITERAL || _la == JavaParserHEX_FLOAT_LITERAL) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !(_la == JavaParserFLOAT_LITERAL || _la == JavaParserHEX_FLOAT_LITERAL) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
 
 	return localctx
@@ -8650,6 +8913,10 @@ func NewAltAnnotationQualifiedNameContext(parser antlr.Parser, parent antlr.Pars
 }
 
 func (s *AltAnnotationQualifiedNameContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *AltAnnotationQualifiedNameContext) AT() antlr.TerminalNode {
+	return s.GetToken(JavaParserAT, 0)
+}
 
 func (s *AltAnnotationQualifiedNameContext) AllIDENTIFIER() []antlr.TerminalNode {
 	return s.GetTokens(JavaParserIDENTIFIER)
@@ -8777,6 +9044,10 @@ func NewAnnotationContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 
 func (s *AnnotationContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *AnnotationContext) AT() antlr.TerminalNode {
+	return s.GetToken(JavaParserAT, 0)
+}
+
 func (s *AnnotationContext) QualifiedName() IQualifiedNameContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IQualifiedNameContext)(nil)).Elem(), 0)
 
@@ -8795,6 +9066,14 @@ func (s *AnnotationContext) AltAnnotationQualifiedName() IAltAnnotationQualified
 	}
 
 	return t.(IAltAnnotationQualifiedNameContext)
+}
+
+func (s *AnnotationContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
+func (s *AnnotationContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
 }
 
 func (s *AnnotationContext) ElementValuePairs() IElementValuePairsContext {
@@ -8975,6 +9254,14 @@ func (s *ElementValuePairsContext) ElementValuePair(i int) IElementValuePairCont
 	return t.(IElementValuePairContext)
 }
 
+func (s *ElementValuePairsContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *ElementValuePairsContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
+}
+
 func (s *ElementValuePairsContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -9083,6 +9370,10 @@ func (s *ElementValuePairContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ElementValuePairContext) IDENTIFIER() antlr.TerminalNode {
 	return s.GetToken(JavaParserIDENTIFIER, 0)
+}
+
+func (s *ElementValuePairContext) ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserASSIGN, 0)
 }
 
 func (s *ElementValuePairContext) ElementValue() IElementValueContext {
@@ -9327,6 +9618,14 @@ func NewElementValueArrayInitializerContext(parser antlr.Parser, parent antlr.Pa
 
 func (s *ElementValueArrayInitializerContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *ElementValueArrayInitializerContext) LBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACE, 0)
+}
+
+func (s *ElementValueArrayInitializerContext) RBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACE, 0)
+}
+
 func (s *ElementValueArrayInitializerContext) AllElementValue() []IElementValueContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IElementValueContext)(nil)).Elem())
 	var tst = make([]IElementValueContext, len(ts))
@@ -9348,6 +9647,14 @@ func (s *ElementValueArrayInitializerContext) ElementValue(i int) IElementValueC
 	}
 
 	return t.(IElementValueContext)
+}
+
+func (s *ElementValueArrayInitializerContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *ElementValueArrayInitializerContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
 }
 
 func (s *ElementValueArrayInitializerContext) GetRuleContext() antlr.RuleContext {
@@ -9486,6 +9793,10 @@ func NewAnnotationTypeDeclarationContext(parser antlr.Parser, parent antlr.Parse
 
 func (s *AnnotationTypeDeclarationContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *AnnotationTypeDeclarationContext) AT() antlr.TerminalNode {
+	return s.GetToken(JavaParserAT, 0)
+}
+
 func (s *AnnotationTypeDeclarationContext) INTERFACE() antlr.TerminalNode {
 	return s.GetToken(JavaParserINTERFACE, 0)
 }
@@ -9602,6 +9913,14 @@ func NewAnnotationTypeBodyContext(parser antlr.Parser, parent antlr.ParserRuleCo
 }
 
 func (s *AnnotationTypeBodyContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *AnnotationTypeBodyContext) LBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACE, 0)
+}
+
+func (s *AnnotationTypeBodyContext) RBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACE, 0)
+}
 
 func (s *AnnotationTypeBodyContext) AllAnnotationTypeElementDeclaration() []IAnnotationTypeElementDeclarationContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IAnnotationTypeElementDeclarationContext)(nil)).Elem())
@@ -9765,6 +10084,10 @@ func (s *AnnotationTypeElementDeclarationContext) Modifier(i int) IModifierConte
 	return t.(IModifierContext)
 }
 
+func (s *AnnotationTypeElementDeclarationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
+}
+
 func (s *AnnotationTypeElementDeclarationContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -9904,6 +10227,10 @@ func (s *AnnotationTypeElementRestContext) AnnotationMethodOrConstantRest() IAnn
 	}
 
 	return t.(IAnnotationMethodOrConstantRestContext)
+}
+
+func (s *AnnotationTypeElementRestContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
 }
 
 func (s *AnnotationTypeElementRestContext) ClassDeclaration() IClassDeclarationContext {
@@ -10239,6 +10566,14 @@ func (s *AnnotationMethodRestContext) IDENTIFIER() antlr.TerminalNode {
 	return s.GetToken(JavaParserIDENTIFIER, 0)
 }
 
+func (s *AnnotationMethodRestContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
+func (s *AnnotationMethodRestContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
+}
+
 func (s *AnnotationMethodRestContext) DefaultValue() IDefaultValueContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IDefaultValueContext)(nil)).Elem(), 0)
 
@@ -10558,6 +10893,14 @@ func NewBlockContext(parser antlr.Parser, parent antlr.ParserRuleContext, invoki
 
 func (s *BlockContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *BlockContext) LBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACE, 0)
+}
+
+func (s *BlockContext) RBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACE, 0)
+}
+
 func (s *BlockContext) AllBlockStatement() []IBlockStatementContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IBlockStatementContext)(nil)).Elem())
 	var tst = make([]IBlockStatementContext, len(ts))
@@ -10695,6 +11038,10 @@ func (s *BlockStatementContext) LocalVariableDeclaration() ILocalVariableDeclara
 	}
 
 	return t.(ILocalVariableDeclarationContext)
+}
+
+func (s *BlockStatementContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
 }
 
 func (s *BlockStatementContext) Statement() IStatementContext {
@@ -11023,6 +11370,10 @@ func (s *LocalTypeDeclarationContext) ClassOrInterfaceModifier(i int) IClassOrIn
 	return t.(IClassOrInterfaceModifierContext)
 }
 
+func (s *LocalTypeDeclarationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
+}
+
 func (s *LocalTypeDeclarationContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -11226,6 +11577,14 @@ func (s *StatementContext) Expression(i int) IExpressionContext {
 	return t.(IExpressionContext)
 }
 
+func (s *StatementContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
+}
+
+func (s *StatementContext) COLON() antlr.TerminalNode {
+	return s.GetToken(JavaParserCOLON, 0)
+}
+
 func (s *StatementContext) IF() antlr.TerminalNode {
 	return s.GetToken(JavaParserIF, 0)
 }
@@ -11271,6 +11630,10 @@ func (s *StatementContext) FOR() antlr.TerminalNode {
 	return s.GetToken(JavaParserFOR, 0)
 }
 
+func (s *StatementContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
 func (s *StatementContext) ForControl() IForControlContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IForControlContext)(nil)).Elem(), 0)
 
@@ -11279,6 +11642,10 @@ func (s *StatementContext) ForControl() IForControlContext {
 	}
 
 	return t.(IForControlContext)
+}
+
+func (s *StatementContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
 }
 
 func (s *StatementContext) WHILE() antlr.TerminalNode {
@@ -11338,6 +11705,14 @@ func (s *StatementContext) ResourceSpecification() IResourceSpecificationContext
 
 func (s *StatementContext) SWITCH() antlr.TerminalNode {
 	return s.GetToken(JavaParserSWITCH, 0)
+}
+
+func (s *StatementContext) LBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACE, 0)
+}
+
+func (s *StatementContext) RBRACE() antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACE, 0)
 }
 
 func (s *StatementContext) AllSwitchBlockStatementGroup() []ISwitchBlockStatementGroupContext {
@@ -11408,10 +11783,6 @@ func (s *StatementContext) IDENTIFIER() antlr.TerminalNode {
 
 func (s *StatementContext) CONTINUE() antlr.TerminalNode {
 	return s.GetToken(JavaParserCONTINUE, 0)
-}
-
-func (s *StatementContext) SEMI() antlr.TerminalNode {
-	return s.GetToken(JavaParserSEMI, 0)
 }
 
 func (s *StatementContext) GetRuleContext() antlr.RuleContext {
@@ -11912,6 +12283,10 @@ func (s *CatchClauseContext) CATCH() antlr.TerminalNode {
 	return s.GetToken(JavaParserCATCH, 0)
 }
 
+func (s *CatchClauseContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
 func (s *CatchClauseContext) CatchType() ICatchTypeContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*ICatchTypeContext)(nil)).Elem(), 0)
 
@@ -11924,6 +12299,10 @@ func (s *CatchClauseContext) CatchType() ICatchTypeContext {
 
 func (s *CatchClauseContext) IDENTIFIER() antlr.TerminalNode {
 	return s.GetToken(JavaParserIDENTIFIER, 0)
+}
+
+func (s *CatchClauseContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
 }
 
 func (s *CatchClauseContext) Block() IBlockContext {
@@ -12105,6 +12484,14 @@ func (s *CatchTypeContext) QualifiedName(i int) IQualifiedNameContext {
 	}
 
 	return t.(IQualifiedNameContext)
+}
+
+func (s *CatchTypeContext) AllBITOR() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserBITOR)
+}
+
+func (s *CatchTypeContext) BITOR(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserBITOR, i)
 }
 
 func (s *CatchTypeContext) GetRuleContext() antlr.RuleContext {
@@ -12318,6 +12705,10 @@ func NewResourceSpecificationContext(parser antlr.Parser, parent antlr.ParserRul
 
 func (s *ResourceSpecificationContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *ResourceSpecificationContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
 func (s *ResourceSpecificationContext) Resources() IResourcesContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IResourcesContext)(nil)).Elem(), 0)
 
@@ -12326,6 +12717,14 @@ func (s *ResourceSpecificationContext) Resources() IResourcesContext {
 	}
 
 	return t.(IResourcesContext)
+}
+
+func (s *ResourceSpecificationContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
+}
+
+func (s *ResourceSpecificationContext) SEMI() antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, 0)
 }
 
 func (s *ResourceSpecificationContext) GetRuleContext() antlr.RuleContext {
@@ -12458,6 +12857,14 @@ func (s *ResourcesContext) Resource(i int) IResourceContext {
 	return t.(IResourceContext)
 }
 
+func (s *ResourcesContext) AllSEMI() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserSEMI)
+}
+
+func (s *ResourcesContext) SEMI(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, i)
+}
+
 func (s *ResourcesContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -12585,6 +12992,10 @@ func (s *ResourceContext) VariableDeclaratorId() IVariableDeclaratorIdContext {
 	}
 
 	return t.(IVariableDeclaratorIdContext)
+}
+
+func (s *ResourceContext) ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserASSIGN, 0)
 }
 
 func (s *ResourceContext) Expression() IExpressionContext {
@@ -12921,6 +13332,10 @@ func (s *SwitchLabelContext) CASE() antlr.TerminalNode {
 	return s.GetToken(JavaParserCASE, 0)
 }
 
+func (s *SwitchLabelContext) COLON() antlr.TerminalNode {
+	return s.GetToken(JavaParserCOLON, 0)
+}
+
 func (s *SwitchLabelContext) Expression() IExpressionContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionContext)(nil)).Elem(), 0)
 
@@ -13091,6 +13506,14 @@ func (s *ForControlContext) EnhancedForControl() IEnhancedForControlContext {
 	}
 
 	return t.(IEnhancedForControlContext)
+}
+
+func (s *ForControlContext) AllSEMI() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserSEMI)
+}
+
+func (s *ForControlContext) SEMI(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserSEMI, i)
 }
 
 func (s *ForControlContext) ForInit() IForInitContext {
@@ -13404,6 +13827,10 @@ func (s *EnhancedForControlContext) VariableDeclaratorId() IVariableDeclaratorId
 	return t.(IVariableDeclaratorIdContext)
 }
 
+func (s *EnhancedForControlContext) COLON() antlr.TerminalNode {
+	return s.GetToken(JavaParserCOLON, 0)
+}
+
 func (s *EnhancedForControlContext) Expression() IExpressionContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionContext)(nil)).Elem(), 0)
 
@@ -13554,6 +13981,10 @@ func NewParExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext
 
 func (s *ParExpressionContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *ParExpressionContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
 func (s *ParExpressionContext) Expression() IExpressionContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionContext)(nil)).Elem(), 0)
 
@@ -13562,6 +13993,10 @@ func (s *ParExpressionContext) Expression() IExpressionContext {
 	}
 
 	return t.(IExpressionContext)
+}
+
+func (s *ParExpressionContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
 }
 
 func (s *ParExpressionContext) GetRuleContext() antlr.RuleContext {
@@ -13682,6 +14117,14 @@ func (s *ExpressionListContext) Expression(i int) IExpressionContext {
 	return t.(IExpressionContext)
 }
 
+func (s *ExpressionListContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *ExpressionListContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
+}
+
 func (s *ExpressionListContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -13790,6 +14233,14 @@ func (s *MethodCallContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *MethodCallContext) IDENTIFIER() antlr.TerminalNode {
 	return s.GetToken(JavaParserIDENTIFIER, 0)
+}
+
+func (s *MethodCallContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
+func (s *MethodCallContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
 }
 
 func (s *MethodCallContext) ExpressionList() IExpressionListContext {
@@ -14045,6 +14496,10 @@ func (s *ExpressionContext) Creator() ICreatorContext {
 	return t.(ICreatorContext)
 }
 
+func (s *ExpressionContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
 func (s *ExpressionContext) AllTypeType() []ITypeTypeContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*ITypeTypeContext)(nil)).Elem())
 	var tst = make([]ITypeTypeContext, len(ts))
@@ -14066,6 +14521,10 @@ func (s *ExpressionContext) TypeType(i int) ITypeTypeContext {
 	}
 
 	return t.(ITypeTypeContext)
+}
+
+func (s *ExpressionContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
 }
 
 func (s *ExpressionContext) AllExpression() []IExpressionContext {
@@ -14114,6 +14573,38 @@ func (s *ExpressionContext) Annotation(i int) IAnnotationContext {
 	return t.(IAnnotationContext)
 }
 
+func (s *ExpressionContext) AllBITAND() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserBITAND)
+}
+
+func (s *ExpressionContext) BITAND(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserBITAND, i)
+}
+
+func (s *ExpressionContext) ADD() antlr.TerminalNode {
+	return s.GetToken(JavaParserADD, 0)
+}
+
+func (s *ExpressionContext) SUB() antlr.TerminalNode {
+	return s.GetToken(JavaParserSUB, 0)
+}
+
+func (s *ExpressionContext) INC() antlr.TerminalNode {
+	return s.GetToken(JavaParserINC, 0)
+}
+
+func (s *ExpressionContext) DEC() antlr.TerminalNode {
+	return s.GetToken(JavaParserDEC, 0)
+}
+
+func (s *ExpressionContext) TILDE() antlr.TerminalNode {
+	return s.GetToken(JavaParserTILDE, 0)
+}
+
+func (s *ExpressionContext) BANG() antlr.TerminalNode {
+	return s.GetToken(JavaParserBANG, 0)
+}
+
 func (s *ExpressionContext) LambdaExpression() ILambdaExpressionContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*ILambdaExpressionContext)(nil)).Elem(), 0)
 
@@ -14122,6 +14613,10 @@ func (s *ExpressionContext) LambdaExpression() ILambdaExpressionContext {
 	}
 
 	return t.(ILambdaExpressionContext)
+}
+
+func (s *ExpressionContext) COLONCOLON() antlr.TerminalNode {
+	return s.GetToken(JavaParserCOLONCOLON, 0)
 }
 
 func (s *ExpressionContext) IDENTIFIER() antlr.TerminalNode {
@@ -14146,6 +14641,126 @@ func (s *ExpressionContext) ClassType() IClassTypeContext {
 	}
 
 	return t.(IClassTypeContext)
+}
+
+func (s *ExpressionContext) MUL() antlr.TerminalNode {
+	return s.GetToken(JavaParserMUL, 0)
+}
+
+func (s *ExpressionContext) DIV() antlr.TerminalNode {
+	return s.GetToken(JavaParserDIV, 0)
+}
+
+func (s *ExpressionContext) MOD() antlr.TerminalNode {
+	return s.GetToken(JavaParserMOD, 0)
+}
+
+func (s *ExpressionContext) AllLT() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserLT)
+}
+
+func (s *ExpressionContext) LT(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserLT, i)
+}
+
+func (s *ExpressionContext) AllGT() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserGT)
+}
+
+func (s *ExpressionContext) GT(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserGT, i)
+}
+
+func (s *ExpressionContext) LE() antlr.TerminalNode {
+	return s.GetToken(JavaParserLE, 0)
+}
+
+func (s *ExpressionContext) GE() antlr.TerminalNode {
+	return s.GetToken(JavaParserGE, 0)
+}
+
+func (s *ExpressionContext) EQUAL() antlr.TerminalNode {
+	return s.GetToken(JavaParserEQUAL, 0)
+}
+
+func (s *ExpressionContext) NOTEQUAL() antlr.TerminalNode {
+	return s.GetToken(JavaParserNOTEQUAL, 0)
+}
+
+func (s *ExpressionContext) CARET() antlr.TerminalNode {
+	return s.GetToken(JavaParserCARET, 0)
+}
+
+func (s *ExpressionContext) BITOR() antlr.TerminalNode {
+	return s.GetToken(JavaParserBITOR, 0)
+}
+
+func (s *ExpressionContext) AND() antlr.TerminalNode {
+	return s.GetToken(JavaParserAND, 0)
+}
+
+func (s *ExpressionContext) OR() antlr.TerminalNode {
+	return s.GetToken(JavaParserOR, 0)
+}
+
+func (s *ExpressionContext) COLON() antlr.TerminalNode {
+	return s.GetToken(JavaParserCOLON, 0)
+}
+
+func (s *ExpressionContext) QUESTION() antlr.TerminalNode {
+	return s.GetToken(JavaParserQUESTION, 0)
+}
+
+func (s *ExpressionContext) ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserASSIGN, 0)
+}
+
+func (s *ExpressionContext) ADD_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserADD_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) SUB_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserSUB_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) MUL_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserMUL_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) DIV_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserDIV_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) AND_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserAND_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) OR_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserOR_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) XOR_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserXOR_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) RSHIFT_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRSHIFT_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) URSHIFT_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserURSHIFT_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) LSHIFT_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLSHIFT_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) MOD_ASSIGN() antlr.TerminalNode {
+	return s.GetToken(JavaParserMOD_ASSIGN, 0)
+}
+
+func (s *ExpressionContext) DOT() antlr.TerminalNode {
+	return s.GetToken(JavaParserDOT, 0)
 }
 
 func (s *ExpressionContext) THIS() antlr.TerminalNode {
@@ -14194,6 +14809,14 @@ func (s *ExpressionContext) NonWildcardTypeArguments() INonWildcardTypeArguments
 	}
 
 	return t.(INonWildcardTypeArgumentsContext)
+}
+
+func (s *ExpressionContext) LBRACK() antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACK, 0)
+}
+
+func (s *ExpressionContext) RBRACK() antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACK, 0)
 }
 
 func (s *ExpressionContext) INSTANCEOF() antlr.TerminalNode {
@@ -14331,21 +14954,23 @@ func (p *JavaParser) expression(_p int) (localctx IExpressionContext) {
 		}
 
 	case 5:
-		p.SetState(1120)
+		{
+			p.SetState(1120)
 
-		var _lt = p.GetTokenStream().LT(1)
+			var _lt = p.GetTokenStream().LT(1)
 
-		localctx.(*ExpressionContext).prefix = _lt
+			localctx.(*ExpressionContext).prefix = _lt
 
-		_la = p.GetTokenStream().LA(1)
+			_la = p.GetTokenStream().LA(1)
 
-		if !(((_la-83)&-(0x1f+1)) == 0 && ((1<<uint((_la-83)))&((1<<(JavaParserINC-83))|(1<<(JavaParserDEC-83))|(1<<(JavaParserADD-83))|(1<<(JavaParserSUB-83)))) != 0) {
-			var _ri = p.GetErrorHandler().RecoverInline(p)
+			if !(((_la-83)&-(0x1f+1)) == 0 && ((1<<uint((_la-83)))&((1<<(JavaParserINC-83))|(1<<(JavaParserDEC-83))|(1<<(JavaParserADD-83))|(1<<(JavaParserSUB-83)))) != 0) {
+				var _ri = p.GetErrorHandler().RecoverInline(p)
 
-			localctx.(*ExpressionContext).prefix = _ri
-		} else {
-			p.GetErrorHandler().ReportMatch(p)
-			p.Consume()
+				localctx.(*ExpressionContext).prefix = _ri
+			} else {
+				p.GetErrorHandler().ReportMatch(p)
+				p.Consume()
+			}
 		}
 		{
 			p.SetState(1121)
@@ -14353,21 +14978,23 @@ func (p *JavaParser) expression(_p int) (localctx IExpressionContext) {
 		}
 
 	case 6:
-		p.SetState(1122)
+		{
+			p.SetState(1122)
 
-		var _lt = p.GetTokenStream().LT(1)
+			var _lt = p.GetTokenStream().LT(1)
 
-		localctx.(*ExpressionContext).prefix = _lt
+			localctx.(*ExpressionContext).prefix = _lt
 
-		_la = p.GetTokenStream().LA(1)
+			_la = p.GetTokenStream().LA(1)
 
-		if !(_la == JavaParserBANG || _la == JavaParserTILDE) {
-			var _ri = p.GetErrorHandler().RecoverInline(p)
+			if !(_la == JavaParserBANG || _la == JavaParserTILDE) {
+				var _ri = p.GetErrorHandler().RecoverInline(p)
 
-			localctx.(*ExpressionContext).prefix = _ri
-		} else {
-			p.GetErrorHandler().ReportMatch(p)
-			p.Consume()
+				localctx.(*ExpressionContext).prefix = _ri
+			} else {
+				p.GetErrorHandler().ReportMatch(p)
+				p.Consume()
+			}
 		}
 		{
 			p.SetState(1123)
@@ -14468,21 +15095,23 @@ func (p *JavaParser) expression(_p int) (localctx IExpressionContext) {
 				if !(p.Precpred(p.GetParserRuleContext(), 17)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 17)", ""))
 				}
-				p.SetState(1144)
+				{
+					p.SetState(1144)
 
-				var _lt = p.GetTokenStream().LT(1)
+					var _lt = p.GetTokenStream().LT(1)
 
-				localctx.(*ExpressionContext).bop = _lt
+					localctx.(*ExpressionContext).bop = _lt
 
-				_la = p.GetTokenStream().LA(1)
+					_la = p.GetTokenStream().LA(1)
 
-				if !(((_la-87)&-(0x1f+1)) == 0 && ((1<<uint((_la-87)))&((1<<(JavaParserMUL-87))|(1<<(JavaParserDIV-87))|(1<<(JavaParserMOD-87)))) != 0) {
-					var _ri = p.GetErrorHandler().RecoverInline(p)
+					if !(((_la-87)&-(0x1f+1)) == 0 && ((1<<uint((_la-87)))&((1<<(JavaParserMUL-87))|(1<<(JavaParserDIV-87))|(1<<(JavaParserMOD-87)))) != 0) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
 
-					localctx.(*ExpressionContext).bop = _ri
-				} else {
-					p.GetErrorHandler().ReportMatch(p)
-					p.Consume()
+						localctx.(*ExpressionContext).bop = _ri
+					} else {
+						p.GetErrorHandler().ReportMatch(p)
+						p.Consume()
+					}
 				}
 				{
 					p.SetState(1145)
@@ -14497,21 +15126,23 @@ func (p *JavaParser) expression(_p int) (localctx IExpressionContext) {
 				if !(p.Precpred(p.GetParserRuleContext(), 16)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 16)", ""))
 				}
-				p.SetState(1147)
+				{
+					p.SetState(1147)
 
-				var _lt = p.GetTokenStream().LT(1)
+					var _lt = p.GetTokenStream().LT(1)
 
-				localctx.(*ExpressionContext).bop = _lt
+					localctx.(*ExpressionContext).bop = _lt
 
-				_la = p.GetTokenStream().LA(1)
+					_la = p.GetTokenStream().LA(1)
 
-				if !(_la == JavaParserADD || _la == JavaParserSUB) {
-					var _ri = p.GetErrorHandler().RecoverInline(p)
+					if !(_la == JavaParserADD || _la == JavaParserSUB) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
 
-					localctx.(*ExpressionContext).bop = _ri
-				} else {
-					p.GetErrorHandler().ReportMatch(p)
-					p.Consume()
+						localctx.(*ExpressionContext).bop = _ri
+					} else {
+						p.GetErrorHandler().ReportMatch(p)
+						p.Consume()
+					}
 				}
 				{
 					p.SetState(1148)
@@ -14577,21 +15208,23 @@ func (p *JavaParser) expression(_p int) (localctx IExpressionContext) {
 				if !(p.Precpred(p.GetParserRuleContext(), 14)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 14)", ""))
 				}
-				p.SetState(1161)
+				{
+					p.SetState(1161)
 
-				var _lt = p.GetTokenStream().LT(1)
+					var _lt = p.GetTokenStream().LT(1)
 
-				localctx.(*ExpressionContext).bop = _lt
+					localctx.(*ExpressionContext).bop = _lt
 
-				_la = p.GetTokenStream().LA(1)
+					_la = p.GetTokenStream().LA(1)
 
-				if !(((_la-71)&-(0x1f+1)) == 0 && ((1<<uint((_la-71)))&((1<<(JavaParserGT-71))|(1<<(JavaParserLT-71))|(1<<(JavaParserLE-71))|(1<<(JavaParserGE-71)))) != 0) {
-					var _ri = p.GetErrorHandler().RecoverInline(p)
+					if !(((_la-71)&-(0x1f+1)) == 0 && ((1<<uint((_la-71)))&((1<<(JavaParserGT-71))|(1<<(JavaParserLT-71))|(1<<(JavaParserLE-71))|(1<<(JavaParserGE-71)))) != 0) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
 
-					localctx.(*ExpressionContext).bop = _ri
-				} else {
-					p.GetErrorHandler().ReportMatch(p)
-					p.Consume()
+						localctx.(*ExpressionContext).bop = _ri
+					} else {
+						p.GetErrorHandler().ReportMatch(p)
+						p.Consume()
+					}
 				}
 				{
 					p.SetState(1162)
@@ -14606,21 +15239,23 @@ func (p *JavaParser) expression(_p int) (localctx IExpressionContext) {
 				if !(p.Precpred(p.GetParserRuleContext(), 12)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 12)", ""))
 				}
-				p.SetState(1164)
+				{
+					p.SetState(1164)
 
-				var _lt = p.GetTokenStream().LT(1)
+					var _lt = p.GetTokenStream().LT(1)
 
-				localctx.(*ExpressionContext).bop = _lt
+					localctx.(*ExpressionContext).bop = _lt
 
-				_la = p.GetTokenStream().LA(1)
+					_la = p.GetTokenStream().LA(1)
 
-				if !(_la == JavaParserEQUAL || _la == JavaParserNOTEQUAL) {
-					var _ri = p.GetErrorHandler().RecoverInline(p)
+					if !(_la == JavaParserEQUAL || _la == JavaParserNOTEQUAL) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
 
-					localctx.(*ExpressionContext).bop = _ri
-				} else {
-					p.GetErrorHandler().ReportMatch(p)
-					p.Consume()
+						localctx.(*ExpressionContext).bop = _ri
+					} else {
+						p.GetErrorHandler().ReportMatch(p)
+						p.Consume()
+					}
 				}
 				{
 					p.SetState(1165)
@@ -14763,21 +15398,23 @@ func (p *JavaParser) expression(_p int) (localctx IExpressionContext) {
 				if !(p.Precpred(p.GetParserRuleContext(), 5)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 5)", ""))
 				}
-				p.SetState(1188)
+				{
+					p.SetState(1188)
 
-				var _lt = p.GetTokenStream().LT(1)
+					var _lt = p.GetTokenStream().LT(1)
 
-				localctx.(*ExpressionContext).bop = _lt
+					localctx.(*ExpressionContext).bop = _lt
 
-				_la = p.GetTokenStream().LA(1)
+					_la = p.GetTokenStream().LA(1)
 
-				if !((((_la-70)&-(0x1f+1)) == 0 && ((1<<uint((_la-70)))&((1<<(JavaParserASSIGN-70))|(1<<(JavaParserADD_ASSIGN-70))|(1<<(JavaParserSUB_ASSIGN-70))|(1<<(JavaParserMUL_ASSIGN-70))|(1<<(JavaParserDIV_ASSIGN-70))|(1<<(JavaParserAND_ASSIGN-70))|(1<<(JavaParserOR_ASSIGN-70))|(1<<(JavaParserXOR_ASSIGN-70))|(1<<(JavaParserMOD_ASSIGN-70))|(1<<(JavaParserLSHIFT_ASSIGN-70)))) != 0) || _la == JavaParserRSHIFT_ASSIGN || _la == JavaParserURSHIFT_ASSIGN) {
-					var _ri = p.GetErrorHandler().RecoverInline(p)
+					if !((((_la-70)&-(0x1f+1)) == 0 && ((1<<uint((_la-70)))&((1<<(JavaParserASSIGN-70))|(1<<(JavaParserADD_ASSIGN-70))|(1<<(JavaParserSUB_ASSIGN-70))|(1<<(JavaParserMUL_ASSIGN-70))|(1<<(JavaParserDIV_ASSIGN-70))|(1<<(JavaParserAND_ASSIGN-70))|(1<<(JavaParserOR_ASSIGN-70))|(1<<(JavaParserXOR_ASSIGN-70))|(1<<(JavaParserMOD_ASSIGN-70))|(1<<(JavaParserLSHIFT_ASSIGN-70)))) != 0) || _la == JavaParserRSHIFT_ASSIGN || _la == JavaParserURSHIFT_ASSIGN) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
 
-					localctx.(*ExpressionContext).bop = _ri
-				} else {
-					p.GetErrorHandler().ReportMatch(p)
-					p.Consume()
+						localctx.(*ExpressionContext).bop = _ri
+					} else {
+						p.GetErrorHandler().ReportMatch(p)
+						p.Consume()
+					}
 				}
 				{
 					p.SetState(1189)
@@ -14888,21 +15525,23 @@ func (p *JavaParser) expression(_p int) (localctx IExpressionContext) {
 				if !(p.Precpred(p.GetParserRuleContext(), 20)) {
 					panic(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 20)", ""))
 				}
-				p.SetState(1211)
+				{
+					p.SetState(1211)
 
-				var _lt = p.GetTokenStream().LT(1)
+					var _lt = p.GetTokenStream().LT(1)
 
-				localctx.(*ExpressionContext).postfix = _lt
+					localctx.(*ExpressionContext).postfix = _lt
 
-				_la = p.GetTokenStream().LA(1)
+					_la = p.GetTokenStream().LA(1)
 
-				if !(_la == JavaParserINC || _la == JavaParserDEC) {
-					var _ri = p.GetErrorHandler().RecoverInline(p)
+					if !(_la == JavaParserINC || _la == JavaParserDEC) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
 
-					localctx.(*ExpressionContext).postfix = _ri
-				} else {
-					p.GetErrorHandler().ReportMatch(p)
-					p.Consume()
+						localctx.(*ExpressionContext).postfix = _ri
+					} else {
+						p.GetErrorHandler().ReportMatch(p)
+						p.Consume()
+					}
 				}
 
 			case 16:
@@ -15010,6 +15649,10 @@ func (s *LambdaExpressionContext) LambdaParameters() ILambdaParametersContext {
 	}
 
 	return t.(ILambdaParametersContext)
+}
+
+func (s *LambdaExpressionContext) ARROW() antlr.TerminalNode {
+	return s.GetToken(JavaParserARROW, 0)
 }
 
 func (s *LambdaExpressionContext) LambdaBody() ILambdaBodyContext {
@@ -15125,6 +15768,14 @@ func (s *LambdaParametersContext) IDENTIFIER(i int) antlr.TerminalNode {
 	return s.GetToken(JavaParserIDENTIFIER, i)
 }
 
+func (s *LambdaParametersContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
+func (s *LambdaParametersContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
+}
+
 func (s *LambdaParametersContext) FormalParameterList() IFormalParameterListContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IFormalParameterListContext)(nil)).Elem(), 0)
 
@@ -15133,6 +15784,14 @@ func (s *LambdaParametersContext) FormalParameterList() IFormalParameterListCont
 	}
 
 	return t.(IFormalParameterListContext)
+}
+
+func (s *LambdaParametersContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *LambdaParametersContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
 }
 
 func (s *LambdaParametersContext) GetRuleContext() antlr.RuleContext {
@@ -15407,6 +16066,10 @@ func NewPrimaryContext(parser antlr.Parser, parent antlr.ParserRuleContext, invo
 
 func (s *PrimaryContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *PrimaryContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
 func (s *PrimaryContext) Expression() IExpressionContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionContext)(nil)).Elem(), 0)
 
@@ -15415,6 +16078,10 @@ func (s *PrimaryContext) Expression() IExpressionContext {
 	}
 
 	return t.(IExpressionContext)
+}
+
+func (s *PrimaryContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
 }
 
 func (s *PrimaryContext) THIS() antlr.TerminalNode {
@@ -15447,6 +16114,10 @@ func (s *PrimaryContext) TypeTypeOrVoid() ITypeTypeOrVoidContext {
 	}
 
 	return t.(ITypeTypeOrVoidContext)
+}
+
+func (s *PrimaryContext) DOT() antlr.TerminalNode {
+	return s.GetToken(JavaParserDOT, 0)
 }
 
 func (s *PrimaryContext) CLASS() antlr.TerminalNode {
@@ -15669,6 +16340,10 @@ func (s *ClassTypeContext) ClassOrInterfaceType() IClassOrInterfaceTypeContext {
 	}
 
 	return t.(IClassOrInterfaceTypeContext)
+}
+
+func (s *ClassTypeContext) DOT() antlr.TerminalNode {
+	return s.GetToken(JavaParserDOT, 0)
 }
 
 func (s *ClassTypeContext) AllAnnotation() []IAnnotationContext {
@@ -16036,6 +16711,14 @@ func (s *CreatedNameContext) TypeArgumentsOrDiamond(i int) ITypeArgumentsOrDiamo
 	return t.(ITypeArgumentsOrDiamondContext)
 }
 
+func (s *CreatedNameContext) AllDOT() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserDOT)
+}
+
+func (s *CreatedNameContext) DOT(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserDOT, i)
+}
+
 func (s *CreatedNameContext) PrimitiveType() IPrimitiveTypeContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IPrimitiveTypeContext)(nil)).Elem(), 0)
 
@@ -16316,6 +16999,22 @@ func NewArrayCreatorRestContext(parser antlr.Parser, parent antlr.ParserRuleCont
 }
 
 func (s *ArrayCreatorRestContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *ArrayCreatorRestContext) AllLBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserLBRACK)
+}
+
+func (s *ArrayCreatorRestContext) LBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACK, i)
+}
+
+func (s *ArrayCreatorRestContext) AllRBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserRBRACK)
+}
+
+func (s *ArrayCreatorRestContext) RBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACK, i)
+}
 
 func (s *ArrayCreatorRestContext) ArrayInitializer() IArrayInitializerContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IArrayInitializerContext)(nil)).Elem(), 0)
@@ -16757,6 +17456,14 @@ func NewTypeArgumentsOrDiamondContext(parser antlr.Parser, parent antlr.ParserRu
 
 func (s *TypeArgumentsOrDiamondContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *TypeArgumentsOrDiamondContext) LT() antlr.TerminalNode {
+	return s.GetToken(JavaParserLT, 0)
+}
+
+func (s *TypeArgumentsOrDiamondContext) GT() antlr.TerminalNode {
+	return s.GetToken(JavaParserGT, 0)
+}
+
 func (s *TypeArgumentsOrDiamondContext) TypeArguments() ITypeArgumentsContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*ITypeArgumentsContext)(nil)).Elem(), 0)
 
@@ -16870,6 +17577,14 @@ func NewNonWildcardTypeArgumentsOrDiamondContext(parser antlr.Parser, parent ant
 }
 
 func (s *NonWildcardTypeArgumentsOrDiamondContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *NonWildcardTypeArgumentsOrDiamondContext) LT() antlr.TerminalNode {
+	return s.GetToken(JavaParserLT, 0)
+}
+
+func (s *NonWildcardTypeArgumentsOrDiamondContext) GT() antlr.TerminalNode {
+	return s.GetToken(JavaParserGT, 0)
+}
 
 func (s *NonWildcardTypeArgumentsOrDiamondContext) NonWildcardTypeArguments() INonWildcardTypeArgumentsContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*INonWildcardTypeArgumentsContext)(nil)).Elem(), 0)
@@ -16985,6 +17700,10 @@ func NewNonWildcardTypeArgumentsContext(parser antlr.Parser, parent antlr.Parser
 
 func (s *NonWildcardTypeArgumentsContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *NonWildcardTypeArgumentsContext) LT() antlr.TerminalNode {
+	return s.GetToken(JavaParserLT, 0)
+}
+
 func (s *NonWildcardTypeArgumentsContext) TypeList() ITypeListContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*ITypeListContext)(nil)).Elem(), 0)
 
@@ -16993,6 +17712,10 @@ func (s *NonWildcardTypeArgumentsContext) TypeList() ITypeListContext {
 	}
 
 	return t.(ITypeListContext)
+}
+
+func (s *NonWildcardTypeArgumentsContext) GT() antlr.TerminalNode {
+	return s.GetToken(JavaParserGT, 0)
 }
 
 func (s *NonWildcardTypeArgumentsContext) GetRuleContext() antlr.RuleContext {
@@ -17111,6 +17834,14 @@ func (s *TypeListContext) TypeType(i int) ITypeTypeContext {
 	}
 
 	return t.(ITypeTypeContext)
+}
+
+func (s *TypeListContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *TypeListContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
 }
 
 func (s *TypeListContext) GetRuleContext() antlr.RuleContext {
@@ -17260,6 +17991,22 @@ func (s *TypeTypeContext) Annotation(i int) IAnnotationContext {
 	}
 
 	return t.(IAnnotationContext)
+}
+
+func (s *TypeTypeContext) AllLBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserLBRACK)
+}
+
+func (s *TypeTypeContext) LBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserLBRACK, i)
+}
+
+func (s *TypeTypeContext) AllRBRACK() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserRBRACK)
+}
+
+func (s *TypeTypeContext) RBRACK(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserRBRACK, i)
 }
 
 func (s *TypeTypeContext) GetRuleContext() antlr.RuleContext {
@@ -17491,14 +18238,16 @@ func (p *JavaParser) PrimitiveType() (localctx IPrimitiveTypeContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(1403)
-	_la = p.GetTokenStream().LA(1)
+	{
+		p.SetState(1403)
+		_la = p.GetTokenStream().LA(1)
 
-	if !((((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<JavaParserBOOLEAN)|(1<<JavaParserBYTE)|(1<<JavaParserCHAR)|(1<<JavaParserDOUBLE)|(1<<JavaParserFLOAT)|(1<<JavaParserINT)|(1<<JavaParserLONG))) != 0) || _la == JavaParserSHORT) {
-		p.GetErrorHandler().RecoverInline(p)
-	} else {
-		p.GetErrorHandler().ReportMatch(p)
-		p.Consume()
+		if !((((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<JavaParserBOOLEAN)|(1<<JavaParserBYTE)|(1<<JavaParserCHAR)|(1<<JavaParserDOUBLE)|(1<<JavaParserFLOAT)|(1<<JavaParserINT)|(1<<JavaParserLONG))) != 0) || _la == JavaParserSHORT) {
+			p.GetErrorHandler().RecoverInline(p)
+		} else {
+			p.GetErrorHandler().ReportMatch(p)
+			p.Consume()
+		}
 	}
 
 	return localctx
@@ -17542,6 +18291,10 @@ func NewTypeArgumentsContext(parser antlr.Parser, parent antlr.ParserRuleContext
 
 func (s *TypeArgumentsContext) GetParser() antlr.Parser { return s.parser }
 
+func (s *TypeArgumentsContext) LT() antlr.TerminalNode {
+	return s.GetToken(JavaParserLT, 0)
+}
+
 func (s *TypeArgumentsContext) AllTypeArgument() []ITypeArgumentContext {
 	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*ITypeArgumentContext)(nil)).Elem())
 	var tst = make([]ITypeArgumentContext, len(ts))
@@ -17563,6 +18316,18 @@ func (s *TypeArgumentsContext) TypeArgument(i int) ITypeArgumentContext {
 	}
 
 	return t.(ITypeArgumentContext)
+}
+
+func (s *TypeArgumentsContext) GT() antlr.TerminalNode {
+	return s.GetToken(JavaParserGT, 0)
+}
+
+func (s *TypeArgumentsContext) AllCOMMA() []antlr.TerminalNode {
+	return s.GetTokens(JavaParserCOMMA)
+}
+
+func (s *TypeArgumentsContext) COMMA(i int) antlr.TerminalNode {
+	return s.GetToken(JavaParserCOMMA, i)
 }
 
 func (s *TypeArgumentsContext) GetRuleContext() antlr.RuleContext {
@@ -17687,6 +18452,10 @@ func (s *SuperSuffixContext) Arguments() IArgumentsContext {
 	}
 
 	return t.(IArgumentsContext)
+}
+
+func (s *SuperSuffixContext) DOT() antlr.TerminalNode {
+	return s.GetToken(JavaParserDOT, 0)
 }
 
 func (s *SuperSuffixContext) IDENTIFIER() antlr.TerminalNode {
@@ -17948,6 +18717,14 @@ func NewArgumentsContext(parser antlr.Parser, parent antlr.ParserRuleContext, in
 }
 
 func (s *ArgumentsContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *ArgumentsContext) LPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserLPAREN, 0)
+}
+
+func (s *ArgumentsContext) RPAREN() antlr.TerminalNode {
+	return s.GetToken(JavaParserRPAREN, 0)
+}
 
 func (s *ArgumentsContext) ExpressionList() IExpressionListContext {
 	var t = s.GetTypedRuleContext(reflect.TypeOf((*IExpressionListContext)(nil)).Elem(), 0)

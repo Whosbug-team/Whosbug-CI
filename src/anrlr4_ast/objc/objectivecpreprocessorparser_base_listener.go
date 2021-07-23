@@ -1,6 +1,6 @@
 // Generated from ObjectiveCPreprocessorParser.g4 by ANTLR 4.7.
 
-package parser // ObjectiveCPreprocessorParser
+package objcParser // ObjectiveCPreprocessorParser
 
 import "github.com/antlr/antlr4/runtime/Go/antlr"
 

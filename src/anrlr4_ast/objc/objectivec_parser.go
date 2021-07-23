@@ -1,6 +1,6 @@
 // Generated from ObjectiveCParser.g4 by ANTLR 4.7.
 
-package parser // ObjectiveCParser
+package objcParser // ObjectiveCParser
 
 import (
 	"fmt"

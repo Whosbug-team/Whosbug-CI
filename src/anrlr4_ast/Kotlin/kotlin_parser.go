@@ -1,6 +1,6 @@
 // Generated from KotlinParser.g4 by ANTLR 4.7.
 
-package parser // KotlinParser
+package KotlinParser // KotlinParser
 
 import (
 	"fmt"

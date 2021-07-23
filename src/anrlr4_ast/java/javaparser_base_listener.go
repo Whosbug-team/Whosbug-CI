@@ -1,8 +1,121 @@
-// Generated from JavaParser.g4 by ANTLR 4.7.
+// Code generated from JavaParser.g4 by ANTLR 4.9.2. DO NOT EDIT.
 
-package parser // JavaParser
+package javaParser // JavaParser
 
-import "github.com/antlr/antlr4/runtime/Go/antlr"
+import (
+	"fmt"
+	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"strconv"
+)
+
+type paramInfoType struct {
+	paramType string
+	paramName string
+}
+
+type methodInfoType struct {
+	StartLine    int
+	EndLine      int
+	ReturnType   string
+	MethodName   string
+	Params       []paramInfoType
+	MasterObject string
+	Depth        int
+	CallMethods  []string
+}
+type classInfoType struct {
+	StartLine    int
+	EndLine      int
+	ClassName    string
+	Extends      string
+	Implements   []string
+	MasterObject string
+	Depth        int
+}
+type astInfoType struct {
+	PackageName string
+	Classes     []classInfoType
+	Imports     []string
+	Fileds      []string
+	Methods     []methodInfoType
+}
+
+type analysisInfoType struct {
+	CallMethods []string
+	AstInfoList astInfoType
+}
+
+var Infos analysisInfoType
+
+/** ExitMethodDeclaration
+ * @Description: 匹配到方法结束时被调用
+ * @receiver s
+ * @param ctx
+ * @author KevinMatt 2021-07-23 23:14:09
+ * @function_mark PASS
+ */
+func (s *BaseJavaParserListener) ExitMethodDeclaration(ctx *MethodDeclarationContext) {
+	var methodInfo methodInfoType
+	MethodName := ctx.GetChild(1)
+	ReturnType := ctx.GetChild(0).(*TypeTypeOrVoidContext).GetText()
+	Params := getParams(ctx)
+	//fmt.Println(Params[0].paramName, Params[0].paramType)
+	methodInfo.ReturnType = ReturnType
+	methodInfo.StartLine = ctx.GetStart().GetLine()
+	methodInfo.EndLine = ctx.GetStop().GetLine()
+	methodInfo.MethodName = fmt.Sprintf("%s", MethodName)
+	methodInfo.MasterObject = ""
+	methodInfo.Params = append(methodInfo.Params, Params...)
+	//TODO 解决语法树深度的高效计算方法
+	Infos.AstInfoList.Methods = append(Infos.AstInfoList.Methods, methodInfo)
+}
+
+/** getParams
+ * @Description: 获取参数名&参数类型结构体的切片
+ * @param ctx *MethodDeclarationContext
+ * @return []paramInfoType 返回追加后的切片
+ * @author KevinMatt 2021-07-23 22:55:22
+ * @function_mark
+ */
+func getParams(ctx *MethodDeclarationContext) []paramInfoType {
+	var paramsCount int
+	var paramInfo paramInfoType
+	var result []paramInfoType
+	if ctx.GetChildCount() == 3 {
+		paramsCount = ctx.GetChild(1).GetChildCount()
+		if paramsCount == 1 {
+			paramType := ctx.GetChild(1).GetChild(0).GetChild(0).(*FormalParameterContext).GetText()
+			paramName := ctx.GetChild(1).GetChild(0).GetChild(1).(*FormalParameterContext).GetText()
+			paramInfo.paramName = paramName
+			paramInfo.paramType = paramType
+			result = append(result, paramInfo)
+		} else if paramsCount > 1 {
+			for index := 0; index < paramsCount; index++ {
+				if index%2 == 0 {
+					paramType := ctx.GetChild(1).GetChild(index).GetChild(0).(*FormalParameterContext).GetText()
+					paramName := ctx.GetChild(1).GetChild(index).GetChild(1).(*FormalParameterContext).GetText()
+					paramInfo.paramName = paramName
+					paramInfo.paramType = paramType
+					result = append(result, paramInfo)
+				}
+			}
+		}
+	}
+	return result
+}
+
+/** EnterMethodCall
+ * @Description: 匹配调用方法行并获取起始行列号
+ * @receiver s
+ * @param ctx
+ * @author KevinMatt 2021-07-23 23:22:56
+ * @function_mark PASS
+ */
+func (s *BaseJavaParserListener) EnterMethodCall(ctx *MethodCallContext) {
+	lineNumber := ctx.GetStart().GetLine()
+	columnNumber := ctx.GetStart().GetColumn()
+	Infos.CallMethods = append(Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetParent().(*ExpressionContext).GetText()))
+}
 
 // BaseJavaParserListener is a complete listener for a parse tree produced by JavaParser.
 type BaseJavaParserListener struct{}
@@ -28,13 +141,22 @@ func (s *BaseJavaParserListener) EnterCompilationUnit(ctx *CompilationUnitContex
 func (s *BaseJavaParserListener) ExitCompilationUnit(ctx *CompilationUnitContext) {}
 
 // EnterPackageDeclaration is called when production packageDeclaration is entered.
-func (s *BaseJavaParserListener) EnterPackageDeclaration(ctx *PackageDeclarationContext) {}
+// 获得读取到的package声明语句
+func (s *BaseJavaParserListener) EnterPackageDeclaration(ctx *PackageDeclarationContext) {
+	//fmt.Println(ctx.GetText())
+	//InfoStruct.analysisInfoType["ast_info"].(map[string]string)["PackageName"] = ctx.QualifiedName().GetText()
+}
 
 // ExitPackageDeclaration is called when production packageDeclaration is exited.
 func (s *BaseJavaParserListener) ExitPackageDeclaration(ctx *PackageDeclarationContext) {}
 
 // EnterImportDeclaration is called when production importDeclaration is entered.
-func (s *BaseJavaParserListener) EnterImportDeclaration(ctx *ImportDeclarationContext) {}
+// 获得读取到的import声明语句
+func (s *BaseJavaParserListener) EnterImportDeclaration(ctx *ImportDeclarationContext) {
+	//fmt.Println(ctx.GetText())
+	//importMatch := ctx.QualifiedName().GetText()
+	//InfoStruct.analysisInfoType["ast_info"].(map[string][]string)["Imports"] = append(InfoStruct.analysisInfoType["ast_info"].(map[string][]string)["Imports"], importMatch)
+}
 
 // ExitImportDeclaration is called when production importDeclaration is exited.
 func (s *BaseJavaParserListener) ExitImportDeclaration(ctx *ImportDeclarationContext) {}
@@ -71,7 +193,8 @@ func (s *BaseJavaParserListener) EnterClassDeclaration(ctx *ClassDeclarationCont
 func (s *BaseJavaParserListener) ExitClassDeclaration(ctx *ClassDeclarationContext) {}
 
 // EnterTypeParameters is called when production typeParameters is entered.
-func (s *BaseJavaParserListener) EnterTypeParameters(ctx *TypeParametersContext) {}
+func (s *BaseJavaParserListener) EnterTypeParameters(ctx *TypeParametersContext) {
+}
 
 // ExitTypeParameters is called when production typeParameters is exited.
 func (s *BaseJavaParserListener) ExitTypeParameters(ctx *TypeParametersContext) {}
@@ -143,10 +266,9 @@ func (s *BaseJavaParserListener) EnterMemberDeclaration(ctx *MemberDeclarationCo
 func (s *BaseJavaParserListener) ExitMemberDeclaration(ctx *MemberDeclarationContext) {}
 
 // EnterMethodDeclaration is called when production methodDeclaration is entered.
-func (s *BaseJavaParserListener) EnterMethodDeclaration(ctx *MethodDeclarationContext) {}
-
-// ExitMethodDeclaration is called when production methodDeclaration is exited.
-func (s *BaseJavaParserListener) ExitMethodDeclaration(ctx *MethodDeclarationContext) {}
+func (s *BaseJavaParserListener) EnterMethodDeclaration(ctx *MethodDeclarationContext) {
+	//fmt.Println("Method Declaration:", ctx.GetText())
+}
 
 // EnterMethodBody is called when production methodBody is entered.
 func (s *BaseJavaParserListener) EnterMethodBody(ctx *MethodBodyContext) {}
@@ -155,7 +277,9 @@ func (s *BaseJavaParserListener) EnterMethodBody(ctx *MethodBodyContext) {}
 func (s *BaseJavaParserListener) ExitMethodBody(ctx *MethodBodyContext) {}
 
 // EnterTypeTypeOrVoid is called when production typeTypeOrVoid is entered.
-func (s *BaseJavaParserListener) EnterTypeTypeOrVoid(ctx *TypeTypeOrVoidContext) {}
+func (s *BaseJavaParserListener) EnterTypeTypeOrVoid(ctx *TypeTypeOrVoidContext) {
+	//fmt.Printf("Type: %s \n", ctx.GetText())
+}
 
 // ExitTypeTypeOrVoid is called when production typeTypeOrVoid is exited.
 func (s *BaseJavaParserListener) ExitTypeTypeOrVoid(ctx *TypeTypeOrVoidContext) {}
@@ -285,7 +409,9 @@ func (s *BaseJavaParserListener) EnterQualifiedNameList(ctx *QualifiedNameListCo
 func (s *BaseJavaParserListener) ExitQualifiedNameList(ctx *QualifiedNameListContext) {}
 
 // EnterFormalParameters is called when production formalParameters is entered.
-func (s *BaseJavaParserListener) EnterFormalParameters(ctx *FormalParametersContext) {}
+func (s *BaseJavaParserListener) EnterFormalParameters(ctx *FormalParametersContext) {
+	//fmt.Println("params:", ctx.GetText())
+}
 
 // ExitFormalParameters is called when production formalParameters is exited.
 func (s *BaseJavaParserListener) ExitFormalParameters(ctx *FormalParametersContext) {}
@@ -538,9 +664,6 @@ func (s *BaseJavaParserListener) EnterExpressionList(ctx *ExpressionListContext)
 
 // ExitExpressionList is called when production expressionList is exited.
 func (s *BaseJavaParserListener) ExitExpressionList(ctx *ExpressionListContext) {}
-
-// EnterMethodCall is called when production methodCall is entered.
-func (s *BaseJavaParserListener) EnterMethodCall(ctx *MethodCallContext) {}
 
 // ExitMethodCall is called when production methodCall is exited.
 func (s *BaseJavaParserListener) ExitMethodCall(ctx *MethodCallContext) {}
