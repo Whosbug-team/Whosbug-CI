@@ -1,7 +1,7 @@
 package whosbugAssigns
 
 import (
-	parser "anrlr4_ast/java"
+	javaparser "anrlr4_ast/java"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -14,20 +14,21 @@ import (
  * @author KevinMatt 2021-07-22 21:45:01
  * @function_mark
  */
-func antlrAnalysis(targetFilePath string, langMode string) string {
+func antlrAnalysis(targetFilePath string, langMode string) javaparser.AnalysisInfoType {
+	var result javaparser.AnalysisInfoType
 	//TODO antlr4 GOLANG解析的使用方法
 	switch langMode {
 	case "java":
-		result, err := executeJava(targetFilePath)
-		errorHandler(err)
-		fmt.Println(result)
-
+		result = executeJava(targetFilePath)
+		javaparser.Infos.SetEmpty()
+	default:
+		break
 	}
-	return "true"
+	return result
 }
 
 type TreeShapeListener struct {
-	*parser.BaseJavaParserListener
+	*javaparser.BaseJavaParserListener
 }
 
 func NewTreeShapeListener() *TreeShapeListener {
@@ -37,19 +38,27 @@ func NewTreeShapeListener() *TreeShapeListener {
 func (this *TreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
 	fmt.Println(ctx.GetText())
 }
-func executeJava(targetFilePath string) (string, error) {
+
+/** executeJava
+ * @Description: 执行Java Antlr语法解析
+ * @param targetFilePath
+ * @return string
+ * @return error
+ * @author KevinMatt 2021-07-24 17:51:25
+ * @function_mark
+ */
+func executeJava(targetFilePath string) javaparser.AnalysisInfoType {
 	input, err := antlr.NewFileStream(targetFilePath)
 	if err != nil {
-		return "", err
+		errorHandler(err)
 	}
-	lexer := parser.NewJavaLexer(input)
+	lexer := javaparser.NewJavaLexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
-	p := parser.NewJavaParser(stream)
+	p := javaparser.NewJavaParser(stream)
 	p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
 	p.BuildParseTrees = true
 	tree := p.CompilationUnit()
 	listener := NewTreeShapeListener()
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-
-	return "?", nil
+	return javaparser.Infos
 }

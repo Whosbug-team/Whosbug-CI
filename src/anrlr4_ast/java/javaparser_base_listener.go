@@ -52,13 +52,17 @@ type astInfoType struct {
 	Methods     []methodInfoType
 }
 
-type analysisInfoType struct {
+type AnalysisInfoType struct {
 	CallMethods []string
 	AstInfoList astInfoType
 }
 
+func (this AnalysisInfoType) SetEmpty() {
+	Infos = AnalysisInfoType{}
+}
+
 // 全局变量:分析信息
-var Infos analysisInfoType
+var Infos AnalysisInfoType
 
 /** ExitMethodDeclaration
  * @Description: 匹配到方法结束时被调用

@@ -1,6 +1,7 @@
 package whosbugAssigns
 
 import (
+	javaParser "anrlr4_ast/java"
 	"strings"
 )
 
@@ -71,16 +72,31 @@ func analyzeCommitDiff(projectId string, commitDiffs []map[string]interface{}, c
 		for _, changeLineNumber := range changeLineNumbers {
 			addObjectFromChangeLineNumber(projectId, filePath, objects, changeLineNumber, antlrAnalyzeRes)
 		}
-
 		commitDiff["diff_content"] = objects
 		// TODO 重构addObjectFromChangeLineNumber()方法，使得commit["commit_diffs"]值作为切片类型生效
-		//commit["commit_diffs"] = append(commit["commit_diffs"], commitDiff)
+		commit["commit_diffs"] = objects
+
 	}
 }
 
-func addObjectFromChangeLineNumber(projectId string, filePath string, objects map[string]interface{}, changeLineNumber map[string]string, antlrAnalyzeRes string) {
+func addObjectFromChangeLineNumber(projectId string, filePath string, objects map[string]interface{}, changeLineNumber map[string]string, antlrAnalyzeRes javaParser.AnalysisInfoType) {
 	// TODO 重构findChangedMethod
-	//changeMethod := findChangeMethod()
+	changeMethod := findChangeMethod(changeLineNumber, antlrAnalyzeRes)
+	if changeMethod == nil {
+		return
+	}
+	if _, ok := objects[changeMethod["startLine"]]; ok {
+		return
+	}
+	childHashCode := hashCode64(projectId, changeMethod["methodName"], filePath)
+	parent := changeMethod["masterObject"]
+
+	objects[changeMethod["startLine"]] = map[string]interface{}{
+		"name":        changeMethod["methodName"],
+		"hash":        childHashCode,
+		"parent_name": parent["objectName"],
+		"parent_hash": hashCode64(projectId, parent["objectName"], filePath),
+	}
 }
 
 /** findChangedMethod
@@ -88,7 +104,14 @@ func addObjectFromChangeLineNumber(projectId string, filePath string, objects ma
  * @author KevinMatt 2021-07-22 14:47:36
  * @function_mark
  */
-func findChangedMethod(changeLineNumber map[string]string, antlrAnalyzeRes []string) {
+func findChangedMethod(changeLineNumber map[string]string, antlrAnalyzeRes javaParser.AnalysisInfoType) map[string]interface{} {
 	//TODO 重构
+	startLineNumbers := make([]int, len(antlrAnalyzeRes.AstInfoList.Methods))
+	for _, part := range antlrAnalyzeRes.AstInfoList.Methods {
+		startLineNumbers = append(startLineNumbers, part.StartLine)
+	}
+	resIndex := searchInsert(startLineNumbers, changeLineNumber["lineNumber"])
+}
+func searchInsert(nums int, target int) int {
 
 }
