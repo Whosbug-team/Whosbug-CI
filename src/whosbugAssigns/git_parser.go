@@ -41,30 +41,27 @@ func toIso8601(timeList []string) string {
  * @author KevinMatt 2021-07-22 13:25:00
  * @function_mark PASS
  */
-func parseCommit(data string, commitInfos []string) []map[string]interface{} {
-	patCommit, err := regexp.Compile(`(commit\ ([a-f0-9]{40}))`)
+func parseCommit(data string, commitInfos []string) []CommitParsedType {
+	patCommit, err := regexp.Compile(`(Commit\ ([a-f0-9]{40}))`)
 	errorHandler(err)
 	rawCommits := patCommit.FindAllStringSubmatch(data, -1)
-	var parsedCommits []map[string]interface{}
+	var parsedCommits []CommitParsedType
 	for index, commitInfoLine := 0, commitInfos[0]; index < len(rawCommits) && index < len(commitInfos); index++ {
 		commitInfoLine = commitInfos[index]
 		infoList := strings.Split(commitInfoLine, ",")
 		timeList := strings.Split(infoList[3][4:], " ")
-		parsedCommit := map[string]interface{}{
-			"commit_left_index": patCommit.FindAllStringSubmatchIndex(data, -1)[index][0],
-			"commit":            infoList[0],
-			"commit_time":       toIso8601(timeList),
-			"committer": map[string]string{
-				"name":  infoList[2],
-				"email": infoList[1],
-			},
-		}
+		var parsedCommit CommitParsedType
+		parsedCommit.CommitLeftIndex = patCommit.FindAllStringSubmatchIndex(data, -1)[index][0]
+		parsedCommit.Commit = infoList[0]
+		parsedCommit.CommitTime = toIso8601(timeList)
+		parsedCommit.CommitterInfo.Name = infoList[2]
+		parsedCommit.CommitterInfo.Email = infoList[1]
 		parsedCommits = append(parsedCommits, parsedCommit)
 	}
 	return parsedCommits
 }
 
-func ParseDiff(data string) []map[string]interface{} {
+func ParseDiff(data string) []DiffParsedType {
 	return parseDiff(data)
 }
 
@@ -75,18 +72,15 @@ func ParseDiff(data string) []map[string]interface{} {
  * @author KevinMatt 2021-07-22 13:25:06
  * @function_mark PASS
  */
-func parseDiff(data string) []map[string]interface{} {
-	patDiff, err := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
+func parseDiff(data string) []DiffParsedType {
+	patDiff, err := regexp.Compile(`(Diff\ \-\-git\ a/(.*)\ b/.+)`)
 	errorHandler(err)
 	patDiffPart, err := regexp.Compile(`(@@\ .*?\ @@)`)
 	errorHandler(err)
 	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
-	// 输出变量
-	//var diffParsed []map[string]interface{}
-	diffParsed := make([]map[string]interface{}, len(rawDiffs))
-	for index := 0; index < len(rawDiffs); index++ {
-		// 正则匹配的结果集
-		rawCommit := rawDiffs[index]
+	diffParsed := make([]DiffParsedType, len(rawDiffs))
+
+	for index, rawCommit := range rawDiffs {
 		parts := rawCommit[2]
 		leftDiffIndex := patDiff.FindAllStringIndex(data, -1)[index][0]
 		var diffPartsContent string
@@ -102,13 +96,11 @@ func parseDiff(data string) []map[string]interface{} {
 		if diffHeadMatch == nil {
 			continue
 		}
-		// @@部分的左下标
 		rightDiffHeadIndex := patDiffPart.FindStringIndex(diffPartsContent)[1]
 		tempFileContent := diffPartsContent[rightDiffHeadIndex:]
 		lines := (strings.SplitAfter(tempFileContent[0:], "\n"))[1:]
-		var changeLineNumbers interface{}
+		var changeLineNumbers []ChangeLineNumberType
 		changeLineNumbers = findAllChangedLineNumbers(lines)
-		// 循环替换每一变动行的第一位
 		lines = replaceLines(lines)
 		sourceCode := strings.Join(lines, "")
 		fileName := path.Base(parts)
@@ -127,12 +119,9 @@ func parseDiff(data string) []map[string]interface{} {
 			errorHandler(err)
 			err = fd.Close()
 			errorHandler(err)
-			diffParsed[index] = make(map[string]interface{})
-			diffParsed[index] = map[string]interface{}{
-				"diff_file":           parts,
-				"diff_file_path":      diffFilePath,
-				"change_line_numbers": changeLineNumbers,
-			}
+			diffParsed[index].DiffFile = parts
+			diffParsed[index].DiffFilePath = diffFilePath
+			diffParsed[index].ChangeLineNumbers = append(diffParsed[index].ChangeLineNumbers, changeLineNumbers...)
 		}
 	}
 	return diffParsed

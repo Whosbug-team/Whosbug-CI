@@ -5,20 +5,18 @@ import (
 	"whosbugAssigns"
 )
 
-func main1() {
+func main() {
 	for _, temp := range TestParseCommit() {
-		for name, temp1 := range temp {
-			fmt.Printf("%s: %v\n", name, temp1)
-		}
+		fmt.Println(temp.CommitLeftIndex, " ", temp.Commit, " ", temp.CommitterInfo.Name, " ")
 	}
 }
-func TestParseCommit() []map[string]interface{} {
+func TestParseCommit() []whosbugAssigns.CommitParsedType {
 	return whosbugAssigns.TestParseCommit()
 }
 
-//func TestGetDiff() map[string]string {
-//	return whosbugAssigns.GetDiffTest("C:\\Users\\KevinMatt\\Desktop\\java-test\\", "master", "whosbug_test_1")
-//}
+func TestGetDiff() whosbugAssigns.ReleaseDiffType {
+	return whosbugAssigns.GetDiffTest("C:\\Users\\KevinMatt\\Desktop\\java-test\\", "master", "whosbug_test_1")
+}
 
 //func TestParseDiff() {
 //	data, err := ioutil.ReadFile("C:\\Users\\KevinMatt\\Desktop\\whosbug-Golang\\logs.diff")
