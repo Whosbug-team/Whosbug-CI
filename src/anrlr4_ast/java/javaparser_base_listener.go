@@ -23,20 +23,32 @@ type methodInfoType struct {
 	Depth        int
 	CallMethods  []string
 }
+
+type masterObjectInfoType struct {
+	ObjectName string
+	startLine  string
+}
+
 type classInfoType struct {
 	StartLine    int
 	EndLine      int
 	ClassName    string
 	Extends      string
 	Implements   []string
-	MasterObject string
+	MasterObject masterObjectInfoType
 	Depth        int
 }
+
+type fieldInfoType struct {
+	FieldType       string
+	FieldDefinition string
+}
+
 type astInfoType struct {
 	PackageName string
 	Classes     []classInfoType
 	Imports     []string
-	Fileds      []string
+	Fileds      []fieldInfoType
 	Methods     []methodInfoType
 }
 
@@ -45,6 +57,7 @@ type analysisInfoType struct {
 	AstInfoList astInfoType
 }
 
+// 全局变量:分析信息
 var Infos analysisInfoType
 
 /** ExitMethodDeclaration
@@ -75,7 +88,7 @@ func (s *BaseJavaParserListener) ExitMethodDeclaration(ctx *MethodDeclarationCon
  * @param ctx *MethodDeclarationContext
  * @return []paramInfoType 返回追加后的切片
  * @author KevinMatt 2021-07-23 22:55:22
- * @function_mark
+ * @function_mark PASS
  */
 func getParams(ctx *MethodDeclarationContext) []paramInfoType {
 	var paramsCount int
@@ -117,6 +130,123 @@ func (s *BaseJavaParserListener) EnterMethodCall(ctx *MethodCallContext) {
 	Infos.CallMethods = append(Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetParent().(*ExpressionContext).GetText()))
 }
 
+/** findImplements
+ * @Description: 获取接口实现implements字段
+ * @param ctx
+ * @return []string 实现的接口列表
+ * @author KevinMatt 2021-07-24 11:43:46
+ * @function_mark PASS
+ */
+func findImplements(ctx *TypeListContext) []string {
+	implementsCount := ctx.GetChildCount()
+	var implements []string
+	if implementsCount == 1 {
+		implementClass := ctx.GetChild(0).(*TypeTypeContext).GetText()
+		implements = append(implements, implementClass)
+	} else if implementsCount > 1 {
+		for index := 0; index < implementsCount; index++ {
+			if index%2 == 0 {
+				implementClass := ctx.GetChild(index).(*TypeTypeContext).GetText()
+				implements = append(implements, implementClass)
+			}
+		}
+	}
+	return implements
+}
+
+/** EnterClassDeclaration
+ * @Description: 类对象匹配
+ * @receiver s
+ * @param ctx
+ * @author KevinMatt 2021-07-24 11:44:50
+ * @function_mark PASS
+ */
+func (s *BaseJavaParserListener) EnterClassDeclaration(ctx *ClassDeclarationContext) {
+	var classInfo classInfoType
+	classInfo.StartLine = ctx.GetStart().GetLine()
+	if ctx.ClassBody() != nil {
+		classInfo.EndLine = ctx.ClassBody().GetStop().GetLine()
+	}
+	childCount := ctx.GetChildCount()
+
+	if childCount == 6 {
+		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+		extendsClassName := ctx.GetChild(2).GetChild(1).GetChild(2).(*TypeBoundContext).GetText()
+		classInfo.ClassName = className
+		classInfo.Extends = extendsClassName
+		classInfo.Implements = findImplements(ctx.GetChild(4).(*TypeListContext))
+	} else if childCount == 5 {
+		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+		classInfo.ClassName = className
+		if ctx.GetChild(2).(*antlr.TerminalNodeImpl).GetText() == "extends" {
+			classInfo.Extends = ctx.GetChild(3).(*TypeTypeContext).GetText()
+		} else {
+			classInfo.Implements = findImplements(ctx.GetChild(3).(*TypeListContext))
+		}
+	} else if childCount == 4 {
+		// Generic classes: class AnnoName<T>
+		// 此处没有解析尖括号内的内容，其内如有继承关系，将一起连接被打印
+		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+		for index := 0; index < ctx.GetChild(2).GetChildCount(); index++ {
+			if index%2 == 0 {
+				className += "" + ctx.GetChild(2).GetChild(index).(*antlr.TerminalNodeImpl).GetText()
+			} else {
+				className += " " + ctx.GetChild(2).GetChild(index).(*TypeParameterContext).GetText()
+			}
+		}
+		classInfo.ClassName = className
+	} else if childCount == 3 {
+		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+		classInfo.ClassName = className
+	}
+	classInfo.MasterObject = findMasterObjectClass(ctx, classInfo)
+	Infos.AstInfoList.Classes = append(Infos.AstInfoList.Classes, classInfo)
+}
+
+/** findMasterObjectClass
+ * @Description: 找到主类实体
+ * @param ctx
+ * @param classInfo
+ * @author KevinMatt 2021-07-24 11:45:14
+ * @function_mark
+ */
+func findMasterObjectClass(ctx *ClassDeclarationContext, classInfo classInfoType) masterObjectInfoType {
+	var masterObject masterObjectInfoType
+	//TODO 找到匹配masterObject的合适规则
+	//parCtx := ctx.GetParent()
+	////parCtx := ctx.GetParent()
+	//masterCtx := parCtx.GetParent().GetParent().GetParent()
+	//temp := masterCtx.GetChild(1)
+	//classInfo.MasterObject.ObjectName = ""
+	//fmt.Println(temp)
+	return masterObject
+}
+
+/** EnterFieldDeclaration
+ * @Description: 获取Field声明信息
+ * @receiver s
+ * @param ctx
+ * @author KevinMatt 2021-07-24 15:48:54
+ * @function_mark PASS
+ */
+func (s *BaseJavaParserListener) EnterFieldDeclaration(ctx *FieldDeclarationContext) {
+	var field fieldInfoType
+	field.FieldType = ctx.GetChild(0).(*TypeTypeContext).GetText()
+	field.FieldDefinition = ctx.GetChild(1).(*VariableDeclaratorsContext).GetText()
+	Infos.AstInfoList.Fileds = append(Infos.AstInfoList.Fileds, field)
+}
+
+/** EnterPackageDeclaration
+ * @Description: 获取读取的包声明
+ * @receiver s
+ * @param ctx
+ * @author KevinMatt 2021-07-24 15:50:18
+ * @function_mark PASS
+ */
+func (s *BaseJavaParserListener) EnterPackageDeclaration(ctx *PackageDeclarationContext) {
+	Infos.AstInfoList.PackageName = ctx.QualifiedName().GetText()
+}
+
 // BaseJavaParserListener is a complete listener for a parse tree produced by JavaParser.
 type BaseJavaParserListener struct{}
 
@@ -140,22 +270,14 @@ func (s *BaseJavaParserListener) EnterCompilationUnit(ctx *CompilationUnitContex
 // ExitCompilationUnit is called when production compilationUnit is exited.
 func (s *BaseJavaParserListener) ExitCompilationUnit(ctx *CompilationUnitContext) {}
 
-// EnterPackageDeclaration is called when production packageDeclaration is entered.
-// 获得读取到的package声明语句
-func (s *BaseJavaParserListener) EnterPackageDeclaration(ctx *PackageDeclarationContext) {
-	//fmt.Println(ctx.GetText())
-	//InfoStruct.analysisInfoType["ast_info"].(map[string]string)["PackageName"] = ctx.QualifiedName().GetText()
-}
-
 // ExitPackageDeclaration is called when production packageDeclaration is exited.
 func (s *BaseJavaParserListener) ExitPackageDeclaration(ctx *PackageDeclarationContext) {}
 
 // EnterImportDeclaration is called when production importDeclaration is entered.
 // 获得读取到的import声明语句
 func (s *BaseJavaParserListener) EnterImportDeclaration(ctx *ImportDeclarationContext) {
-	//fmt.Println(ctx.GetText())
-	//importMatch := ctx.QualifiedName().GetText()
-	//InfoStruct.analysisInfoType["ast_info"].(map[string][]string)["Imports"] = append(InfoStruct.analysisInfoType["ast_info"].(map[string][]string)["Imports"], importMatch)
+	importClass := ctx.QualifiedName().GetText()
+	Infos.AstInfoList.Imports = append(Infos.AstInfoList.Imports, importClass)
 }
 
 // ExitImportDeclaration is called when production importDeclaration is exited.
@@ -185,50 +307,6 @@ func (s *BaseJavaParserListener) EnterVariableModifier(ctx *VariableModifierCont
 
 // ExitVariableModifier is called when production variableModifier is exited.
 func (s *BaseJavaParserListener) ExitVariableModifier(ctx *VariableModifierContext) {}
-
-// EnterClassDeclaration is called when production classDeclaration is entered.
-func (s *BaseJavaParserListener) EnterClassDeclaration(ctx *ClassDeclarationContext) {
-	var classInfo classInfoType
-	classInfo.StartLine = ctx.GetStart().GetLine()
-	if ctx.ClassBody() != nil {
-		classInfo.EndLine = ctx.ClassBody().GetStop().GetLine()
-	}
-	childCount := ctx.GetChildCount()
-
-	if childCount == 7 {
-		// class Foo extends Bar implements Hoge
-		// c1 = ctx.getChild(0)  # ---> class
-		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
-		extendsClassName := ctx.GetChild(3).GetChild(0).(*antlr.TerminalNodeImpl).GetText()
-		classInfo.ClassName = className
-		classInfo.Extends = extendsClassName
-		classInfo.Implements = findImplements(ctx.GetChild(5).(*antlr.TerminalNodeImpl))
-		classInfo.MasterObject = findMasterObject()
-	}
-}
-
-func findImplements(ctx *antlr.TerminalNodeImpl) []string {
-	implementsCount := ctx.GetChildCount()
-	var implements []string
-	if implementsCount == 1 {
-		implementClass := ctx.GetChild(0).(*antlr.TerminalNodeImpl).GetText()
-		implements = append(implements, implementClass)
-	} else if implementsCount > 1 {
-		for index := 0; index < implementsCount; index++ {
-			if index%2 == 0 {
-				implementClass := ctx.GetChild(0).(*antlr.TerminalNodeImpl).GetText()
-				implements = append(implements, implementClass)
-			}
-		}
-	}
-	return implements
-}
-func findMasterObject(ctx *ClassDeclarationContext, classInfo classInfoType) {
-	// TODO 重构实现
-	//parCtx := ctx.GetParent()
-	//masterCtx := parCtx.GetParent().GetParent().GetParent()
-
-}
 
 // ExitClassDeclaration is called when production classDeclaration is exited.
 func (s *BaseJavaParserListener) ExitClassDeclaration(ctx *ClassDeclarationContext) {}
@@ -345,9 +423,6 @@ func (s *BaseJavaParserListener) EnterConstructorDeclaration(ctx *ConstructorDec
 
 // ExitConstructorDeclaration is called when production constructorDeclaration is exited.
 func (s *BaseJavaParserListener) ExitConstructorDeclaration(ctx *ConstructorDeclarationContext) {}
-
-// EnterFieldDeclaration is called when production fieldDeclaration is entered.
-func (s *BaseJavaParserListener) EnterFieldDeclaration(ctx *FieldDeclarationContext) {}
 
 // ExitFieldDeclaration is called when production fieldDeclaration is exited.
 func (s *BaseJavaParserListener) ExitFieldDeclaration(ctx *FieldDeclarationContext) {}
