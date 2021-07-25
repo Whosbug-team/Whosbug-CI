@@ -1,52 +1,19 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 	"whosbugAssigns"
 )
 
-type input_json struct {
-	ProjectId       string   `json:"__PROJRCT_ID"`
-	ReleaseVersion  string   `json:"__RELEASE_VERSION"`
-	ProjectUrl      string   `json:"__PROJECT_URL"`
-	BranchName      string   `json:"__BRANCH_NAME"`
-	LanguageSupport []string `json:"__LAN_SUPPORT"`
-	WebServerHost   string   `json:"__WEB_SRV_HOST""`
-}
-type innerConfig struct {
-	userId string
-	secret string
-}
-
-var innerConf innerConfig
-var config input_json
-
 func main() {
 	fmt.Println("Start!")
-	GetInputConfig()
-	projectId := config.ProjectId
-	branchName := config.BranchName
-	repoPath := config.ProjectUrl
-	resCommits := whosbugAssigns.AnalysisTest(repoPath, branchName, projectId)
-	result(resCommits, projectId, "1.0.0")
+	whosbugAssigns.GetInputConfig()
+	projectId := whosbugAssigns.Config.ProjectId
+	branchName := whosbugAssigns.Config.BranchName
+	repoPath := whosbugAssigns.Config.ProjectUrl
+	resCommits := whosbugAssigns.Analysis(repoPath, branchName, projectId)
+	whosbugAssigns.Result(resCommits, projectId, "1.0.0")
 	fmt.Println("Whosbug analysis done")
-}
-func GetInputConfig() {
-	file, err := os.Open("src/input.json")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&config)
-	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		fmt.Println("Get input.json succeed!")
-	}
-	fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
 }
 
 //func TestParseCommit() []whosbugAssigns.CommitParsedType {

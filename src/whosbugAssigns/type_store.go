@@ -46,3 +46,19 @@ type ChangeMethodType struct {
 	MethodName   string
 	MasterObject string
 }
+
+type input_json struct {
+	ProjectId       string   `json:"__PROJRCT_ID"`
+	ReleaseVersion  string   `json:"__RELEASE_VERSION"`
+	ProjectUrl      string   `json:"__PROJECT_URL"`
+	BranchName      string   `json:"__BRANCH_NAME"`
+	LanguageSupport []string `json:"__LAN_SUPPORT"`
+	WebServerHost   string   `json:"__WEB_SRV_HOST""`
+}
+type innerConfig struct {
+	userId string
+	secret string
+}
+
+var InnerConf innerConfig
+var Config input_json

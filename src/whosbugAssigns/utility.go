@@ -2,19 +2,21 @@ package whosbugAssigns
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 	"path"
 )
 
 var supportLans = []string{".java"}
 
-/** execCommandOutput
- * @Description: 执行终端命令
+// execCommandOutput
+/* @Description:
  * @param command 命令程序
  * @param args 命令参数
  * @return string 标准输出内容
- * @author KevinMatt 2021-07-22 16:49:44
+ * @author KevinMatt 2021-07-25 13:16:22
  * @function_mark PASS
  */
 func execCommandOutput(command string, args ...string) string {
@@ -43,17 +45,34 @@ func lanFilter(fileName string) bool {
 	return false
 }
 
-func result(resCommits []CommitParsedType, projectId string, releaseVersion string) {
-	fmt.Println("projectId: ", projectId)
-	fmt.Println("releaseVersion: ", releaseVersion)
-	latestCommitHash := resCommits[0].Commit
-	type projectInfo struct {
-		projectId string
+func GetInputConfig() {
+	file, err := os.Open("src/input.json")
+	if err != nil {
+		fmt.Println(err.Error())
 	}
-	var project projectInfo
-	var encryptDest []byte
-	err := encrypt([]byte(projectId), encryptDest, []byte(secret), []byte(projectId))
-	errorHandler(err)
-	project.projectId = string(encryptDest)
+
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&Config)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println("Get input.json succeed!")
+	}
+	fmt.Println("Version:\t", Config.ReleaseVersion, "\nProjectId:\t", Config.ProjectId, "\nBranchName:\t", Config.BranchName)
+}
+
+func Result(resCommits []CommitParsedType, projectId string, releaseVersion string) {
+	//fmt.Println("projectId: ", projectId)
+	//fmt.Println("releaseVersion: ", releaseVersion)
+	//latestCommitHash := resCommits[0].Commit
+	//type projectInfo struct {
+	//	projectId string
+	//}
+	//var project projectInfo
+	//var encryptDest []byte
+	//err := encrypt([]byte(projectId), encryptDest, []byte(secret), []byte(projectId))
+	//errorHandler(err)
+	//project.projectId = string(encryptDest)
+	fmt.Println("latestCommitHash")
 	// TODO 完成解析结果输出内容功能
 }

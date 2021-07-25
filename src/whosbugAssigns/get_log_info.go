@@ -9,12 +9,12 @@ import (
 	"regexp"
 )
 
-/** findAllChangedLineNumbers
- * @Description: 匹配所有改变行(以+/-开头的行)的行号
+// findAllChangedLineNumbers
+/* @Description: 匹配所有改变行(以+/-开头的行)的行号
  * @param lines 传入diff中的所有代码行(完整文件代码行)
- * @return []ChangeLineNumberType
- * @author KevinMatt 2021-07-25 03:09:12
- * @function_mark
+ * @return []ChangeLineNumberType 返回存储所有变更行信息的切片
+ * @author KevinMatt 2021-07-25 13:47:42
+ * @function_mark PASS
  */
 func findAllChangedLineNumbers(lines []string) []ChangeLineNumberType {
 	markCompile, err := regexp.Compile(`^[\+\-]`)
@@ -38,13 +38,13 @@ func GetDiffTest(repoPath string, branchName string, projectId string) ReleaseDi
 	return getDiff(repoPath, branchName, projectId)
 }
 
-/** getDiff
- * @Description:
- * @param repoPath
- * @param BranchName
- * @param projectId
- * @return map[string]string
- * @author KevinMatt 2021-07-22 13:56:12
+// getDiff
+/* @Description: 获取release的diff信息
+ * @param repoPath 仓库目录/url
+ * @param branchName 分支名
+ * @param projectId 项目id
+ * @return ReleaseDiffType 返回releaseDiff结构体
+ * @author KevinMatt 2021-07-25 13:12:07
  * @function_mark PASS
  */
 func getDiff(repoPath, branchName, projectId string) ReleaseDiffType {

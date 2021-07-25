@@ -5,17 +5,17 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
-/** antlrAnalysis
- * @Description:
- * @param targetFilePath
- * @param langMode
- * @return string
- * @author KevinMatt 2021-07-22 21:45:01
- * @function_mark
+// antlrAnalysis
+/* @Description: 执行antlr分析入口函数
+ * @param targetFilePath 目标代码目录
+ * @param langMode 解析语言模式
+ * @return javaparser.AnalysisInfoType
+ * @author KevinMatt 2021-07-25 13:56:08
+ * @function_mark PASS
  */
 func antlrAnalysis(targetFilePath string, langMode string) javaparser.AnalysisInfoType {
 	var result javaparser.AnalysisInfoType
-	//TODO antlr4 GOLANG解析的使用方法
+	// TODO 目前只有Java的支持
 	switch langMode {
 	case "java":
 		result = executeJava(targetFilePath)
@@ -38,13 +38,12 @@ func NewTreeShapeListener() *TreeShapeListener {
 //	fmt.Println(ctx.GetText())
 //}
 
-/** executeJava
- * @Description: 执行Java Antlr语法解析
- * @param targetFilePath
- * @return string
- * @return error
- * @author KevinMatt 2021-07-24 17:51:25
- * @function_mark
+// executeJava
+/* @Description: 执行Java Antlr语法解析
+ * @param targetFilePath 解析目标目录
+ * @return javaparser.AnalysisInfoType
+ * @author KevinMatt 2021-07-25 14:00:10
+ * @function_mark PASS
  */
 func executeJava(targetFilePath string) javaparser.AnalysisInfoType {
 	input, err := antlr.NewFileStream(targetFilePath)

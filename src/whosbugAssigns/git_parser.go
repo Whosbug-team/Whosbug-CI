@@ -23,22 +23,23 @@ var month_correspond = map[string]string{
 	"Dec": "12",
 }
 
-/**toIso8601
- * @Description: 转换时间戳格式
+// toIso8601
+/* @Description: 时间戳转换
  * @param timeList
  * @return string
- * @author KevinMatt
+ * @author KevinMatt 2021-07-25 13:42:29
+ * @function_mark PASS
  */
 func toIso8601(timeList []string) string {
 	return fmt.Sprintf("%s-%s-%sT%s%s:%s", timeList[3], month_correspond[timeList[0]], timeList[1], timeList[2], timeList[4][3:], timeList[4][3:])
 }
 
-/** parseCommit
- * @Description: 转换commit信息
+// parseCommit
+/* @Description: 解析commit信息
  * @param data 传入数据的diff部分(git log元数据)
  * @param commitInfos  log元数据分片
- * @return []map[string]interface{}
- * @author KevinMatt 2021-07-22 13:25:00
+ * @return []CommitParsedType
+ * @author KevinMatt 2021-07-25 13:36:35
  * @function_mark PASS
  */
 func parseCommit(data string, commitInfos []string) []CommitParsedType {
@@ -65,11 +66,11 @@ func ParseDiff(data string) []DiffParsedType {
 	return parseDiff(data)
 }
 
-/** parseDiff
- * @Description: 将git log的信息的diff部分分解提取
+// parseDiff
+/* @Description: 将git log的信息的diff部分分解提取
  * @param data
- * @return []map[string]interface{}
- * @author KevinMatt 2021-07-22 13:25:06
+ * @return []DiffParsedType
+ * @author KevinMatt 2021-07-25 13:43:55
  * @function_mark PASS
  */
 func parseDiff(data string) []DiffParsedType {
@@ -131,11 +132,11 @@ func parseDiff(data string) []DiffParsedType {
 	return diffParsed
 }
 
-/** replaceLines
- * @Description: 清除+/-符号并移除-行和No newline提示
+// replaceLines
+/* @Description: 清除+/-符号并移除-行和No newline提示
  * @param lines 传入行集合
  * @return []string
- * @author KevinMatt 2021-07-22 13:25:13
+ * @author KevinMatt 2021-07-25 13:52:57
  * @function_mark PASS
  */
 func replaceLines(lines []string) []string {
