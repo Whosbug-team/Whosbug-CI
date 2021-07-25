@@ -9,6 +9,9 @@ func TestParseCommit() []CommitParsedType {
 	releaseDiff := getDiff("C:\\Users\\KevinMatt\\Desktop\\java-test\\", "master", "whosbug_test_1")
 	return parseCommit(releaseDiff.Diff, strings.Split(releaseDiff.CommitInfo, "\n"))
 }
+func AnalysisTest(repoPath, branchName, projectId string) []CommitParsedType {
+	return analysis(repoPath, branchName, projectId)
+}
 
 /** analysis
  * @Description: 分析逻辑主函数
@@ -19,7 +22,7 @@ func TestParseCommit() []CommitParsedType {
  * @author KevinMatt 2021-07-22 13:24:31
  * @function_mark
  */
-func analysis(repoPath string, branchName string, projectId string) []CommitParsedType {
+func analysis(repoPath, branchName, projectId string) []CommitParsedType {
 	releaseDiff := getDiff(repoPath, branchName, projectId)
 	commits := parseCommit(releaseDiff.Diff, strings.Split(releaseDiff.CommitInfo, "\n"))
 	// allCommits:interface实际存储的内容为string
@@ -35,7 +38,7 @@ func analysis(repoPath string, branchName string, projectId string) []CommitPars
 			diffPark = releaseDiff.Diff[commit.CommitLeftIndex:nextCommitLeftIndex]
 		}
 		commitDiffs := parseDiff(diffPark)
-		analyzeCommitDiff1(projectId, commitDiffs, commitId, commit)
+		commit = analyzeCommitDiff(projectId, commitDiffs, commitId, commit)
 		allCommits = append(allCommits, commit)
 	}
 	return allCommits
@@ -46,68 +49,89 @@ func analysis(repoPath string, branchName string, projectId string) []CommitPars
  * @param projectId
  * @param commitDiffs
  * @param commitId
- * @param Commit
- * @author KevinMatt 2021-07-22 13:24:09
+ * @param commit
+ * @return CommitParsedType
+ * @author KevinMatt 2021-07-25 03:57:26
  * @function_mark
  */
-func analyzeCommitDiff1(projectId string, commitDiffs []DiffParsedType, commitId string, commit CommitParsedType) {
-	//for index := 0; index < len(commitDiffs); index++ {
-	//	commitDiff := commitDiffs[index]
-	//	commitDiff.Commit = commitId
-	//	commitDiff.DiffContent = ""
-	//	// 处理后的源码路径
-	//	tempFile := commitDiff.DiffFilePath
-	//	// diff的原始路径
-	//	filePath := commitDiff.DiffFile
-	//	antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
-	//
-	//	ChangeLineNumbers := commitDiff.ChangeLineNumbers
-	//	var objects ObjectInfoType
-	//	// !注意，此处的changeLineNumbers内的map类型为map[string]string,作为整形使用时需要转型
-	//	for _, changeLineNumber := range ChangeLineNumbers {
-	//		addObjectFromChangeLineNumber(projectId, filePath, objects, changeLineNumber, antlrAnalyzeRes)
-	//	}
-	//	//CommitDiff.DiffContent =
-	//	// TODO 重构addObjectFromChangeLineNumber()方法，使得commit["commit_diffs"]值作为切片类型生效
-	//	//Commit.CommitDiff =
-	//
-	//}
+func analyzeCommitDiff(projectId string, commitDiffs []DiffParsedType, commitId string, commit CommitParsedType) CommitParsedType {
+	for index := 0; index < len(commitDiffs); index++ {
+		commitDiff := commitDiffs[index]
+		commitDiff.Commit = commitId
+		// 处理后的源码路径
+		tempFile := commitDiff.DiffFilePath
+		// diff的原始路径
+		filePath := commitDiff.DiffFile
+		antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
+
+		changeLineNumbers := commitDiff.ChangeLineNumbers
+		objects := make(map[int]map[string]string)
+		// !注意，此处的changeLineNumbers内的map类型为map[string]string,作为整形使用时需要转型
+		for _, changeLineNumber := range changeLineNumbers {
+			objects = addObjectFromChangeLineNumber(projectId, filePath, objects, changeLineNumber, antlrAnalyzeRes)
+		}
+		commitDiff.DiffContent = objects
+		// TODO 重构addObjectFromChangeLineNumber()方法，使得commit["commit_diffs"]值作为切片类型生效
+		commit.CommitDiffs = append(commit.CommitDiffs, commitDiff)
+	}
+	return commit
 }
 
-//func addObjectFromChangeLineNumber(projectId string, filePath string, objects map[string]interface{}, changeLineNumber map[string]string, antlrAnalyzeRes javaParser.AnalysisInfoType) {
-//	// TODO 重构findChangedMethod
-//	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
-//	if changeMethod == nil {
-//		return
-//	}
-//	if _, ok := objects[changeMethod["startLine"]]; ok {
-//		return
-//	}
-//	childHashCode := hashCode64(projectId, changeMethod["methodName"], filePath)
-//	parent := changeMethod["masterObject"]
-//
-//	objects[changeMethod["startLine"]] = map[string]interface{}{
-//		"Name":        changeMethod["methodName"],
-//		"hash":        childHashCode,
-//		"parent_name": parent["objectName"],
-//		"parent_hash": hashCode64(projectId, parent["objectName"], filePath),
-//	}
-//}
+func addObjectFromChangeLineNumber(projectId string, filePath string, objects map[int]map[string]string, changeLineNumber ChangeLineNumberType, antlrAnalyzeRes javaParser.AnalysisInfoType) map[int]map[string]string {
+	// TODO 重构findChangedMethod
+	//objects := make(map[int]interface{})
+	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
+	if len(objects) > 0 {
+		if _, ok := objects[changeMethod.StartLine]; ok {
+			return objects
+		}
+	}
+	childHashCode := hashCode64(projectId, changeMethod.MethodName, filePath)
+	parent := changeMethod.MasterObject
+	objects[changeMethod.StartLine] = make(map[string]string)
+	objects[changeMethod.StartLine] = map[string]string{
+		"Name":        changeMethod.MethodName,
+		"hash":        childHashCode,
+		"parent_name": parent.ObjectName,
+		"parent_hash": hashCode64(projectId, parent.ObjectName, filePath),
+	}
+	return objects
+}
 
 /** findChangedMethod
  * @Description:
  * @author KevinMatt 2021-07-22 14:47:36
  * @function_mark
  */
-func findChangedMethod(changeLineNumber map[string]string, antlrAnalyzeRes javaParser.AnalysisInfoType) map[string]interface{} {
+func findChangedMethod(changeLineNumber ChangeLineNumberType, antlrAnalyzeRes javaParser.AnalysisInfoType) javaParser.MethodInfoType {
 	//TODO 重构
-	startLineNumbers := make([]int, len(antlrAnalyzeRes.AstInfoList.Methods))
+	var changeMethodInfo javaParser.MethodInfoType
+	startLineNumbers := make([]int, 0)
 	for _, part := range antlrAnalyzeRes.AstInfoList.Methods {
 		startLineNumbers = append(startLineNumbers, part.StartLine)
 	}
-	//resIndex := searchInsert(startLineNumbers, changeLineNumber["LineNumber"])
-	return nil
+	resIndex := searchInsert(startLineNumbers, changeLineNumber.LineNumber)
+	if resIndex > -1 {
+		changeMethodInfo = antlrAnalyzeRes.AstInfoList.Methods[resIndex]
+	}
+	return changeMethodInfo
 }
-func searchInsert(nums int, target int) int {
-	return 0
+func searchInsert(nums []int, target int) int {
+	if nums == nil {
+		return -1
+	}
+	if len(nums) >= 2 && target > nums[1] {
+		return -1
+	}
+	if target < nums[0] {
+		return -1
+	}
+	for index := range nums {
+		if target < nums[index] {
+			return index - 1
+		} else if target == nums[index] {
+			return index
+		}
+	}
+	return -1
 }

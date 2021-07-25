@@ -2,7 +2,6 @@ package whosbugAssigns
 
 import (
 	javaparser "anrlr4_ast/java"
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
@@ -35,9 +34,9 @@ func NewTreeShapeListener() *TreeShapeListener {
 	return new(TreeShapeListener)
 }
 
-func (this *TreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
-	fmt.Println(ctx.GetText())
-}
+//func (this *TreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
+//	fmt.Println(ctx.GetText())
+//}
 
 /** executeJava
  * @Description: 执行Java Antlr语法解析

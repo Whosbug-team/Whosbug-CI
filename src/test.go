@@ -1,22 +1,65 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"whosbugAssigns"
 )
 
-func main() {
-	for _, temp := range TestParseCommit() {
-		fmt.Println(temp.CommitLeftIndex, " ", temp.Commit, " ", temp.CommitterInfo.Name, " ")
-	}
+type input_json struct {
+	ProjectId       string   `json:"__PROJRCT_ID"`
+	ReleaseVersion  string   `json:"__RELEASE_VERSION"`
+	ProjectUrl      string   `json:"__PROJECT_URL"`
+	BranchName      string   `json:"__BRANCH_NAME"`
+	LanguageSupport []string `json:"__LAN_SUPPORT"`
+	WebServerHost   string   `json:"__WEB_SRV_HOST""`
 }
-func TestParseCommit() []whosbugAssigns.CommitParsedType {
-	return whosbugAssigns.TestParseCommit()
+type innerConfig struct {
+	userId string
+	secret string
 }
 
-func TestGetDiff() whosbugAssigns.ReleaseDiffType {
-	return whosbugAssigns.GetDiffTest("C:\\Users\\KevinMatt\\Desktop\\java-test\\", "master", "whosbug_test_1")
+var innerConf innerConfig
+var config input_json
+
+func main() {
+	fmt.Println("Start!")
+	GetInputConfig()
+	projectId := config.ProjectId
+	branchName := config.BranchName
+	repoPath := config.ProjectUrl
+	resCommits := whosbugAssigns.AnalysisTest(repoPath, branchName, projectId)
+	result(resCommits, projectId, "1.0.0")
+	fmt.Println("Whosbug analysis done")
 }
+func GetInputConfig() {
+	file, err := os.Open("src/input.json")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&config)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println("Get input.json succeed!")
+	}
+	fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
+}
+
+//func TestParseCommit() []whosbugAssigns.CommitParsedType {
+//for _, temp := range TestParseCommit() {
+////	fmt.Println(temp.CommitTime)
+////	fmt.Println(temp.Commit)
+////}
+//	return whosbugAssigns.TestParseCommit()
+//}
+
+//func TestGetDiff() map[string]string {
+//	return whosbugAssigns.GetDiffTest("C:\\Users\\KevinMatt\\Desktop\\java-test\\", "master", "whosbug_test_1")
+//}
 
 //func TestParseDiff() {
 //	data, err := ioutil.ReadFile("C:\\Users\\KevinMatt\\Desktop\\whosbug-Golang\\logs.diff")

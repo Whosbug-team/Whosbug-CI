@@ -7,14 +7,15 @@ import (
 	"net/url"
 	"os"
 	"regexp"
-	"strconv"
 )
 
-// @title findAllChangedLineNumbers
-// @description 匹配所有改变行(以+/-开头的行)的行号
-// @author KevinMatt
-// @param lines []string 传入diff中的所有代码行(完整文件代码行)
-// @return ChangeLineNumbers []map[string]string:{ {"line_number":xxx,"change_type":xxx}... }
+/** findAllChangedLineNumbers
+ * @Description: 匹配所有改变行(以+/-开头的行)的行号
+ * @param lines 传入diff中的所有代码行(完整文件代码行)
+ * @return []ChangeLineNumberType
+ * @author KevinMatt 2021-07-25 03:09:12
+ * @function_mark
+ */
 func findAllChangedLineNumbers(lines []string) []ChangeLineNumberType {
 	markCompile, err := regexp.Compile(`^[\+\-]`)
 	errorHandler(err)
@@ -31,45 +32,6 @@ func findAllChangedLineNumbers(lines []string) []ChangeLineNumberType {
 		}
 	}
 	return changeLineNumbers
-}
-
-// @title findAllChangedLines
-// @description
-// @auth KevinMatt
-// @param lines []string diff中所有的代码行
-// @return ChangedLineInfos []map[string]string 返回map的切片，格式类似：ChangedLineInfos={
-//	{"LineNumber": 行号, "ChangeType": 变动类型},
-//	{"LineNumber": 行号, "ChangeType": 变动类型},
-//    ...
-//}
-
-/** findAllChangedLines
- * @Description: 匹配所有代码变更行并存储到切片，匹配的正则规范为：+/-行被匹配
- * @param lines  diff中所有的代码行
- * @return []map[string]string
- * @author KevinMatt 2021-07-24 23:07:56
- * @function_mark
- */
-func findAllChangedLines(lines []string) []map[string]string {
-
-	re, err := regexp.Compile(`^[\+\-]`)
-	errorHandler(err)
-	// ChangedLineInfos 匹配到的所有改变行信息(行号&改变类型)
-	var ChangedLineInfos []map[string]string
-	lineNumber := 0
-	// 遍历匹配
-	for index := 0; index < len(lines); index++ {
-		lineNumber++
-		match := re.FindString(lines[index])
-		line := lines[index]
-		if match != "" {
-			tempMap := make(map[string]string)
-			tempMap["LineNumber"] = strconv.Itoa(lineNumber)
-			tempMap["ChangeType"] = string(line[0])
-			ChangedLineInfos = append(ChangedLineInfos, tempMap)
-		}
-	}
-	return ChangedLineInfos
 }
 
 func GetDiffTest(repoPath string, branchName string, projectId string) ReleaseDiffType {
@@ -112,10 +74,10 @@ func getDiff(repoPath, branchName, projectId string) ReleaseDiffType {
 
 	var diff, commitInfo string
 	if string(lastReleaseCommitHash) != "" {
-		diff = execCommandOutput("git", "log", "--full-Diff", "-p", "-U1000", "--pretty=raw", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
+		diff = execCommandOutput("git", "log", "--full-diff", "-p", "-U1000", "--pretty=raw", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
 		commitInfo = execCommandOutput("git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
 	} else {
-		diff = execCommandOutput("git", "log", "--full-Diff", "-p", "-U1000", "--pretty=raw")
+		diff = execCommandOutput("git", "log", "--full-diff", "-p", "-U1000", "--pretty=raw")
 		commitInfo = execCommandOutput("git", "log", "--pretty=format:%H,%ce,%cn,%cd")
 	}
 	var releaseDiff ReleaseDiffType
@@ -140,6 +102,7 @@ func getDiff(repoPath, branchName, projectId string) ReleaseDiffType {
  * @function_mark
  */
 func getLatestRelease(projectId string) string {
+	// TODO Not Functioning
 	token := genToken()
 	urls := HOST + "/release/last/"
 	headers := make(map[string]string)

@@ -2,6 +2,7 @@ package whosbugAssigns
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
 	"path"
 )
@@ -40,4 +41,19 @@ func lanFilter(fileName string) bool {
 		}
 	}
 	return false
+}
+
+func result(resCommits []CommitParsedType, projectId string, releaseVersion string) {
+	fmt.Println("projectId: ", projectId)
+	fmt.Println("releaseVersion: ", releaseVersion)
+	latestCommitHash := resCommits[0].Commit
+	type projectInfo struct {
+		projectId string
+	}
+	var project projectInfo
+	var encryptDest []byte
+	err := encrypt([]byte(projectId), encryptDest, []byte(secret), []byte(projectId))
+	errorHandler(err)
+	project.projectId = string(encryptDest)
+	// TODO 完成解析结果输出内容功能
 }

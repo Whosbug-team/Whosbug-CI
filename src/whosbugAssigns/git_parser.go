@@ -42,7 +42,7 @@ func toIso8601(timeList []string) string {
  * @function_mark PASS
  */
 func parseCommit(data string, commitInfos []string) []CommitParsedType {
-	patCommit, err := regexp.Compile(`(Commit\ ([a-f0-9]{40}))`)
+	patCommit, err := regexp.Compile(`(commit\ ([a-f0-9]{40}))`)
 	errorHandler(err)
 	rawCommits := patCommit.FindAllStringSubmatch(data, -1)
 	var parsedCommits []CommitParsedType
@@ -73,12 +73,12 @@ func ParseDiff(data string) []DiffParsedType {
  * @function_mark PASS
  */
 func parseDiff(data string) []DiffParsedType {
-	patDiff, err := regexp.Compile(`(Diff\ \-\-git\ a/(.*)\ b/.+)`)
+	patDiff, err := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
 	errorHandler(err)
 	patDiffPart, err := regexp.Compile(`(@@\ .*?\ @@)`)
 	errorHandler(err)
 	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
-	diffParsed := make([]DiffParsedType, len(rawDiffs))
+	diffParsed := make([]DiffParsedType, 0)
 
 	for index, rawCommit := range rawDiffs {
 		parts := rawCommit[2]
@@ -119,9 +119,13 @@ func parseDiff(data string) []DiffParsedType {
 			errorHandler(err)
 			err = fd.Close()
 			errorHandler(err)
-			diffParsed[index].DiffFile = parts
-			diffParsed[index].DiffFilePath = diffFilePath
-			diffParsed[index].ChangeLineNumbers = append(diffParsed[index].ChangeLineNumbers, changeLineNumbers...)
+			var diffSingle DiffParsedType
+			diffSingle.DiffFile = parts
+			diffSingle.DiffFilePath = diffFilePath
+			diffSingle.ChangeLineNumbers = append(diffSingle.ChangeLineNumbers, changeLineNumbers...)
+			diffParsed = append(diffParsed, diffSingle)
+		} else {
+			continue
 		}
 	}
 	return diffParsed

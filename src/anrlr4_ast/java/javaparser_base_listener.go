@@ -5,6 +5,7 @@ package javaParser // JavaParser
 import (
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"reflect"
 	"strconv"
 )
 
@@ -13,20 +14,20 @@ type paramInfoType struct {
 	paramName string
 }
 
-type methodInfoType struct {
+type MethodInfoType struct {
 	StartLine    int
 	EndLine      int
 	ReturnType   string
 	MethodName   string
 	Params       []paramInfoType
-	MasterObject string
+	MasterObject masterObjectInfoType
 	Depth        int
 	CallMethods  []string
 }
 
 type masterObjectInfoType struct {
 	ObjectName string
-	startLine  string
+	StartLine  string
 }
 
 type classInfoType struct {
@@ -49,7 +50,7 @@ type astInfoType struct {
 	Classes     []classInfoType
 	Imports     []string
 	Fileds      []fieldInfoType
-	Methods     []methodInfoType
+	Methods     []MethodInfoType
 }
 
 type AnalysisInfoType struct {
@@ -59,6 +60,9 @@ type AnalysisInfoType struct {
 
 func (this AnalysisInfoType) SetEmpty() {
 	Infos = AnalysisInfoType{}
+}
+func (this MethodInfoType) IsEmpty() bool {
+	return reflect.DeepEqual(this, MethodInfoType{})
 }
 
 // 全局变量:分析信息
@@ -72,7 +76,7 @@ var Infos AnalysisInfoType
  * @function_mark PASS
  */
 func (s *BaseJavaParserListener) ExitMethodDeclaration(ctx *MethodDeclarationContext) {
-	var methodInfo methodInfoType
+	var methodInfo MethodInfoType
 	MethodName := ctx.GetChild(1)
 	ReturnType := ctx.GetChild(0).(*TypeTypeOrVoidContext).GetText()
 	Params := getParams(ctx)
@@ -81,7 +85,7 @@ func (s *BaseJavaParserListener) ExitMethodDeclaration(ctx *MethodDeclarationCon
 	methodInfo.StartLine = ctx.GetStart().GetLine()
 	methodInfo.EndLine = ctx.GetStop().GetLine()
 	methodInfo.MethodName = fmt.Sprintf("%s", MethodName)
-	methodInfo.MasterObject = ""
+	methodInfo.MasterObject = masterObjectInfoType{}
 	methodInfo.Params = append(methodInfo.Params, Params...)
 	//TODO 解决语法树深度的高效计算方法
 	Infos.AstInfoList.Methods = append(Infos.AstInfoList.Methods, methodInfo)

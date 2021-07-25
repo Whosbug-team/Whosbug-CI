@@ -9,7 +9,7 @@ type DiffParsedType struct {
 	DiffFilePath      string
 	ChangeLineNumbers []ChangeLineNumberType
 	Commit            string
-	DiffContent       string
+	DiffContent       map[int]map[string]string
 }
 type CommitterInfoType struct {
 	Name  string
@@ -20,7 +20,7 @@ type CommitParsedType struct {
 	Commit          string
 	CommitTime      string
 	CommitterInfo   CommitterInfoType
-	CommitDiff      ObjectInfoType
+	CommitDiffs     []DiffParsedType
 }
 
 type analysisInfo struct {
@@ -35,4 +35,14 @@ type ReleaseDiffType struct {
 }
 
 type ObjectInfoType struct {
+	Name    string
+	Hash    string
+	ParName string
+	ParHash string
+}
+
+type ChangeMethodType struct {
+	StartLine    int
+	MethodName   string
+	MasterObject string
 }
