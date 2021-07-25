@@ -13,3 +13,7 @@ src/test.go
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+/src/github.com/swaggo/swag/
+/src/github.com/swaggo/
+/src/gopkg.in/
+/src/github.com/

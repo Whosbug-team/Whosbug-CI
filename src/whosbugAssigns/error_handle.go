@@ -5,10 +5,13 @@ import (
 	"log"
 )
 
-// @title errorHandler
-// @description 用于错误处理，可传入错误日志和打印的附加字段
-// @auth KevinMatt
-// @param err error "传入的错误类型"
+// errorHandler
+/* @Description:
+ * @param err 传入的错误类型
+ * @param message 错误处理的消息
+ * @author KevinMatt 2021-07-25 14:35:41
+ * @function_mark
+ */
 func errorHandler(err error, message ...string) {
 
 	if err != nil {
