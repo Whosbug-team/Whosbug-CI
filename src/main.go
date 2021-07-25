@@ -13,6 +13,9 @@ func main() {
 	repoPath := whosbugAssigns.Config.ProjectUrl
 	resCommits := whosbugAssigns.Analysis(repoPath, branchName, projectId)
 	whosbugAssigns.Result(resCommits, projectId, "1.0.0")
+	for _, resCommit := range resCommits {
+		fmt.Println(resCommit.Commit, " ", resCommit.CommitDiffs[0].DiffContent[0]["Name"])
+	}
 	fmt.Println("Whosbug analysis done")
 }
 

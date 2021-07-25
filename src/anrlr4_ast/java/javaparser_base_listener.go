@@ -10,8 +10,8 @@ import (
 )
 
 type paramInfoType struct {
-	paramType string
-	paramName string
+	ParamType string
+	ParamName string
 }
 
 type MethodInfoType struct {
@@ -77,50 +77,59 @@ var Infos AnalysisInfoType
  */
 func (s *BaseJavaParserListener) ExitMethodDeclaration(ctx *MethodDeclarationContext) {
 	var methodInfo MethodInfoType
-	MethodName := ctx.GetChild(1)
+	MethodName := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
 	ReturnType := ctx.GetChild(0).(*TypeTypeOrVoidContext).GetText()
-	Params := getParams(ctx)
+	Params := getParams(ctx.GetChild(2).(*FormalParametersContext))
 	//fmt.Println(Params[0].paramName, Params[0].paramType)
 	methodInfo.ReturnType = ReturnType
 	methodInfo.StartLine = ctx.GetStart().GetLine()
 	methodInfo.EndLine = ctx.GetStop().GetLine()
-	methodInfo.MethodName = fmt.Sprintf("%s", MethodName)
+	methodInfo.MethodName = MethodName
 	methodInfo.MasterObject = masterObjectInfoType{}
 	methodInfo.Params = append(methodInfo.Params, Params...)
 	//TODO 解决语法树深度的高效计算方法
 	Infos.AstInfoList.Methods = append(Infos.AstInfoList.Methods, methodInfo)
 }
 
-/** getParams
- * @Description: 获取参数名&参数类型结构体的切片
+// getParams
+/* @Description: 获取参数名&参数类型结构体的切片
  * @param ctx *MethodDeclarationContext
  * @return []paramInfoType 返回追加后的切片
- * @author KevinMatt 2021-07-23 22:55:22
+ * @author KevinMatt 2021-07-25 16:56:35
  * @function_mark PASS
  */
-func getParams(ctx *MethodDeclarationContext) []paramInfoType {
-	var paramsCount int
+func getParams(ctx *FormalParametersContext) []paramInfoType {
 	var paramInfo paramInfoType
 	var result []paramInfoType
 	if ctx.GetChildCount() == 3 {
-		paramsCount = ctx.GetChild(1).GetChildCount()
-		if paramsCount == 1 {
-			paramType := ctx.GetChild(1).GetChild(0).GetChild(0).(*FormalParameterContext).GetText()
-			paramName := ctx.GetChild(1).GetChild(0).GetChild(1).(*FormalParameterContext).GetText()
-			paramInfo.paramName = paramName
-			paramInfo.paramType = paramType
-			result = append(result, paramInfo)
-		} else if paramsCount > 1 {
-			for index := 0; index < paramsCount; index++ {
-				if index%2 == 0 {
-					paramType := ctx.GetChild(1).GetChild(index).GetChild(0).(*FormalParameterContext).GetText()
-					paramName := ctx.GetChild(1).GetChild(index).GetChild(1).(*FormalParameterContext).GetText()
-					paramInfo.paramName = paramName
-					paramInfo.paramType = paramType
+		paramCount := ctx.GetChild(1).GetChildCount()
+		if paramCount == 1 {
+			treeListCount := ctx.GetChild(1).GetChild(0).GetChildCount()
+			if treeListCount == 3 {
+				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(1).(*TypeTypeContext).GetText()
+				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(2).(*VariableDeclaratorIdContext).GetText()
+			} else if treeListCount == 2 {
+				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(0).(*TypeTypeContext).GetText()
+				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(1).(*VariableDeclaratorIdContext).GetText()
+			}
+		} else if paramCount > 1 {
+			for index := 0; index < paramCount; index++ {
+				count := ctx.GetChild(1).GetChild(index).GetChildCount()
+				if count == 3 {
+					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(*TypeTypeContext).GetText() + ctx.GetChild(1).GetChild(index).GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(2).(*VariableDeclaratorIdContext).GetText()
+					result = append(result, paramInfo)
+				} else if count == 2 {
+					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(*TypeTypeContext).GetText()
+					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(1).(*VariableDeclaratorIdContext).GetText()
 					result = append(result, paramInfo)
 				}
 			}
 		}
+	} else if ctx.GetChildCount() == 2 {
+		paramInfo.ParamType = "void"
+		paramInfo.ParamName = "void"
+		result = append(result, paramInfo)
 	}
 	return result
 }
