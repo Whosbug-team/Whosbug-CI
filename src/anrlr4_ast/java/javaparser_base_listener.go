@@ -220,8 +220,8 @@ func (s *BaseJavaParserListener) EnterClassDeclaration(ctx *ClassDeclarationCont
 	Infos.AstInfoList.Classes = append(Infos.AstInfoList.Classes, classInfo)
 }
 
-/** findMasterObjectClass
- * @Description: 找到主类实体
+// findMasterObjectClass
+/* @Description: 找到主类实体
  * @param ctx
  * @param classInfo
  * @author KevinMatt 2021-07-24 11:45:14

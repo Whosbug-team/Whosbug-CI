@@ -2,9 +2,6 @@ package whosbugAssigns
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
 	"os"
 	"regexp"
 )
@@ -32,10 +29,6 @@ func findAllChangedLineNumbers(lines []string) []ChangeLineNumberType {
 		}
 	}
 	return changeLineNumbers
-}
-
-func GetDiffTest(repoPath string, branchName string, projectId string) ReleaseDiffType {
-	return getDiff(repoPath, branchName, projectId)
 }
 
 // getDiff
@@ -92,32 +85,4 @@ func getDiff(repoPath, branchName, projectId string) ReleaseDiffType {
 	errorHandler(err)
 
 	return releaseDiff
-}
-
-/** getLatestRelease
- * @Description: 获得最新的Release信息
- * @param projectId 项目ID
- * @return string Release信息
- * @author KevinMatt 2021-07-22 16:50:26
- * @function_mark
- */
-func getLatestRelease(projectId string) string {
-	// TODO Not Functioning
-	token := genToken()
-	urls := HOST + "/release/last/"
-	headers := make(map[string]string)
-	headers["token"] = token
-	data := make(map[string]string)
-	data["pid"] = projectId
-
-	getLatestReleaseRes, err := http.PostForm(urls, url.Values{"token": {token}, "pid": {projectId}})
-	errorHandler(err)
-	if getLatestReleaseRes.StatusCode == 200 {
-		res, err := ioutil.ReadAll(getLatestReleaseRes.Body)
-		errorHandler(err)
-		return string(res)
-	} else {
-		fmt.Println(getLatestReleaseRes.Body)
-		return ""
-	}
 }

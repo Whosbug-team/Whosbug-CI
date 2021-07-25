@@ -5,6 +5,20 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
+type TreeShapeListener struct {
+	*javaparser.BaseJavaParserListener
+}
+
+// NewTreeShapeListener
+/* @Description: 生成Listener
+ * @return *TreeShapeListener
+ * @author KevinMatt 2021-07-25 20:06:55
+ * @function_mark
+ */
+func NewTreeShapeListener() *TreeShapeListener {
+	return new(TreeShapeListener)
+}
+
 // antlrAnalysis
 /* @Description: 执行antlr分析入口函数
  * @param targetFilePath 目标代码目录
@@ -25,18 +39,6 @@ func antlrAnalysis(targetFilePath string, langMode string) javaparser.AnalysisIn
 	}
 	return result
 }
-
-type TreeShapeListener struct {
-	*javaparser.BaseJavaParserListener
-}
-
-func NewTreeShapeListener() *TreeShapeListener {
-	return new(TreeShapeListener)
-}
-
-//func (this *TreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
-//	fmt.Println(ctx.GetText())
-//}
 
 // executeJava
 /* @Description: 执行Java Antlr语法解析

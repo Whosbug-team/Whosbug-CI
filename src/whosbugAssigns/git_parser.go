@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var month_correspond = map[string]string{
+var monthCorrespond = map[string]string{
 	"Jan": "01",
 	"Feb": "02",
 	"Mar": "03",
@@ -31,7 +31,7 @@ var month_correspond = map[string]string{
  * @function_mark PASS
  */
 func toIso8601(timeList []string) string {
-	return fmt.Sprintf("%s-%s-%sT%s%s:%s", timeList[3], month_correspond[timeList[0]], timeList[1], timeList[2], timeList[4][3:], timeList[4][3:])
+	return fmt.Sprintf("%s-%s-%sT%s%s:%s", timeList[3], monthCorrespond[timeList[0]], timeList[1], timeList[2], timeList[4][3:], timeList[4][3:])
 }
 
 // parseCommit
@@ -60,10 +60,6 @@ func parseCommit(data string, commitInfos []string) []CommitParsedType {
 		parsedCommits = append(parsedCommits, parsedCommit)
 	}
 	return parsedCommits
-}
-
-func ParseDiff(data string) []DiffParsedType {
-	return parseDiff(data)
 }
 
 // parseDiff

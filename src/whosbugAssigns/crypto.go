@@ -8,13 +8,13 @@ import (
 	"crypto/sha256"
 )
 
-/** generateKIV
- * @Description: 生成AES-CFB需要的Key和IV
- * @param projectId 项目ID
- * @param key 加密密钥
- * @return []byte K密钥
- * @return []byte IV偏移密钥
- * @author KevinMatt 2021-07-22 13:23:16
+// generateKIV
+/* @Description: 		生成AES-CFB需要的Key和IV
+ * @param projectId 	项目ID
+ * @param key 			加密密钥
+ * @return []byte 		K密钥
+ * @return []byte 		IV偏移密钥
+ * @author KevinMatt 2021-07-25 20:07:20
  * @function_mark PASS
  */
 func generateKIV(projectId, key []byte) ([]byte, []byte) {
@@ -26,12 +26,12 @@ func generateKIV(projectId, key []byte) ([]byte, []byte) {
 }
 
 // encrypt
-/* @Description: AES-CFB加密
- * @param projectId 项目ID
- * @param Dest 输出的加密后字符串
- * @param key 加密密钥
- * @param plainText 需要加密的文本
- * @return error 错误抛出
+/* @Description: 		AES-CFB加密
+ * @param projectId 	项目ID
+ * @param Dest 			输出的加密后字符串
+ * @param key 			加密密钥
+ * @param plainText 	需要加密的文本
+ * @return error 		错误抛出
  * @author KevinMatt 2021-07-25 13:34:09
  * @function_mark PASS
  */
@@ -42,17 +42,18 @@ func encrypt(projectId, Dest, key, plainText []byte) error {
 		return err
 	}
 	aesEncryptor := cipher.NewCFBEncrypter(aesBlockEncryptor, IV)
+	// TODO error here
 	aesEncryptor.XORKeyStream(Dest, plainText)
 	return nil
 }
 
 // decrypt
-/* @Description: AES-CFB解密
- * @param projectId 项目ID
- * @param Dest 解密完成的字符串
- * @param key 解密密钥
- * @param plainText 需要解密的文本
- * @return error 错误抛出
+/* @Description: 		AES-CFB解密
+ * @param projectId 	项目ID
+ * @param Dest 			解密完成的字符串
+ * @param key 			解密密钥
+ * @param plainText 	需要解密的文本
+ * @return error 		错误抛出
  * @author KevinMatt 2021-07-25 13:35:15
  * @function_mark PASS
  */

@@ -13,7 +13,6 @@ import (
  * @function_mark
  */
 func errorHandler(err error, message ...string) {
-
 	if err != nil {
 		fmt.Println(message[0], err.Error())
 		log.Fatal(err)

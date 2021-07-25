@@ -1,5 +1,7 @@
 package whosbugAssigns
 
+var supportLans = []string{".java"}
+
 type ChangeLineNumberType struct {
 	LineNumber int
 	ChangeType string
@@ -21,10 +23,6 @@ type CommitParsedType struct {
 	CommitTime      string
 	CommitterInfo   CommitterInfoType
 	CommitDiffs     []DiffParsedType
-}
-
-type analysisInfo struct {
-	Diff string
 }
 
 type ReleaseDiffType struct {
@@ -53,12 +51,17 @@ type input_json struct {
 	ProjectUrl      string   `json:"__PROJECT_URL"`
 	BranchName      string   `json:"__BRANCH_NAME"`
 	LanguageSupport []string `json:"__LAN_SUPPORT"`
-	WebServerHost   string   `json:"__WEB_SRV_HOST""`
+	WebServerHost   string   `json:"__WEB_SRV_HOST"`
 }
 type innerConfig struct {
-	userId string
-	secret string
+	username string
+	password string
 }
 
-var InnerConf innerConfig
+var innerConf innerConfig
 var Config input_json
+
+func init() {
+	innerConf.username = "kevinmatt"
+	innerConf.password = "heyuheng1.22.3"
+}
