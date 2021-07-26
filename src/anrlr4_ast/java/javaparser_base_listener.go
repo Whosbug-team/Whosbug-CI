@@ -106,11 +106,11 @@ func getParams(ctx *FormalParametersContext) []paramInfoType {
 		if paramCount == 1 {
 			treeListCount := ctx.GetChild(1).GetChild(0).GetChildCount()
 			if treeListCount == 3 {
-				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(1).(*TypeTypeContext).GetText()
-				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(2).(*VariableDeclaratorIdContext).GetText()
+				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
+				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(2).(antlr.ParseTree).GetText()
 			} else if treeListCount == 2 {
-				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(0).(*TypeTypeContext).GetText()
-				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(1).(*VariableDeclaratorIdContext).GetText()
+				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(0).(antlr.ParseTree).GetText()
+				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
 			}
 		} else if paramCount > 1 {
 			for index := 0; index < paramCount; index++ {
@@ -120,8 +120,8 @@ func getParams(ctx *FormalParametersContext) []paramInfoType {
 					//paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(2).(*VariableDeclaratorIdContext).GetText()
 					//result = append(result, paramInfo)
 				} else if count == 2 {
-					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(*TypeTypeContext).GetText()
-					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(1).(*VariableDeclaratorIdContext).GetText()
+					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(antlr.ParseTree).GetText()
+					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(1).(antlr.ParseTree).GetText()
 					result = append(result, paramInfo)
 				}
 			}
@@ -144,7 +144,7 @@ func getParams(ctx *FormalParametersContext) []paramInfoType {
 func (s *BaseJavaParserListener) EnterMethodCall(ctx *MethodCallContext) {
 	lineNumber := ctx.GetStart().GetLine()
 	columnNumber := ctx.GetStart().GetColumn()
-	Infos.CallMethods = append(Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetParent().(*ExpressionContext).GetText()))
+	Infos.CallMethods = append(Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetParent().(antlr.ParseTree).GetText()))
 }
 
 /** findImplements
@@ -154,16 +154,16 @@ func (s *BaseJavaParserListener) EnterMethodCall(ctx *MethodCallContext) {
  * @author KevinMatt 2021-07-24 11:43:46
  * @function_mark PASS
  */
-func findImplements(ctx *TypeListContext) []string {
+func findImplements(ctx antlr.ParseTree) []string {
 	implementsCount := ctx.GetChildCount()
 	var implements []string
 	if implementsCount == 1 {
-		implementClass := ctx.GetChild(0).(*TypeTypeContext).GetText()
+		implementClass := ctx.GetChild(0).(antlr.ParseTree).GetText()
 		implements = append(implements, implementClass)
 	} else if implementsCount > 1 {
 		for index := 0; index < implementsCount; index++ {
 			if index%2 == 0 {
-				implementClass := ctx.GetChild(index).(*TypeTypeContext).GetText()
+				implementClass := ctx.GetChild(index).(antlr.ParseTree).GetText()
 				implements = append(implements, implementClass)
 			}
 		}
@@ -187,33 +187,36 @@ func (s *BaseJavaParserListener) EnterClassDeclaration(ctx *ClassDeclarationCont
 	childCount := ctx.GetChildCount()
 
 	if childCount == 6 {
-		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
-		extendsClassName := ctx.GetChild(2).GetChild(1).GetChild(2).(*TypeBoundContext).GetText()
+		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
+		var extendsClassName string
+		if ctx.GetChild(2).GetChild(1).GetChild(2) != nil {
+			extendsClassName = ctx.GetChild(2).GetChild(1).GetChild(2).(antlr.ParseTree).GetText()
+		}
 		classInfo.ClassName = className
 		classInfo.Extends = extendsClassName
-		classInfo.Implements = findImplements(ctx.GetChild(4).(*TypeListContext))
+		classInfo.Implements = findImplements(ctx.GetChild(4).(antlr.ParseTree))
 	} else if childCount == 5 {
-		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		classInfo.ClassName = className
-		if ctx.GetChild(2).(*antlr.TerminalNodeImpl).GetText() == "extends" {
-			classInfo.Extends = ctx.GetChild(3).(*TypeTypeContext).GetText()
+		if ctx.GetChild(2).(antlr.ParseTree).GetText() == "extends" {
+			classInfo.Extends = ctx.GetChild(3).(antlr.ParseTree).GetText()
 		} else {
-			classInfo.Implements = findImplements(ctx.GetChild(3).(*TypeListContext))
+			classInfo.Implements = findImplements(ctx.GetChild(3).(antlr.ParseTree))
 		}
 	} else if childCount == 4 {
 		// Generic classes: class AnnoName<T>
 		// 此处没有解析尖括号内的内容，其内如有继承关系，将一起连接被打印
-		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		for index := 0; index < ctx.GetChild(2).GetChildCount(); index++ {
 			if index%2 == 0 {
-				className += "" + ctx.GetChild(2).GetChild(index).(*antlr.TerminalNodeImpl).GetText()
+				className += "" + ctx.GetChild(2).GetChild(index).(antlr.ParseTree).GetText()
 			} else {
-				className += " " + ctx.GetChild(2).GetChild(index).(*TypeParameterContext).GetText()
+				className += " " + ctx.GetChild(2).GetChild(index).(antlr.ParseTree).GetText()
 			}
 		}
 		classInfo.ClassName = className
 	} else if childCount == 3 {
-		className := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		classInfo.ClassName = className
 	}
 	classInfo.MasterObject = findMasterObjectClass(ctx, classInfo)
@@ -248,8 +251,8 @@ func findMasterObjectClass(ctx *ClassDeclarationContext, classInfo classInfoType
  */
 func (s *BaseJavaParserListener) EnterFieldDeclaration(ctx *FieldDeclarationContext) {
 	var field fieldInfoType
-	field.FieldType = ctx.GetChild(0).(*TypeTypeContext).GetText()
-	field.FieldDefinition = ctx.GetChild(1).(*VariableDeclaratorsContext).GetText()
+	field.FieldType = ctx.GetChild(0).(antlr.ParseTree).GetText()
+	field.FieldDefinition = ctx.GetChild(1).(antlr.ParseTree).GetText()
 	Infos.AstInfoList.Fileds = append(Infos.AstInfoList.Fileds, field)
 }
 

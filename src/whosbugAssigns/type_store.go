@@ -10,7 +10,7 @@ type DiffParsedType struct {
 	DiffFile          string
 	DiffFilePath      string
 	ChangeLineNumbers []ChangeLineNumberType
-	Commit            string
+	CommitId          string
 	DiffContent       map[int]map[string]string
 }
 type CommitterInfoType struct {

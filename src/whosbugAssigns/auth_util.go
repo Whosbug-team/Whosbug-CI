@@ -12,8 +12,8 @@ import (
 )
 
 const HOST = "http://127.0.0.1:8082"
-const secret = ""
-const userId = "qapm"
+
+var secret string
 
 var tokenGot string
 

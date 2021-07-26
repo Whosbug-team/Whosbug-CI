@@ -12,6 +12,7 @@
     <mapping directory="$PROJECT_DIR$/src/github.com/stretchr/testify" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/swaggo/gin-swagger" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/swaggo/swag" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/github.com/urfave/cli" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/gopkg.in/yaml.v2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/gopkg.in/yaml.v3" vcs="Git" />
   </component>

@@ -1,36 +1,34 @@
 package whosbugAssigns
 
-import javaParser "anrlr4_ast/java"
+import (
+	javaParser "anrlr4_ast/java"
+)
 
-// analyzeCommitDiff
+/* analyzeCommitDiff
 /* @Description: 分析commitDiff
  * @param projectId 项目ID
  * @param commitDiffs commitDiff切片
  * @param commitId CommitHash
  * @param commit 解析后的commit信息
- * @return CommitParsedType
- * @author KevinMatt 2021-07-25 13:54:04
+ * @return DiffParsedType
+ * @author KevinMatt 2021-07-26 23:11:25
  * @function_mark PASS
- */
-func analyzeCommitDiff(projectId string, commitDiffs []DiffParsedType, commitId string, commit CommitParsedType) CommitParsedType {
-	for index := 0; index < len(commitDiffs); index++ {
-		commitDiff := commitDiffs[index]
-		commitDiff.Commit = commitId
+*/
+func analyzeCommitDiff(projectId string, CommitDiffs []DiffParsedType, commitId string) {
+	for index := range CommitDiffs {
+		CommitDiffs[index].CommitId = commitId
 		// 处理后的源码路径
-		tempFile := commitDiff.DiffFilePath
+		tempFile := CommitDiffs[index].DiffFilePath
 		// diff的原始路径
-		filePath := commitDiff.DiffFile
+		filePath := CommitDiffs[index].DiffFile
 		antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
-
-		changeLineNumbers := commitDiff.ChangeLineNumbers
+		changeLineNumbers := CommitDiffs[index].ChangeLineNumbers
 		objects := make(map[int]map[string]string)
 		for _, changeLineNumber := range changeLineNumbers {
 			objects = addObjectFromChangeLineNumber(projectId, filePath, objects, changeLineNumber, antlrAnalyzeRes)
 		}
-		commitDiff.DiffContent = objects
-		commit.CommitDiffs = append(commit.CommitDiffs, commitDiff)
+		CommitDiffs[index].DiffContent = objects
 	}
-	return commit
 }
 
 // addObjectFromChangeLineNumber
@@ -96,10 +94,7 @@ func findIntervalIndex(nums []int, target int) int {
 	if len(nums) == 0 {
 		return -1
 	}
-	if len(nums) >= 2 && target > nums[1] {
-		return -1
-	}
-	if target <= nums[0] {
+	if target < nums[0] || target > nums[len(nums)-1] {
 		return -1
 	}
 	for index := range nums {

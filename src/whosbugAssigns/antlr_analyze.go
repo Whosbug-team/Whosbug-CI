@@ -29,7 +29,6 @@ func NewTreeShapeListener() *TreeShapeListener {
  */
 func antlrAnalysis(targetFilePath string, langMode string) javaparser.AnalysisInfoType {
 	var result javaparser.AnalysisInfoType
-	// TODO 目前只有Java的支持
 	switch langMode {
 	case "java":
 		result = executeJava(targetFilePath)
