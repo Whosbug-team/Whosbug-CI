@@ -55,7 +55,7 @@ func addObjectFromChangeLineNumber(projectId string, filePath string, objects ma
 	parent := changeMethod.MasterObject
 	objects[changeMethod.StartLine] = make(map[string]string)
 	objects[changeMethod.StartLine] = map[string]string{
-		"Name":        changeMethod.MethodName,
+		"name":        changeMethod.MethodName,
 		"hash":        childHashCode,
 		"parent_name": parent.ObjectName,
 		"parent_hash": hashCode64(projectId, parent.ObjectName, filePath),
@@ -93,13 +93,13 @@ func findChangedMethod(changeLineNumber ChangeLineNumberType, antlrAnalyzeRes ja
  * @function_mark 	PASS
  */
 func findIntervalIndex(nums []int, target int) int {
-	if nums == nil {
+	if len(nums) == 0 {
 		return -1
 	}
 	if len(nums) >= 2 && target > nums[1] {
 		return -1
 	}
-	if target < nums[0] {
+	if target <= nums[0] {
 		return -1
 	}
 	for index := range nums {

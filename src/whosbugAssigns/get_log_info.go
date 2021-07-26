@@ -51,22 +51,20 @@ func getDiff(repoPath, branchName, projectId string) ReleaseDiffType {
 
 	newReleaseCommitHash := execCommandOutput("git", "rev-parse", "HEAD")
 
-	originHash := make([]byte, len(projectId))
-	err = encrypt([]byte(projectId), originHash, []byte(secret), []byte(projectId))
+	originHash := encrypt(projectId, secret, projectId)
 	errorHandler(err)
-	getLatestRelease(string(originHash))
-	lastReleaseCommitHash := make([]byte, len(originHash))
+	getLatestRelease(originHash)
 
-	err = decrypt([]byte(projectId), lastReleaseCommitHash, []byte(secret), originHash)
-	if string(lastReleaseCommitHash) != string(originHash) {
-		lastReleaseCommitHash = nil
+	lastReleaseCommitHash := decrypt(projectId, secret, originHash)
+	if lastReleaseCommitHash == originHash {
+		lastReleaseCommitHash = ""
 	}
 	errorHandler(err)
-	fmt.Println("last release's Commit hash: ", string(lastReleaseCommitHash))
+	fmt.Println("last release's Commit hash: ", lastReleaseCommitHash)
 	fmt.Println("new release's Commit hash: ", newReleaseCommitHash)
 
 	var diff, commitInfo string
-	if string(lastReleaseCommitHash) != "" {
+	if lastReleaseCommitHash != "" {
 		diff = execCommandOutput("git", "log", "--full-diff", "-p", "-U1000", "--pretty=raw", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
 		commitInfo = execCommandOutput("git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
 	} else {

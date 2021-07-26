@@ -6,6 +6,7 @@ import (
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha256"
+	"fmt"
 )
 
 // generateKIV
@@ -35,16 +36,16 @@ func generateKIV(projectId, key []byte) ([]byte, []byte) {
  * @author KevinMatt 2021-07-25 13:34:09
  * @function_mark PASS
  */
-func encrypt(projectId, Dest, key, plainText []byte) error {
-	K, IV := generateKIV(projectId, key)
+func encrypt(projectId, key, plainText string) string {
+	K, IV := generateKIV([]byte(projectId), []byte(key))
 	aesBlockEncryptor, err := aes.NewCipher(K)
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
+	var dest = plainText
 	aesEncryptor := cipher.NewCFBEncrypter(aesBlockEncryptor, IV)
-	// TODO error here
-	aesEncryptor.XORKeyStream(Dest, plainText)
-	return nil
+	aesEncryptor.XORKeyStream([]byte(dest), []byte(plainText))
+	return dest
 }
 
 // decrypt
@@ -57,13 +58,14 @@ func encrypt(projectId, Dest, key, plainText []byte) error {
  * @author KevinMatt 2021-07-25 13:35:15
  * @function_mark PASS
  */
-func decrypt(projectId, Dest, key, plainText []byte) error {
-	K, IV := generateKIV(projectId, key)
+func decrypt(projectId, key, plainText string) string {
+	K, IV := generateKIV([]byte(projectId), []byte(key))
 	aesBlockDescriptor, err := aes.NewCipher(K)
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
+	var dest = plainText
 	aesDescriptor := cipher.NewCFBDecrypter(aesBlockDescriptor, IV)
-	aesDescriptor.XORKeyStream(Dest, plainText)
-	return nil
+	aesDescriptor.XORKeyStream([]byte(dest), []byte(plainText))
+	return dest
 }

@@ -116,9 +116,9 @@ func getParams(ctx *FormalParametersContext) []paramInfoType {
 			for index := 0; index < paramCount; index++ {
 				count := ctx.GetChild(1).GetChild(index).GetChildCount()
 				if count == 3 {
-					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(*TypeTypeContext).GetText() + ctx.GetChild(1).GetChild(index).GetChild(1).(*antlr.TerminalNodeImpl).GetText()
-					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(2).(*VariableDeclaratorIdContext).GetText()
-					result = append(result, paramInfo)
+					//paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(*TypeTypeContext).GetText() + ctx.GetChild(1).GetChild(index).GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+					//paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(2).(*VariableDeclaratorIdContext).GetText()
+					//result = append(result, paramInfo)
 				} else if count == 2 {
 					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(*TypeTypeContext).GetText()
 					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(1).(*VariableDeclaratorIdContext).GetText()

@@ -64,20 +64,77 @@ func lanFilter(fileName string) bool {
 	return false
 }
 
+// getKeysAndValues
+/* @Description:
+ * @param m
+ * @return []int
+ * @return []map[string]string
+ * @author KevinMatt 2021-07-26 17:03:05
+ * @function_mark
+ */
+func getKeysAndValues(m map[int]map[string]string) ([]int, []map[string]string) {
+	keys := make([]int, 0, len(m))
+	values := make([]map[string]string, 0, len(m))
+	for k, v := range m {
+		keys = append(keys, k)
+		values = append(values, v)
+	}
+	return keys, values
+}
+
+// Result
+/* @Description:
+ * @param resCommits
+ * @param projectId
+ * @param releaseVersion
+ * @author KevinMatt 2021-07-26 17:03:02
+ * @function_mark
+ */
 func Result(resCommits []CommitParsedType, projectId string, releaseVersion string) {
-	//fmt.Println("projectId: ", projectId)
-	//fmt.Println("releaseVersion: ", releaseVersion)
-	//latestCommitHash := resCommits[0].Commit
-	//type projectInfo struct {
-	//	projectId string
-	//}
-	//var project projectInfo
-	//var encryptDest []byte
-	//err := encrypt([]byte(projectId), encryptDest, []byte(secret), []byte(projectId))
-	//errorHandler(err)
-	//project.projectId = string(encryptDest)
-	fmt.Println("latestCommitHash")
-	// TODO 完成解析结果输出内容功能
+	fmt.Println("Pid: ", projectId)
+	fmt.Println("Release: ", releaseVersion)
+	latestCommitHash := resCommits[0].Commit
+
+	project := map[string]string{
+		"pid": encrypt(projectId, secret, projectId),
+	}
+
+	release := map[string]string{
+		"release":     encrypt(projectId, secret, releaseVersion),
+		"commit_hash": encrypt(projectId, secret, latestCommitHash),
+	}
+
+	objects := make([]map[string]string, 0)
+	for _, commits := range resCommits {
+		owner := fmt.Sprintf("%s-%s", commits.CommitterInfo.Name, commits.CommitterInfo.Email)
+		for _, diffFile := range commits.CommitDiffs {
+			filePath := path.Base(diffFile.DiffFilePath)
+			for _, value := range diffFile.DiffContent {
+				tempMap := map[string]string{
+					"owner":       encrypt(projectId, secret, owner),
+					"file_path":   encrypt(projectId, secret, filePath),
+					"parent_name": encrypt(projectId, secret, value["parent_name"]),
+					"parent_hash": encrypt(projectId, secret, value["parent_hash"]),
+					"name":        encrypt(projectId, secret, value["name"]),
+					"hash":        encrypt(projectId, secret, value["hash"]),
+					"old_name":    "",
+					"commit_time": encrypt(projectId, secret, value["commit_time"]),
+				}
+				objects = append(objects, tempMap)
+			}
+		}
+	}
+	res := map[string]interface{}{
+		"objects": objects,
+		"release": release,
+		"project": project,
+	}
+
+	fd, err := os.OpenFile("res.json", os.O_RDWR|os.O_CREATE, 0755)
+	errorHandler(err)
+	jsonInfo, err := json.Marshal(res)
+	_, _ = fd.WriteString(string(jsonInfo))
+
 }
 
 // hashCode64
