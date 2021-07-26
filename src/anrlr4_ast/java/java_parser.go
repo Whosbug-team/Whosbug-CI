@@ -1142,17 +1142,17 @@ func (s *CompilationUnitContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CompilationUnitContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterCompilationUnit(s)
-	}
-}
+//func (s *CompilationUnitContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterCompilationUnit(s)
+//	}
+//}
 
-func (s *CompilationUnitContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitCompilationUnit(s)
-	}
-}
+//func (s *CompilationUnitContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitCompilationUnit(s)
+//	}
+//}
 
 func (p *JavaParser) CompilationUnit() (localctx ICompilationUnitContext) {
 	localctx = NewCompilationUnitContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1315,11 +1315,11 @@ func (s *PackageDeclarationContext) EnterRule(listener antlr.ParseTreeListener) 
 	}
 }
 
-func (s *PackageDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitPackageDeclaration(s)
-	}
-}
+//func (s *PackageDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitPackageDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) PackageDeclaration() (localctx IPackageDeclarationContext) {
 	localctx = NewPackageDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1449,17 +1449,17 @@ func (s *ImportDeclarationContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ImportDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterImportDeclaration(s)
-	}
-}
+//func (s *ImportDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterImportDeclaration(s)
+//	}
+//}
 
-func (s *ImportDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitImportDeclaration(s)
-	}
-}
+//func (s *ImportDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitImportDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) ImportDeclaration() (localctx IImportDeclarationContext) {
 	localctx = NewImportDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1638,17 +1638,17 @@ func (s *TypeDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeDeclaration(s)
-	}
-}
+//func (s *TypeDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeDeclaration(s)
+//	}
+//}
 
-func (s *TypeDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeDeclaration(s)
-	}
-}
+//func (s *TypeDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) TypeDeclaration() (localctx ITypeDeclarationContext) {
 	localctx = NewTypeDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1812,17 +1812,18 @@ func (s *ModifierContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ModifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterModifier(s)
-	}
-}
+//
+//func (s *ModifierContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterModifier(s)
+//	}
+//}
 
-func (s *ModifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitModifier(s)
-	}
-}
+//func (s *ModifierContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitModifier(s)
+//	}
+//}
 
 func (p *JavaParser) Modifier() (localctx IModifierContext) {
 	localctx = NewModifierContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1974,17 +1975,17 @@ func (s *ClassOrInterfaceModifierContext) ToStringTree(ruleNames []string, recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassOrInterfaceModifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterClassOrInterfaceModifier(s)
-	}
-}
-
-func (s *ClassOrInterfaceModifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitClassOrInterfaceModifier(s)
-	}
-}
+//func (s *ClassOrInterfaceModifierContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterClassOrInterfaceModifier(s)
+//	}
+//}
+//
+//func (s *ClassOrInterfaceModifierContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitClassOrInterfaceModifier(s)
+//	}
+//}
 
 func (p *JavaParser) ClassOrInterfaceModifier() (localctx IClassOrInterfaceModifierContext) {
 	localctx = NewClassOrInterfaceModifierContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2133,17 +2134,17 @@ func (s *VariableModifierContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableModifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterVariableModifier(s)
-	}
-}
-
-func (s *VariableModifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitVariableModifier(s)
-	}
-}
+//func (s *VariableModifierContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterVariableModifier(s)
+//	}
+//}
+//
+//func (s *VariableModifierContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitVariableModifier(s)
+//	}
+//}
 
 func (p *JavaParser) VariableModifier() (localctx IVariableModifierContext) {
 	localctx = NewVariableModifierContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2298,11 +2299,11 @@ func (s *ClassDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
 	}
 }
 
-func (s *ClassDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitClassDeclaration(s)
-	}
-}
+//func (s *ClassDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitClassDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) ClassDeclaration() (localctx IClassDeclarationContext) {
 	localctx = NewClassDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2468,17 +2469,17 @@ func (s *TypeParametersContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeParametersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeParameters(s)
-	}
-}
-
-func (s *TypeParametersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeParameters(s)
-	}
-}
+//func (s *TypeParametersContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeParameters(s)
+//	}
+//}
+//
+//func (s *TypeParametersContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeParameters(s)
+//	}
+//}
 
 func (p *JavaParser) TypeParameters() (localctx ITypeParametersContext) {
 	localctx = NewTypeParametersContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2623,17 +2624,17 @@ func (s *TypeParameterContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeParameterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeParameter(s)
-	}
-}
-
-func (s *TypeParameterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeParameter(s)
-	}
-}
+//func (s *TypeParameterContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeParameter(s)
+//	}
+//}
+//
+//func (s *TypeParameterContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeParameter(s)
+//	}
+//}
 
 func (p *JavaParser) TypeParameter() (localctx ITypeParameterContext) {
 	localctx = NewTypeParameterContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2791,17 +2792,17 @@ func (s *TypeBoundContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeBoundContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeBound(s)
-	}
-}
-
-func (s *TypeBoundContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeBound(s)
-	}
-}
+//func (s *TypeBoundContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeBound(s)
+//	}
+//}
+//
+//func (s *TypeBoundContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeBound(s)
+//	}
+//}
 
 func (p *JavaParser) TypeBound() (localctx ITypeBoundContext) {
 	localctx = NewTypeBoundContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2951,17 +2952,17 @@ func (s *EnumDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnumDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterEnumDeclaration(s)
-	}
-}
-
-func (s *EnumDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitEnumDeclaration(s)
-	}
-}
+//func (s *EnumDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterEnumDeclaration(s)
+//	}
+//}
+//
+//func (s *EnumDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitEnumDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) EnumDeclaration() (localctx IEnumDeclarationContext) {
 	localctx = NewEnumDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3130,17 +3131,17 @@ func (s *EnumConstantsContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnumConstantsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterEnumConstants(s)
-	}
-}
-
-func (s *EnumConstantsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitEnumConstants(s)
-	}
-}
+//func (s *EnumConstantsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterEnumConstants(s)
+//	}
+//}
+//
+//func (s *EnumConstantsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitEnumConstants(s)
+//	}
+//}
 
 func (p *JavaParser) EnumConstants() (localctx IEnumConstantsContext) {
 	localctx = NewEnumConstantsContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3286,17 +3287,17 @@ func (s *EnumConstantContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnumConstantContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterEnumConstant(s)
-	}
-}
-
-func (s *EnumConstantContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitEnumConstant(s)
-	}
-}
+//func (s *EnumConstantContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterEnumConstant(s)
+//	}
+//}
+//
+//func (s *EnumConstantContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitEnumConstant(s)
+//	}
+//}
 
 func (p *JavaParser) EnumConstant() (localctx IEnumConstantContext) {
 	localctx = NewEnumConstantContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3441,17 +3442,17 @@ func (s *EnumBodyDeclarationsContext) ToStringTree(ruleNames []string, recog ant
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnumBodyDeclarationsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterEnumBodyDeclarations(s)
-	}
-}
-
-func (s *EnumBodyDeclarationsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitEnumBodyDeclarations(s)
-	}
-}
+//func (s *EnumBodyDeclarationsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterEnumBodyDeclarations(s)
+//	}
+//}
+//
+//func (s *EnumBodyDeclarationsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitEnumBodyDeclarations(s)
+//	}
+//}
 
 func (p *JavaParser) EnumBodyDeclarations() (localctx IEnumBodyDeclarationsContext) {
 	localctx = NewEnumBodyDeclarationsContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3585,17 +3586,17 @@ func (s *InterfaceDeclarationContext) ToStringTree(ruleNames []string, recog ant
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *InterfaceDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterInterfaceDeclaration(s)
-	}
-}
-
-func (s *InterfaceDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitInterfaceDeclaration(s)
-	}
-}
+//func (s *InterfaceDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterInterfaceDeclaration(s)
+//	}
+//}
+//
+//func (s *InterfaceDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitInterfaceDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) InterfaceDeclaration() (localctx IInterfaceDeclarationContext) {
 	localctx = NewInterfaceDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3738,17 +3739,17 @@ func (s *ClassBodyContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterClassBody(s)
-	}
-}
-
-func (s *ClassBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitClassBody(s)
-	}
-}
+//func (s *ClassBodyContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterClassBody(s)
+//	}
+//}
+//
+//func (s *ClassBodyContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitClassBody(s)
+//	}
+//}
 
 func (p *JavaParser) ClassBody() (localctx IClassBodyContext) {
 	localctx = NewClassBodyContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3875,17 +3876,17 @@ func (s *InterfaceBodyContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *InterfaceBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterInterfaceBody(s)
-	}
-}
-
-func (s *InterfaceBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitInterfaceBody(s)
-	}
-}
+//func (s *InterfaceBodyContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterInterfaceBody(s)
+//	}
+//}
+//
+//func (s *InterfaceBodyContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitInterfaceBody(s)
+//	}
+//}
 
 func (p *JavaParser) InterfaceBody() (localctx IInterfaceBodyContext) {
 	localctx = NewInterfaceBodyContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4032,17 +4033,17 @@ func (s *ClassBodyDeclarationContext) ToStringTree(ruleNames []string, recog ant
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassBodyDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterClassBodyDeclaration(s)
-	}
-}
-
-func (s *ClassBodyDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitClassBodyDeclaration(s)
-	}
-}
+//func (s *ClassBodyDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterClassBodyDeclaration(s)
+//	}
+//}
+//
+//func (s *ClassBodyDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitClassBodyDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) ClassBodyDeclaration() (localctx IClassBodyDeclarationContext) {
 	localctx = NewClassBodyDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4259,17 +4260,17 @@ func (s *MemberDeclarationContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *MemberDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterMemberDeclaration(s)
-	}
-}
-
-func (s *MemberDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitMemberDeclaration(s)
-	}
-}
+//func (s *MemberDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterMemberDeclaration(s)
+//	}
+//}
+//
+//func (s *MemberDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitMemberDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) MemberDeclaration() (localctx IMemberDeclarationContext) {
 	localctx = NewMemberDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4472,11 +4473,11 @@ func (s *MethodDeclarationContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *MethodDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterMethodDeclaration(s)
-	}
-}
+//func (s *MethodDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterMethodDeclaration(s)
+//	}
+//}
 
 func (s *MethodDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(JavaParserListener); ok {
@@ -4619,17 +4620,17 @@ func (s *MethodBodyContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *MethodBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterMethodBody(s)
-	}
-}
-
-func (s *MethodBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitMethodBody(s)
-	}
-}
+//func (s *MethodBodyContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterMethodBody(s)
+//	}
+//}
+//
+//func (s *MethodBodyContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitMethodBody(s)
+//	}
+//}
 
 func (p *JavaParser) MethodBody() (localctx IMethodBodyContext) {
 	localctx = NewMethodBodyContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4736,17 +4737,18 @@ func (s *TypeTypeOrVoidContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeTypeOrVoidContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeTypeOrVoid(s)
-	}
-}
-
-func (s *TypeTypeOrVoidContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeTypeOrVoid(s)
-	}
-}
+//
+//func (s *TypeTypeOrVoidContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeTypeOrVoid(s)
+//	}
+//}
+//
+//func (s *TypeTypeOrVoidContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeTypeOrVoid(s)
+//	}
+//}
 
 func (p *JavaParser) TypeTypeOrVoid() (localctx ITypeTypeOrVoidContext) {
 	localctx = NewTypeTypeOrVoidContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4859,17 +4861,17 @@ func (s *GenericMethodDeclarationContext) ToStringTree(ruleNames []string, recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *GenericMethodDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterGenericMethodDeclaration(s)
-	}
-}
-
-func (s *GenericMethodDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitGenericMethodDeclaration(s)
-	}
-}
+//func (s *GenericMethodDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterGenericMethodDeclaration(s)
+//	}
+//}
+//
+//func (s *GenericMethodDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitGenericMethodDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) GenericMethodDeclaration() (localctx IGenericMethodDeclarationContext) {
 	localctx = NewGenericMethodDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4970,17 +4972,17 @@ func (s *GenericConstructorDeclarationContext) ToStringTree(ruleNames []string, 
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *GenericConstructorDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterGenericConstructorDeclaration(s)
-	}
-}
-
-func (s *GenericConstructorDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitGenericConstructorDeclaration(s)
-	}
-}
+//func (s *GenericConstructorDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterGenericConstructorDeclaration(s)
+//	}
+//}
+//
+//func (s *GenericConstructorDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitGenericConstructorDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) GenericConstructorDeclaration() (localctx IGenericConstructorDeclarationContext) {
 	localctx = NewGenericConstructorDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5110,17 +5112,17 @@ func (s *ConstructorDeclarationContext) ToStringTree(ruleNames []string, recog a
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ConstructorDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterConstructorDeclaration(s)
-	}
-}
-
-func (s *ConstructorDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitConstructorDeclaration(s)
-	}
-}
+//func (s *ConstructorDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterConstructorDeclaration(s)
+//	}
+//}
+//
+//func (s *ConstructorDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitConstructorDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) ConstructorDeclaration() (localctx IConstructorDeclarationContext) {
 	localctx = NewConstructorDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5254,11 +5256,11 @@ func (s *FieldDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
 	}
 }
 
-func (s *FieldDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitFieldDeclaration(s)
-	}
-}
+//func (s *FieldDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitFieldDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) FieldDeclaration() (localctx IFieldDeclarationContext) {
 	localctx = NewFieldDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5380,17 +5382,18 @@ func (s *InterfaceBodyDeclarationContext) ToStringTree(ruleNames []string, recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *InterfaceBodyDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterInterfaceBodyDeclaration(s)
-	}
-}
-
-func (s *InterfaceBodyDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitInterfaceBodyDeclaration(s)
-	}
-}
+//
+//func (s *InterfaceBodyDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterInterfaceBodyDeclaration(s)
+//	}
+//}
+//
+//func (s *InterfaceBodyDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitInterfaceBodyDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) InterfaceBodyDeclaration() (localctx IInterfaceBodyDeclarationContext) {
 	localctx = NewInterfaceBodyDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5571,17 +5574,17 @@ func (s *InterfaceMemberDeclarationContext) ToStringTree(ruleNames []string, rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *InterfaceMemberDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterInterfaceMemberDeclaration(s)
-	}
-}
-
-func (s *InterfaceMemberDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitInterfaceMemberDeclaration(s)
-	}
-}
+//func (s *InterfaceMemberDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterInterfaceMemberDeclaration(s)
+//	}
+//}
+//
+//func (s *InterfaceMemberDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitInterfaceMemberDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) InterfaceMemberDeclaration() (localctx IInterfaceMemberDeclarationContext) {
 	localctx = NewInterfaceMemberDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5751,17 +5754,17 @@ func (s *ConstDeclarationContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ConstDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterConstDeclaration(s)
-	}
-}
-
-func (s *ConstDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitConstDeclaration(s)
-	}
-}
+//func (s *ConstDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterConstDeclaration(s)
+//	}
+//}
+//
+//func (s *ConstDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitConstDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) ConstDeclaration() (localctx IConstDeclarationContext) {
 	localctx = NewConstDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5899,17 +5902,17 @@ func (s *ConstantDeclaratorContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ConstantDeclaratorContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterConstantDeclarator(s)
-	}
-}
-
-func (s *ConstantDeclaratorContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitConstantDeclarator(s)
-	}
-}
+//func (s *ConstantDeclaratorContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterConstantDeclarator(s)
+//	}
+//}
+//
+//func (s *ConstantDeclaratorContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitConstantDeclarator(s)
+//	}
+//}
 
 func (p *JavaParser) ConstantDeclarator() (localctx IConstantDeclaratorContext) {
 	localctx = NewConstantDeclaratorContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6133,17 +6136,17 @@ func (s *InterfaceMethodDeclarationContext) ToStringTree(ruleNames []string, rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *InterfaceMethodDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterInterfaceMethodDeclaration(s)
-	}
-}
-
-func (s *InterfaceMethodDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitInterfaceMethodDeclaration(s)
-	}
-}
+//func (s *InterfaceMethodDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterInterfaceMethodDeclaration(s)
+//	}
+//}
+//
+//func (s *InterfaceMethodDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitInterfaceMethodDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) InterfaceMethodDeclaration() (localctx IInterfaceMethodDeclarationContext) {
 	localctx = NewInterfaceMethodDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6349,17 +6352,17 @@ func (s *InterfaceMethodModifierContext) ToStringTree(ruleNames []string, recog 
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *InterfaceMethodModifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterInterfaceMethodModifier(s)
-	}
-}
-
-func (s *InterfaceMethodModifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitInterfaceMethodModifier(s)
-	}
-}
+//func (s *InterfaceMethodModifierContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterInterfaceMethodModifier(s)
+//	}
+//}
+//
+//func (s *InterfaceMethodModifierContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitInterfaceMethodModifier(s)
+//	}
+//}
 
 func (p *JavaParser) InterfaceMethodModifier() (localctx IInterfaceMethodModifierContext) {
 	localctx = NewInterfaceMethodModifierContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6500,17 +6503,17 @@ func (s *GenericInterfaceMethodDeclarationContext) ToStringTree(ruleNames []stri
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *GenericInterfaceMethodDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterGenericInterfaceMethodDeclaration(s)
-	}
-}
-
-func (s *GenericInterfaceMethodDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitGenericInterfaceMethodDeclaration(s)
-	}
-}
+//func (s *GenericInterfaceMethodDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterGenericInterfaceMethodDeclaration(s)
+//	}
+//}
+//
+//func (s *GenericInterfaceMethodDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitGenericInterfaceMethodDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) GenericInterfaceMethodDeclaration() (localctx IGenericInterfaceMethodDeclarationContext) {
 	localctx = NewGenericInterfaceMethodDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6622,17 +6625,17 @@ func (s *VariableDeclaratorsContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableDeclaratorsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterVariableDeclarators(s)
-	}
-}
-
-func (s *VariableDeclaratorsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitVariableDeclarators(s)
-	}
-}
+//func (s *VariableDeclaratorsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterVariableDeclarators(s)
+//	}
+//}
+//
+//func (s *VariableDeclaratorsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitVariableDeclarators(s)
+//	}
+//}
 
 func (p *JavaParser) VariableDeclarators() (localctx IVariableDeclaratorsContext) {
 	localctx = NewVariableDeclaratorsContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6752,17 +6755,17 @@ func (s *VariableDeclaratorContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableDeclaratorContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterVariableDeclarator(s)
-	}
-}
-
-func (s *VariableDeclaratorContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitVariableDeclarator(s)
-	}
-}
+//func (s *VariableDeclaratorContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterVariableDeclarator(s)
+//	}
+//}
+//
+//func (s *VariableDeclaratorContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitVariableDeclarator(s)
+//	}
+//}
 
 func (p *JavaParser) VariableDeclarator() (localctx IVariableDeclaratorContext) {
 	localctx = NewVariableDeclaratorContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6875,17 +6878,17 @@ func (s *VariableDeclaratorIdContext) ToStringTree(ruleNames []string, recog ant
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableDeclaratorIdContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterVariableDeclaratorId(s)
-	}
-}
-
-func (s *VariableDeclaratorIdContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitVariableDeclaratorId(s)
-	}
-}
+//func (s *VariableDeclaratorIdContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterVariableDeclaratorId(s)
+//	}
+//}
+//
+//func (s *VariableDeclaratorIdContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitVariableDeclaratorId(s)
+//	}
+//}
 
 func (p *JavaParser) VariableDeclaratorId() (localctx IVariableDeclaratorIdContext) {
 	localctx = NewVariableDeclaratorIdContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7001,17 +7004,17 @@ func (s *VariableInitializerContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableInitializerContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterVariableInitializer(s)
-	}
-}
-
-func (s *VariableInitializerContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitVariableInitializer(s)
-	}
-}
+//func (s *VariableInitializerContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterVariableInitializer(s)
+//	}
+//}
+//
+//func (s *VariableInitializerContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitVariableInitializer(s)
+//	}
+//}
 
 func (p *JavaParser) VariableInitializer() (localctx IVariableInitializerContext) {
 	localctx = NewVariableInitializerContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7143,17 +7146,17 @@ func (s *ArrayInitializerContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArrayInitializerContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterArrayInitializer(s)
-	}
-}
-
-func (s *ArrayInitializerContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitArrayInitializer(s)
-	}
-}
+//func (s *ArrayInitializerContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterArrayInitializer(s)
+//	}
+//}
+//
+//func (s *ArrayInitializerContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitArrayInitializer(s)
+//	}
+//}
 
 func (p *JavaParser) ArrayInitializer() (localctx IArrayInitializerContext) {
 	localctx = NewArrayInitializerContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7318,17 +7321,17 @@ func (s *ClassOrInterfaceTypeContext) ToStringTree(ruleNames []string, recog ant
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassOrInterfaceTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterClassOrInterfaceType(s)
-	}
-}
-
-func (s *ClassOrInterfaceTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitClassOrInterfaceType(s)
-	}
-}
+//func (s *ClassOrInterfaceTypeContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterClassOrInterfaceType(s)
+//	}
+//}
+//
+//func (s *ClassOrInterfaceTypeContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitClassOrInterfaceType(s)
+//	}
+//}
 
 func (p *JavaParser) ClassOrInterfaceType() (localctx IClassOrInterfaceTypeContext) {
 	localctx = NewClassOrInterfaceTypeContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7492,17 +7495,17 @@ func (s *TypeArgumentContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeArgumentContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeArgument(s)
-	}
-}
-
-func (s *TypeArgumentContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeArgument(s)
-	}
-}
+//func (s *TypeArgumentContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeArgument(s)
+//	}
+//}
+//
+//func (s *TypeArgumentContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeArgument(s)
+//	}
+//}
 
 func (p *JavaParser) TypeArgument() (localctx ITypeArgumentContext) {
 	localctx = NewTypeArgumentContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7660,17 +7663,17 @@ func (s *QualifiedNameListContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *QualifiedNameListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterQualifiedNameList(s)
-	}
-}
-
-func (s *QualifiedNameListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitQualifiedNameList(s)
-	}
-}
+//func (s *QualifiedNameListContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterQualifiedNameList(s)
+//	}
+//}
+//
+//func (s *QualifiedNameListContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitQualifiedNameList(s)
+//	}
+//}
 
 func (p *JavaParser) QualifiedNameList() (localctx IQualifiedNameListContext) {
 	localctx = NewQualifiedNameListContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7784,17 +7787,17 @@ func (s *FormalParametersContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FormalParametersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterFormalParameters(s)
-	}
-}
-
-func (s *FormalParametersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitFormalParameters(s)
-	}
-}
+//func (s *FormalParametersContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterFormalParameters(s)
+//	}
+//}
+//
+//func (s *FormalParametersContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitFormalParameters(s)
+//	}
+//}
 
 func (p *JavaParser) FormalParameters() (localctx IFormalParametersContext) {
 	localctx = NewFormalParametersContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7928,17 +7931,17 @@ func (s *FormalParameterListContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FormalParameterListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterFormalParameterList(s)
-	}
-}
-
-func (s *FormalParameterListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitFormalParameterList(s)
-	}
-}
+//func (s *FormalParameterListContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterFormalParameterList(s)
+//	}
+//}
+//
+//func (s *FormalParameterListContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitFormalParameterList(s)
+//	}
+//}
 
 func (p *JavaParser) FormalParameterList() (localctx IFormalParameterListContext) {
 	localctx = NewFormalParameterListContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8109,17 +8112,17 @@ func (s *FormalParameterContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FormalParameterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterFormalParameter(s)
-	}
-}
-
-func (s *FormalParameterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitFormalParameter(s)
-	}
-}
+//func (s *FormalParameterContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterFormalParameter(s)
+//	}
+//}
+//
+//func (s *FormalParameterContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitFormalParameter(s)
+//	}
+//}
 
 func (p *JavaParser) FormalParameter() (localctx IFormalParameterContext) {
 	localctx = NewFormalParameterContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8288,17 +8291,17 @@ func (s *LastFormalParameterContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LastFormalParameterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterLastFormalParameter(s)
-	}
-}
-
-func (s *LastFormalParameterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitLastFormalParameter(s)
-	}
-}
+//func (s *LastFormalParameterContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterLastFormalParameter(s)
+//	}
+//}
+//
+//func (s *LastFormalParameterContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitLastFormalParameter(s)
+//	}
+//}
 
 func (p *JavaParser) LastFormalParameter() (localctx ILastFormalParameterContext) {
 	localctx = NewLastFormalParameterContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8432,17 +8435,17 @@ func (s *QualifiedNameContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *QualifiedNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterQualifiedName(s)
-	}
-}
-
-func (s *QualifiedNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitQualifiedName(s)
-	}
-}
+//func (s *QualifiedNameContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterQualifiedName(s)
+//	}
+//}
+//
+//func (s *QualifiedNameContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitQualifiedName(s)
+//	}
+//}
 
 func (p *JavaParser) QualifiedName() (localctx IQualifiedNameContext) {
 	localctx = NewQualifiedNameContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8577,17 +8580,17 @@ func (s *LiteralContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterLiteral(s)
-	}
-}
-
-func (s *LiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitLiteral(s)
-	}
-}
+//func (s *LiteralContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterLiteral(s)
+//	}
+//}
+//
+//func (s *LiteralContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitLiteral(s)
+//	}
+//}
 
 func (p *JavaParser) Literal() (localctx ILiteralContext) {
 	localctx = NewLiteralContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8724,17 +8727,17 @@ func (s *IntegerLiteralContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *IntegerLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterIntegerLiteral(s)
-	}
-}
-
-func (s *IntegerLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitIntegerLiteral(s)
-	}
-}
+//func (s *IntegerLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterIntegerLiteral(s)
+//	}
+//}
+//
+//func (s *IntegerLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitIntegerLiteral(s)
+//	}
+//}
 
 func (p *JavaParser) IntegerLiteral() (localctx IIntegerLiteralContext) {
 	localctx = NewIntegerLiteralContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8827,17 +8830,17 @@ func (s *FloatLiteralContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FloatLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterFloatLiteral(s)
-	}
-}
-
-func (s *FloatLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitFloatLiteral(s)
-	}
-}
+//func (s *FloatLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterFloatLiteral(s)
+//	}
+//}
+//
+//func (s *FloatLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitFloatLiteral(s)
+//	}
+//}
 
 func (p *JavaParser) FloatLiteral() (localctx IFloatLiteralContext) {
 	localctx = NewFloatLiteralContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8942,17 +8945,17 @@ func (s *AltAnnotationQualifiedNameContext) ToStringTree(ruleNames []string, rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AltAnnotationQualifiedNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterAltAnnotationQualifiedName(s)
-	}
-}
-
-func (s *AltAnnotationQualifiedNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitAltAnnotationQualifiedName(s)
-	}
-}
+//func (s *AltAnnotationQualifiedNameContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterAltAnnotationQualifiedName(s)
+//	}
+//}
+//
+//func (s *AltAnnotationQualifiedNameContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitAltAnnotationQualifiedName(s)
+//	}
+//}
 
 func (p *JavaParser) AltAnnotationQualifiedName() (localctx IAltAnnotationQualifiedNameContext) {
 	localctx = NewAltAnnotationQualifiedNameContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9104,17 +9107,17 @@ func (s *AnnotationContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterAnnotation(s)
-	}
-}
-
-func (s *AnnotationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitAnnotation(s)
-	}
-}
+//func (s *AnnotationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterAnnotation(s)
+//	}
+//}
+//
+//func (s *AnnotationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitAnnotation(s)
+//	}
+//}
 
 func (p *JavaParser) Annotation() (localctx IAnnotationContext) {
 	localctx = NewAnnotationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9270,17 +9273,17 @@ func (s *ElementValuePairsContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ElementValuePairsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterElementValuePairs(s)
-	}
-}
-
-func (s *ElementValuePairsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitElementValuePairs(s)
-	}
-}
+//func (s *ElementValuePairsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterElementValuePairs(s)
+//	}
+//}
+//
+//func (s *ElementValuePairsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitElementValuePairs(s)
+//	}
+//}
 
 func (p *JavaParser) ElementValuePairs() (localctx IElementValuePairsContext) {
 	localctx = NewElementValuePairsContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9394,17 +9397,17 @@ func (s *ElementValuePairContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ElementValuePairContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterElementValuePair(s)
-	}
-}
-
-func (s *ElementValuePairContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitElementValuePair(s)
-	}
-}
+//func (s *ElementValuePairContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterElementValuePair(s)
+//	}
+//}
+//
+//func (s *ElementValuePairContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitElementValuePair(s)
+//	}
+//}
 
 func (p *JavaParser) ElementValuePair() (localctx IElementValuePairContext) {
 	localctx = NewElementValuePairContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9519,17 +9522,17 @@ func (s *ElementValueContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ElementValueContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterElementValue(s)
-	}
-}
-
-func (s *ElementValueContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitElementValue(s)
-	}
-}
+//func (s *ElementValueContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterElementValue(s)
+//	}
+//}
+//
+//func (s *ElementValueContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitElementValue(s)
+//	}
+//}
 
 func (p *JavaParser) ElementValue() (localctx IElementValueContext) {
 	localctx = NewElementValueContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9665,17 +9668,17 @@ func (s *ElementValueArrayInitializerContext) ToStringTree(ruleNames []string, r
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ElementValueArrayInitializerContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterElementValueArrayInitializer(s)
-	}
-}
-
-func (s *ElementValueArrayInitializerContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitElementValueArrayInitializer(s)
-	}
-}
+//func (s *ElementValueArrayInitializerContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterElementValueArrayInitializer(s)
+//	}
+//}
+//
+//func (s *ElementValueArrayInitializerContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitElementValueArrayInitializer(s)
+//	}
+//}
 
 func (p *JavaParser) ElementValueArrayInitializer() (localctx IElementValueArrayInitializerContext) {
 	localctx = NewElementValueArrayInitializerContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9823,17 +9826,17 @@ func (s *AnnotationTypeDeclarationContext) ToStringTree(ruleNames []string, reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationTypeDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterAnnotationTypeDeclaration(s)
-	}
-}
-
-func (s *AnnotationTypeDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitAnnotationTypeDeclaration(s)
-	}
-}
+//func (s *AnnotationTypeDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterAnnotationTypeDeclaration(s)
+//	}
+//}
+//
+//func (s *AnnotationTypeDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitAnnotationTypeDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) AnnotationTypeDeclaration() (localctx IAnnotationTypeDeclarationContext) {
 	localctx = NewAnnotationTypeDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9953,17 +9956,17 @@ func (s *AnnotationTypeBodyContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationTypeBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterAnnotationTypeBody(s)
-	}
-}
-
-func (s *AnnotationTypeBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitAnnotationTypeBody(s)
-	}
-}
+//func (s *AnnotationTypeBodyContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterAnnotationTypeBody(s)
+//	}
+//}
+//
+//func (s *AnnotationTypeBodyContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitAnnotationTypeBody(s)
+//	}
+//}
 
 func (p *JavaParser) AnnotationTypeBody() (localctx IAnnotationTypeBodyContext) {
 	localctx = NewAnnotationTypeBodyContext(p, p.GetParserRuleContext(), p.GetState())
@@ -10096,17 +10099,17 @@ func (s *AnnotationTypeElementDeclarationContext) ToStringTree(ruleNames []strin
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationTypeElementDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterAnnotationTypeElementDeclaration(s)
-	}
-}
-
-func (s *AnnotationTypeElementDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitAnnotationTypeElementDeclaration(s)
-	}
-}
+//func (s *AnnotationTypeElementDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterAnnotationTypeElementDeclaration(s)
+//	}
+//}
+//
+//func (s *AnnotationTypeElementDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitAnnotationTypeElementDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) AnnotationTypeElementDeclaration() (localctx IAnnotationTypeElementDeclarationContext) {
 	localctx = NewAnnotationTypeElementDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -10281,17 +10284,17 @@ func (s *AnnotationTypeElementRestContext) ToStringTree(ruleNames []string, reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationTypeElementRestContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterAnnotationTypeElementRest(s)
-	}
-}
-
-func (s *AnnotationTypeElementRestContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitAnnotationTypeElementRest(s)
-	}
-}
+//func (s *AnnotationTypeElementRestContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterAnnotationTypeElementRest(s)
+//	}
+//}
+//
+//func (s *AnnotationTypeElementRestContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitAnnotationTypeElementRest(s)
+//	}
+//}
 
 func (p *JavaParser) AnnotationTypeElementRest() (localctx IAnnotationTypeElementRestContext) {
 	localctx = NewAnnotationTypeElementRestContext(p, p.GetParserRuleContext(), p.GetState())
@@ -10470,17 +10473,17 @@ func (s *AnnotationMethodOrConstantRestContext) ToStringTree(ruleNames []string,
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationMethodOrConstantRestContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterAnnotationMethodOrConstantRest(s)
-	}
-}
-
-func (s *AnnotationMethodOrConstantRestContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitAnnotationMethodOrConstantRest(s)
-	}
-}
+//func (s *AnnotationMethodOrConstantRestContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterAnnotationMethodOrConstantRest(s)
+//	}
+//}
+//
+//func (s *AnnotationMethodOrConstantRestContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitAnnotationMethodOrConstantRest(s)
+//	}
+//}
 
 func (p *JavaParser) AnnotationMethodOrConstantRest() (localctx IAnnotationMethodOrConstantRestContext) {
 	localctx = NewAnnotationMethodOrConstantRestContext(p, p.GetParserRuleContext(), p.GetState())
@@ -10592,17 +10595,17 @@ func (s *AnnotationMethodRestContext) ToStringTree(ruleNames []string, recog ant
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationMethodRestContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterAnnotationMethodRest(s)
-	}
-}
-
-func (s *AnnotationMethodRestContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitAnnotationMethodRest(s)
-	}
-}
+//func (s *AnnotationMethodRestContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterAnnotationMethodRest(s)
+//	}
+//}
+//
+//func (s *AnnotationMethodRestContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitAnnotationMethodRest(s)
+//	}
+//}
 
 func (p *JavaParser) AnnotationMethodRest() (localctx IAnnotationMethodRestContext) {
 	localctx = NewAnnotationMethodRestContext(p, p.GetParserRuleContext(), p.GetState())
@@ -10709,17 +10712,17 @@ func (s *AnnotationConstantRestContext) ToStringTree(ruleNames []string, recog a
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationConstantRestContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterAnnotationConstantRest(s)
-	}
-}
-
-func (s *AnnotationConstantRestContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitAnnotationConstantRest(s)
-	}
-}
+//func (s *AnnotationConstantRestContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterAnnotationConstantRest(s)
+//	}
+//}
+//
+//func (s *AnnotationConstantRestContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitAnnotationConstantRest(s)
+//	}
+//}
 
 func (p *JavaParser) AnnotationConstantRest() (localctx IAnnotationConstantRestContext) {
 	localctx = NewAnnotationConstantRestContext(p, p.GetParserRuleContext(), p.GetState())
@@ -10810,17 +10813,17 @@ func (s *DefaultValueContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *DefaultValueContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterDefaultValue(s)
-	}
-}
-
-func (s *DefaultValueContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitDefaultValue(s)
-	}
-}
+//func (s *DefaultValueContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterDefaultValue(s)
+//	}
+//}
+//
+//func (s *DefaultValueContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitDefaultValue(s)
+//	}
+//}
 
 func (p *JavaParser) DefaultValue() (localctx IDefaultValueContext) {
 	localctx = NewDefaultValueContext(p, p.GetParserRuleContext(), p.GetState())
@@ -10932,17 +10935,17 @@ func (s *BlockContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) 
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *BlockContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterBlock(s)
-	}
-}
-
-func (s *BlockContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitBlock(s)
-	}
-}
+//func (s *BlockContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterBlock(s)
+//	}
+//}
+//
+//func (s *BlockContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitBlock(s)
+//	}
+//}
 
 func (p *JavaParser) Block() (localctx IBlockContext) {
 	localctx = NewBlockContext(p, p.GetParserRuleContext(), p.GetState())
@@ -11072,17 +11075,17 @@ func (s *BlockStatementContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *BlockStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterBlockStatement(s)
-	}
-}
-
-func (s *BlockStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitBlockStatement(s)
-	}
-}
+//func (s *BlockStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterBlockStatement(s)
+//	}
+//}
+//
+//func (s *BlockStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitBlockStatement(s)
+//	}
+//}
 
 func (p *JavaParser) BlockStatement() (localctx IBlockStatementContext) {
 	localctx = NewBlockStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -11226,17 +11229,17 @@ func (s *LocalVariableDeclarationContext) ToStringTree(ruleNames []string, recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LocalVariableDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterLocalVariableDeclaration(s)
-	}
-}
-
-func (s *LocalVariableDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitLocalVariableDeclaration(s)
-	}
-}
+//func (s *LocalVariableDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterLocalVariableDeclaration(s)
+//	}
+//}
+//
+//func (s *LocalVariableDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitLocalVariableDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) LocalVariableDeclaration() (localctx ILocalVariableDeclarationContext) {
 	localctx = NewLocalVariableDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -11382,17 +11385,17 @@ func (s *LocalTypeDeclarationContext) ToStringTree(ruleNames []string, recog ant
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LocalTypeDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterLocalTypeDeclaration(s)
-	}
-}
-
-func (s *LocalTypeDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitLocalTypeDeclaration(s)
-	}
-}
+//func (s *LocalTypeDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterLocalTypeDeclaration(s)
+//	}
+//}
+//
+//func (s *LocalTypeDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitLocalTypeDeclaration(s)
+//	}
+//}
 
 func (p *JavaParser) LocalTypeDeclaration() (localctx ILocalTypeDeclarationContext) {
 	localctx = NewLocalTypeDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -11793,17 +11796,17 @@ func (s *StatementContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *StatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterStatement(s)
-	}
-}
-
-func (s *StatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitStatement(s)
-	}
-}
+//func (s *StatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterStatement(s)
+//	}
+//}
+//
+//func (s *StatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitStatement(s)
+//	}
+//}
 
 func (p *JavaParser) Statement() (localctx IStatementContext) {
 	localctx = NewStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -12346,17 +12349,17 @@ func (s *CatchClauseContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CatchClauseContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterCatchClause(s)
-	}
-}
-
-func (s *CatchClauseContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitCatchClause(s)
-	}
-}
+//func (s *CatchClauseContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterCatchClause(s)
+//	}
+//}
+//
+//func (s *CatchClauseContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitCatchClause(s)
+//	}
+//}
 
 func (p *JavaParser) CatchClause() (localctx ICatchClauseContext) {
 	localctx = NewCatchClauseContext(p, p.GetParserRuleContext(), p.GetState())
@@ -12502,17 +12505,17 @@ func (s *CatchTypeContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CatchTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterCatchType(s)
-	}
-}
-
-func (s *CatchTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitCatchType(s)
-	}
-}
+//func (s *CatchTypeContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterCatchType(s)
+//	}
+//}
+//
+//func (s *CatchTypeContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitCatchType(s)
+//	}
+//}
 
 func (p *JavaParser) CatchType() (localctx ICatchTypeContext) {
 	localctx = NewCatchTypeContext(p, p.GetParserRuleContext(), p.GetState())
@@ -12622,17 +12625,17 @@ func (s *FinallyBlockContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FinallyBlockContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterFinallyBlock(s)
-	}
-}
-
-func (s *FinallyBlockContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitFinallyBlock(s)
-	}
-}
+//func (s *FinallyBlockContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterFinallyBlock(s)
+//	}
+//}
+//
+//func (s *FinallyBlockContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitFinallyBlock(s)
+//	}
+//}
 
 func (p *JavaParser) FinallyBlock() (localctx IFinallyBlockContext) {
 	localctx = NewFinallyBlockContext(p, p.GetParserRuleContext(), p.GetState())
@@ -12735,17 +12738,17 @@ func (s *ResourceSpecificationContext) ToStringTree(ruleNames []string, recog an
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ResourceSpecificationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterResourceSpecification(s)
-	}
-}
-
-func (s *ResourceSpecificationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitResourceSpecification(s)
-	}
-}
+//func (s *ResourceSpecificationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterResourceSpecification(s)
+//	}
+//}
+//
+//func (s *ResourceSpecificationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitResourceSpecification(s)
+//	}
+//}
 
 func (p *JavaParser) ResourceSpecification() (localctx IResourceSpecificationContext) {
 	localctx = NewResourceSpecificationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -12873,17 +12876,17 @@ func (s *ResourcesContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ResourcesContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterResources(s)
-	}
-}
-
-func (s *ResourcesContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitResources(s)
-	}
-}
+//func (s *ResourcesContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterResources(s)
+//	}
+//}
+//
+//func (s *ResourcesContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitResources(s)
+//	}
+//}
 
 func (p *JavaParser) Resources() (localctx IResourcesContext) {
 	localctx = NewResourcesContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13039,17 +13042,17 @@ func (s *ResourceContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ResourceContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterResource(s)
-	}
-}
-
-func (s *ResourceContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitResource(s)
-	}
-}
+//func (s *ResourceContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterResource(s)
+//	}
+//}
+//
+//func (s *ResourceContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitResource(s)
+//	}
+//}
 
 func (p *JavaParser) Resource() (localctx IResourceContext) {
 	localctx = NewResourceContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13202,17 +13205,17 @@ func (s *SwitchBlockStatementGroupContext) ToStringTree(ruleNames []string, reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SwitchBlockStatementGroupContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterSwitchBlockStatementGroup(s)
-	}
-}
-
-func (s *SwitchBlockStatementGroupContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitSwitchBlockStatementGroup(s)
-	}
-}
+//func (s *SwitchBlockStatementGroupContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterSwitchBlockStatementGroup(s)
+//	}
+//}
+//
+//func (s *SwitchBlockStatementGroupContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitSwitchBlockStatementGroup(s)
+//	}
+//}
 
 func (p *JavaParser) SwitchBlockStatementGroup() (localctx ISwitchBlockStatementGroupContext) {
 	localctx = NewSwitchBlockStatementGroupContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13362,17 +13365,17 @@ func (s *SwitchLabelContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SwitchLabelContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterSwitchLabel(s)
-	}
-}
-
-func (s *SwitchLabelContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitSwitchLabel(s)
-	}
-}
+//func (s *SwitchLabelContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterSwitchLabel(s)
+//	}
+//}
+//
+//func (s *SwitchLabelContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitSwitchLabel(s)
+//	}
+//}
 
 func (p *JavaParser) SwitchLabel() (localctx ISwitchLabelContext) {
 	localctx = NewSwitchLabelContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13554,17 +13557,17 @@ func (s *ForControlContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ForControlContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterForControl(s)
-	}
-}
-
-func (s *ForControlContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitForControl(s)
-	}
-}
+//func (s *ForControlContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterForControl(s)
+//	}
+//}
+//
+//func (s *ForControlContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitForControl(s)
+//	}
+//}
 
 func (p *JavaParser) ForControl() (localctx IForControlContext) {
 	localctx = NewForControlContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13715,17 +13718,17 @@ func (s *ForInitContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ForInitContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterForInit(s)
-	}
-}
-
-func (s *ForInitContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitForInit(s)
-	}
-}
+//func (s *ForInitContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterForInit(s)
+//	}
+//}
+//
+//func (s *ForInitContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitForInit(s)
+//	}
+//}
 
 func (p *JavaParser) ForInit() (localctx IForInitContext) {
 	localctx = NewForInitContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13872,17 +13875,17 @@ func (s *EnhancedForControlContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnhancedForControlContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterEnhancedForControl(s)
-	}
-}
-
-func (s *EnhancedForControlContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitEnhancedForControl(s)
-	}
-}
+//func (s *EnhancedForControlContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterEnhancedForControl(s)
+//	}
+//}
+//
+//func (s *EnhancedForControlContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitEnhancedForControl(s)
+//	}
+//}
 
 func (p *JavaParser) EnhancedForControl() (localctx IEnhancedForControlContext) {
 	localctx = NewEnhancedForControlContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14007,17 +14010,17 @@ func (s *ParExpressionContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ParExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterParExpression(s)
-	}
-}
-
-func (s *ParExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitParExpression(s)
-	}
-}
+//func (s *ParExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterParExpression(s)
+//	}
+//}
+//
+//func (s *ParExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitParExpression(s)
+//	}
+//}
 
 func (p *JavaParser) ParExpression() (localctx IParExpressionContext) {
 	localctx = NewParExpressionContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14133,17 +14136,17 @@ func (s *ExpressionListContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ExpressionListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterExpressionList(s)
-	}
-}
-
-func (s *ExpressionListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitExpressionList(s)
-	}
-}
+//func (s *ExpressionListContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterExpressionList(s)
+//	}
+//}
+//
+//func (s *ExpressionListContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitExpressionList(s)
+//	}
+//}
 
 func (p *JavaParser) ExpressionList() (localctx IExpressionListContext) {
 	localctx = NewExpressionListContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14275,11 +14278,11 @@ func (s *MethodCallContext) EnterRule(listener antlr.ParseTreeListener) {
 	}
 }
 
-func (s *MethodCallContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitMethodCall(s)
-	}
-}
+//func (s *MethodCallContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitMethodCall(s)
+//	}
+//}
 
 func (p *JavaParser) MethodCall() (localctx IMethodCallContext) {
 	localctx = NewMethodCallContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14831,17 +14834,17 @@ func (s *ExpressionContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterExpression(s)
-	}
-}
-
-func (s *ExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitExpression(s)
-	}
-}
+//func (s *ExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterExpression(s)
+//	}
+//}
+//
+//func (s *ExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitExpression(s)
+//	}
+//}
 
 func (p *JavaParser) Expression() (localctx IExpressionContext) {
 	return p.expression(0)
@@ -15673,17 +15676,17 @@ func (s *LambdaExpressionContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LambdaExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterLambdaExpression(s)
-	}
-}
-
-func (s *LambdaExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitLambdaExpression(s)
-	}
-}
+//func (s *LambdaExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterLambdaExpression(s)
+//	}
+//}
+//
+//func (s *LambdaExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitLambdaExpression(s)
+//	}
+//}
 
 func (p *JavaParser) LambdaExpression() (localctx ILambdaExpressionContext) {
 	localctx = NewLambdaExpressionContext(p, p.GetParserRuleContext(), p.GetState())
@@ -15802,17 +15805,17 @@ func (s *LambdaParametersContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LambdaParametersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterLambdaParameters(s)
-	}
-}
-
-func (s *LambdaParametersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitLambdaParameters(s)
-	}
-}
+//func (s *LambdaParametersContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterLambdaParameters(s)
+//	}
+//}
+//
+//func (s *LambdaParametersContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitLambdaParameters(s)
+//	}
+//}
 
 func (p *JavaParser) LambdaParameters() (localctx ILambdaParametersContext) {
 	localctx = NewLambdaParametersContext(p, p.GetParserRuleContext(), p.GetState())
@@ -15971,17 +15974,17 @@ func (s *LambdaBodyContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LambdaBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterLambdaBody(s)
-	}
-}
-
-func (s *LambdaBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitLambdaBody(s)
-	}
-}
+//func (s *LambdaBodyContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterLambdaBody(s)
+//	}
+//}
+//
+//func (s *LambdaBodyContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitLambdaBody(s)
+//	}
+//}
 
 func (p *JavaParser) LambdaBody() (localctx ILambdaBodyContext) {
 	localctx = NewLambdaBodyContext(p, p.GetParserRuleContext(), p.GetState())
@@ -16162,17 +16165,17 @@ func (s *PrimaryContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *PrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterPrimary(s)
-	}
-}
-
-func (s *PrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitPrimary(s)
-	}
-}
+//func (s *PrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterPrimary(s)
+//	}
+//}
+//
+//func (s *PrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitPrimary(s)
+//	}
+//}
 
 func (p *JavaParser) Primary() (localctx IPrimaryContext) {
 	localctx = NewPrimaryContext(p, p.GetParserRuleContext(), p.GetState())
@@ -16387,17 +16390,17 @@ func (s *ClassTypeContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterClassType(s)
-	}
-}
-
-func (s *ClassTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitClassType(s)
-	}
-}
+//func (s *ClassTypeContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterClassType(s)
+//	}
+//}
+//
+//func (s *ClassTypeContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitClassType(s)
+//	}
+//}
 
 func (p *JavaParser) ClassType() (localctx IClassTypeContext) {
 	localctx = NewClassTypeContext(p, p.GetParserRuleContext(), p.GetState())
@@ -16558,17 +16561,17 @@ func (s *CreatorContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CreatorContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterCreator(s)
-	}
-}
-
-func (s *CreatorContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitCreator(s)
-	}
-}
+//func (s *CreatorContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterCreator(s)
+//	}
+//}
+//
+//func (s *CreatorContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitCreator(s)
+//	}
+//}
 
 func (p *JavaParser) Creator() (localctx ICreatorContext) {
 	localctx = NewCreatorContext(p, p.GetParserRuleContext(), p.GetState())
@@ -16737,17 +16740,17 @@ func (s *CreatedNameContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CreatedNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterCreatedName(s)
-	}
-}
-
-func (s *CreatedNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitCreatedName(s)
-	}
-}
+//func (s *CreatedNameContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterCreatedName(s)
+//	}
+//}
+//
+//func (s *CreatedNameContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitCreatedName(s)
+//	}
+//}
 
 func (p *JavaParser) CreatedName() (localctx ICreatedNameContext) {
 	localctx = NewCreatedNameContext(p, p.GetParserRuleContext(), p.GetState())
@@ -16905,17 +16908,17 @@ func (s *InnerCreatorContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *InnerCreatorContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterInnerCreator(s)
-	}
-}
-
-func (s *InnerCreatorContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitInnerCreator(s)
-	}
-}
+//func (s *InnerCreatorContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterInnerCreator(s)
+//	}
+//}
+//
+//func (s *InnerCreatorContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitInnerCreator(s)
+//	}
+//}
 
 func (p *JavaParser) InnerCreator() (localctx IInnerCreatorContext) {
 	localctx = NewInnerCreatorContext(p, p.GetParserRuleContext(), p.GetState())
@@ -17057,17 +17060,17 @@ func (s *ArrayCreatorRestContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArrayCreatorRestContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterArrayCreatorRest(s)
-	}
-}
-
-func (s *ArrayCreatorRestContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitArrayCreatorRest(s)
-	}
-}
+//func (s *ArrayCreatorRestContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterArrayCreatorRest(s)
+//	}
+//}
+//
+//func (s *ArrayCreatorRestContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitArrayCreatorRest(s)
+//	}
+//}
 
 func (p *JavaParser) ArrayCreatorRest() (localctx IArrayCreatorRestContext) {
 	localctx = NewArrayCreatorRestContext(p, p.GetParserRuleContext(), p.GetState())
@@ -17256,17 +17259,17 @@ func (s *ClassCreatorRestContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassCreatorRestContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterClassCreatorRest(s)
-	}
-}
-
-func (s *ClassCreatorRestContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitClassCreatorRest(s)
-	}
-}
+//func (s *ClassCreatorRestContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterClassCreatorRest(s)
+//	}
+//}
+//
+//func (s *ClassCreatorRestContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitClassCreatorRest(s)
+//	}
+//}
 
 func (p *JavaParser) ClassCreatorRest() (localctx IClassCreatorRestContext) {
 	localctx = NewClassCreatorRestContext(p, p.GetParserRuleContext(), p.GetState())
@@ -17373,17 +17376,17 @@ func (s *ExplicitGenericInvocationContext) ToStringTree(ruleNames []string, reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ExplicitGenericInvocationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterExplicitGenericInvocation(s)
-	}
-}
-
-func (s *ExplicitGenericInvocationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitExplicitGenericInvocation(s)
-	}
-}
+//func (s *ExplicitGenericInvocationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterExplicitGenericInvocation(s)
+//	}
+//}
+//
+//func (s *ExplicitGenericInvocationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitExplicitGenericInvocation(s)
+//	}
+//}
 
 func (p *JavaParser) ExplicitGenericInvocation() (localctx IExplicitGenericInvocationContext) {
 	localctx = NewExplicitGenericInvocationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -17482,17 +17485,17 @@ func (s *TypeArgumentsOrDiamondContext) ToStringTree(ruleNames []string, recog a
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeArgumentsOrDiamondContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeArgumentsOrDiamond(s)
-	}
-}
-
-func (s *TypeArgumentsOrDiamondContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeArgumentsOrDiamond(s)
-	}
-}
+//func (s *TypeArgumentsOrDiamondContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeArgumentsOrDiamond(s)
+//	}
+//}
+//
+//func (s *TypeArgumentsOrDiamondContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeArgumentsOrDiamond(s)
+//	}
+//}
 
 func (p *JavaParser) TypeArgumentsOrDiamond() (localctx ITypeArgumentsOrDiamondContext) {
 	localctx = NewTypeArgumentsOrDiamondContext(p, p.GetParserRuleContext(), p.GetState())
@@ -17604,17 +17607,17 @@ func (s *NonWildcardTypeArgumentsOrDiamondContext) ToStringTree(ruleNames []stri
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *NonWildcardTypeArgumentsOrDiamondContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterNonWildcardTypeArgumentsOrDiamond(s)
-	}
-}
-
-func (s *NonWildcardTypeArgumentsOrDiamondContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitNonWildcardTypeArgumentsOrDiamond(s)
-	}
-}
+//func (s *NonWildcardTypeArgumentsOrDiamondContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterNonWildcardTypeArgumentsOrDiamond(s)
+//	}
+//}
+//
+//func (s *NonWildcardTypeArgumentsOrDiamondContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitNonWildcardTypeArgumentsOrDiamond(s)
+//	}
+//}
 
 func (p *JavaParser) NonWildcardTypeArgumentsOrDiamond() (localctx INonWildcardTypeArgumentsOrDiamondContext) {
 	localctx = NewNonWildcardTypeArgumentsOrDiamondContext(p, p.GetParserRuleContext(), p.GetState())
@@ -17726,17 +17729,17 @@ func (s *NonWildcardTypeArgumentsContext) ToStringTree(ruleNames []string, recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *NonWildcardTypeArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterNonWildcardTypeArguments(s)
-	}
-}
-
-func (s *NonWildcardTypeArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitNonWildcardTypeArguments(s)
-	}
-}
+//func (s *NonWildcardTypeArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterNonWildcardTypeArguments(s)
+//	}
+//}
+//
+//func (s *NonWildcardTypeArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitNonWildcardTypeArguments(s)
+//	}
+//}
 
 func (p *JavaParser) NonWildcardTypeArguments() (localctx INonWildcardTypeArgumentsContext) {
 	localctx = NewNonWildcardTypeArgumentsContext(p, p.GetParserRuleContext(), p.GetState())
@@ -17852,17 +17855,17 @@ func (s *TypeListContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeList(s)
-	}
-}
-
-func (s *TypeListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeList(s)
-	}
-}
+//func (s *TypeListContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeList(s)
+//	}
+//}
+//
+//func (s *TypeListContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeList(s)
+//	}
+//}
 
 func (p *JavaParser) TypeList() (localctx ITypeListContext) {
 	localctx = NewTypeListContext(p, p.GetParserRuleContext(), p.GetState())
@@ -18017,17 +18020,17 @@ func (s *TypeTypeContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeType(s)
-	}
-}
-
-func (s *TypeTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeType(s)
-	}
-}
+//func (s *TypeTypeContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeType(s)
+//	}
+//}
+//
+//func (s *TypeTypeContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeType(s)
+//	}
+//}
 
 func (p *JavaParser) TypeType() (localctx ITypeTypeContext) {
 	localctx = NewTypeTypeContext(p, p.GetParserRuleContext(), p.GetState())
@@ -18204,17 +18207,17 @@ func (s *PrimitiveTypeContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *PrimitiveTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterPrimitiveType(s)
-	}
-}
-
-func (s *PrimitiveTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitPrimitiveType(s)
-	}
-}
+//func (s *PrimitiveTypeContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterPrimitiveType(s)
+//	}
+//}
+//
+//func (s *PrimitiveTypeContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitPrimitiveType(s)
+//	}
+//}
 
 func (p *JavaParser) PrimitiveType() (localctx IPrimitiveTypeContext) {
 	localctx = NewPrimitiveTypeContext(p, p.GetParserRuleContext(), p.GetState())
@@ -18338,17 +18341,17 @@ func (s *TypeArgumentsContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterTypeArguments(s)
-	}
-}
-
-func (s *TypeArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitTypeArguments(s)
-	}
-}
+//func (s *TypeArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterTypeArguments(s)
+//	}
+//}
+//
+//func (s *TypeArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitTypeArguments(s)
+//	}
+//}
 
 func (p *JavaParser) TypeArguments() (localctx ITypeArgumentsContext) {
 	localctx = NewTypeArgumentsContext(p, p.GetParserRuleContext(), p.GetState())
@@ -18470,17 +18473,17 @@ func (s *SuperSuffixContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SuperSuffixContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterSuperSuffix(s)
-	}
-}
-
-func (s *SuperSuffixContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitSuperSuffix(s)
-	}
-}
+//func (s *SuperSuffixContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterSuperSuffix(s)
+//	}
+//}
+//
+//func (s *SuperSuffixContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitSuperSuffix(s)
+//	}
+//}
 
 func (p *JavaParser) SuperSuffix() (localctx ISuperSuffixContext) {
 	localctx = NewSuperSuffixContext(p, p.GetParserRuleContext(), p.GetState())
@@ -18615,17 +18618,17 @@ func (s *ExplicitGenericInvocationSuffixContext) ToStringTree(ruleNames []string
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ExplicitGenericInvocationSuffixContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterExplicitGenericInvocationSuffix(s)
-	}
-}
-
-func (s *ExplicitGenericInvocationSuffixContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitExplicitGenericInvocationSuffix(s)
-	}
-}
+//func (s *ExplicitGenericInvocationSuffixContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterExplicitGenericInvocationSuffix(s)
+//	}
+//}
+//
+//func (s *ExplicitGenericInvocationSuffixContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitExplicitGenericInvocationSuffix(s)
+//	}
+//}
 
 func (p *JavaParser) ExplicitGenericInvocationSuffix() (localctx IExplicitGenericInvocationSuffixContext) {
 	localctx = NewExplicitGenericInvocationSuffixContext(p, p.GetParserRuleContext(), p.GetState())
@@ -18744,17 +18747,17 @@ func (s *ArgumentsContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.EnterArguments(s)
-	}
-}
-
-func (s *ArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaParserListener); ok {
-		listenerT.ExitArguments(s)
-	}
-}
+//func (s *ArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.EnterArguments(s)
+//	}
+//}
+//
+//func (s *ArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaParserListener); ok {
+//		listenerT.ExitArguments(s)
+//	}
+//}
 
 func (p *JavaParser) Arguments() (localctx IArgumentsContext) {
 	localctx = NewArgumentsContext(p, p.GetParserRuleContext(), p.GetState())

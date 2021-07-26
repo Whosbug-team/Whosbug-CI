@@ -2,6 +2,8 @@ package whosbugAssigns
 
 import (
 	javaParser "anrlr4_ast/java"
+	"fmt"
+	"time"
 )
 
 /* analyzeCommitDiff
@@ -15,6 +17,7 @@ import (
  * @function_mark PASS
 */
 func analyzeCommitDiff(projectId string, CommitDiffs []DiffParsedType, commitId string) {
+	t := time.Now()
 	for index := range CommitDiffs {
 		CommitDiffs[index].CommitId = commitId
 		// 处理后的源码路径
@@ -29,6 +32,7 @@ func analyzeCommitDiff(projectId string, CommitDiffs []DiffParsedType, commitId 
 		}
 		CommitDiffs[index].DiffContent = objects
 	}
+	fmt.Println("analysCommitdiff cost ", commitId, time.Since(t))
 }
 
 // addObjectFromChangeLineNumber

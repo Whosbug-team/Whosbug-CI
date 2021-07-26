@@ -24,9 +24,7 @@ func parseDiff(data string) []DiffParsedType {
 	t := time.Now()
 	patDiff, _ := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
 	patDiffPart, _ := regexp.Compile(`(@@\ .*?\ @@)`)
-	t1 := time.Now()
 	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
-	fmt.Println("findAllStringSubmatch cost ", time.Since(t1))
 	diffParsedList := make([]DiffParsedType, 0)
 	indexList := patDiff.FindAllStringIndex(data, -1)
 
