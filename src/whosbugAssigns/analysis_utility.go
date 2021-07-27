@@ -24,7 +24,9 @@ func analyzeCommitDiff(projectId string, CommitDiffs []DiffParsedType, commitId 
 		tempFile := CommitDiffs[index].DiffFilePath
 		// diff的原始路径
 		filePath := CommitDiffs[index].DiffFile
+		t1 := time.Now()
 		antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
+		fmt.Println("antlrAnalysis cost", time.Since(t1))
 		changeLineNumbers := CommitDiffs[index].ChangeLineNumbers
 		objects := make(map[int]map[string]string)
 		for _, changeLineNumber := range changeLineNumbers {
@@ -32,7 +34,7 @@ func analyzeCommitDiff(projectId string, CommitDiffs []DiffParsedType, commitId 
 		}
 		CommitDiffs[index].DiffContent = objects
 	}
-	fmt.Println("analysCommitdiff cost ", commitId, time.Since(t))
+	fmt.Println("analyzeCommitDiff cost ", commitId, time.Since(t))
 }
 
 // addObjectFromChangeLineNumber
@@ -53,14 +55,14 @@ func addObjectFromChangeLineNumber(projectId string, filePath string, objects ma
 			return objects
 		}
 	}
-	childHashCode := hashCode64(projectId, changeMethod.MethodName, filePath)
+	childHashCode := fmt.Sprintf("%x", hashCode64([]byte(projectId), []byte(changeMethod.MethodName), []byte(filePath)))
 	parent := changeMethod.MasterObject
 	objects[changeMethod.StartLine] = make(map[string]string)
 	objects[changeMethod.StartLine] = map[string]string{
 		"name":        changeMethod.MethodName,
 		"hash":        childHashCode,
 		"parent_name": parent.ObjectName,
-		"parent_hash": hashCode64(projectId, parent.ObjectName, filePath),
+		"parent_hash": fmt.Sprintf("%x", hashCode64([]byte(projectId), []byte(parent.ObjectName), []byte(filePath))),
 	}
 	return objects
 }
@@ -73,8 +75,7 @@ func addObjectFromChangeLineNumber(projectId string, filePath string, objects ma
  * @author KevinMatt 2021-07-25 14:11:45
  * @function_mark PASS
  */
-func findChangedMethod(changeLineNumber ChangeLineNumberType, antlrAnalyzeRes javaParser.AnalysisInfoType) javaParser.MethodInfoType {
-	var changeMethodInfo javaParser.MethodInfoType
+func findChangedMethod(changeLineNumber ChangeLineNumberType, antlrAnalyzeRes javaParser.AnalysisInfoType) (changeMethodInfo javaParser.MethodInfoType) {
 	startLineNumbers := make([]int, 0)
 	for _, part := range antlrAnalyzeRes.AstInfoList.Methods {
 		startLineNumbers = append(startLineNumbers, part.StartLine)
@@ -83,7 +84,7 @@ func findChangedMethod(changeLineNumber ChangeLineNumberType, antlrAnalyzeRes ja
 	if resIndex > -1 {
 		changeMethodInfo = antlrAnalyzeRes.AstInfoList.Methods[resIndex]
 	}
-	return changeMethodInfo
+	return
 }
 
 // findIntervalIndex

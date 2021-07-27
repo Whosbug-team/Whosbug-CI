@@ -37,6 +37,7 @@ func Analysis(repoPath, branchName, projectId string) []CommitParsedType {
 			nextCommitLeftIndex := commits[index+1].CommitLeftIndex
 			diffPark = releaseDiff.Diff[commit.CommitLeftIndex:nextCommitLeftIndex]
 		}
+		// 解析diff信息
 		commitDiffs := parseDiff(diffPark)
 		// commitDiffs切片引用传递，不需返回值
 		analyzeCommitDiff(projectId, commitDiffs, commit.Commit)
@@ -45,18 +46,4 @@ func Analysis(repoPath, branchName, projectId string) []CommitParsedType {
 	}
 	fmt.Println("Analysis cost: ", time.Since(t))
 	return parsedCommits
-}
-
-func getDiffParkList(commits []CommitParsedType, releaseDiff ReleaseDiffType) (diffParkList []string) {
-	for index := range commits {
-		commit := commits[index]
-		var diffParkList []string
-		if index == len(commits)-1 {
-			diffParkList = append(diffParkList, releaseDiff.Diff[commit.CommitLeftIndex:])
-		} else {
-			nextCommitLeftIndex := commits[index+1].CommitLeftIndex
-			diffParkList = append(diffParkList, releaseDiff.Diff[commit.CommitLeftIndex:nextCommitLeftIndex])
-		}
-	}
-	return diffParkList
 }

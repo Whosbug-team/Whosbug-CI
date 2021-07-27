@@ -55,6 +55,7 @@ func executeJava(targetFilePath string) javaparser.AnalysisInfoType {
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	p := javaparser.NewJavaParser(stream)
 	p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
+
 	p.BuildParseTrees = true
 	tree := p.CompilationUnit()
 	listener := NewTreeShapeListener()

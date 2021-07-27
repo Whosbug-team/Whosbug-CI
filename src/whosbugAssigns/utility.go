@@ -146,7 +146,7 @@ func Result(resCommits []CommitParsedType, projectId string, releaseVersion stri
  * @author KevinMatt 2021-07-26 20:49:17
  * @function_mark
 */
-func hashCode64(projectId string, objectName string, filePath string) string {
-	text := projectId + objectName + filePath
-	return string(sha256.New().Sum([]byte(text)))
+func hashCode64(projectId, objectName, filePath []byte) (text [32]byte) {
+	text = sha256.Sum256(append(append(projectId, objectName...), filePath...))
+	return
 }

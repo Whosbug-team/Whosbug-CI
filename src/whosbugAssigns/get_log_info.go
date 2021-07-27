@@ -55,14 +55,18 @@ func getLogInfo(repoPath, branchName, projectId string) ReleaseDiffType {
  * @function_mark
 */
 func getDiffInfo(lastReleaseCommitHash, newReleaseCommitHash string) (diffInfo string, commitInfo string) {
+
 	if lastReleaseCommitHash == "" {
 		diffInfo = execCommandOutput("git", "log", "--full-diff", "-p", "-U1000", "--pretty=raw", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
 		commitInfo = execCommandOutput("git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
 	} else {
+		t := time.Now()
 		diffInfo = execCommandOutput("git", "log", "--full-diff", "-p", "-U1000", "--pretty=raw")
 		commitInfo = execCommandOutput("git", "log", "--pretty=format:%H,%ce,%cn,%cd")
 		fmt.Println("last release's Commit hash: ", lastReleaseCommitHash)
+		fmt.Println("ExecLog cost ", time.Since(t))
 	}
 	fmt.Println("new release's Commit hash: ", newReleaseCommitHash)
+
 	return
 }
