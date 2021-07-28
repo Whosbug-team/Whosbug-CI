@@ -81,5 +81,7 @@ type DiffInfoType struct {
 	diffHeadLineNumber int
 	DiffFilePath       string
 	DiffFileName       string
-	changeLineList     []ChangeLineNumberType
+	ChangeLineNumbers  []ChangeLineNumberType
+	CommitId           string
+	DiffContent        map[int]map[string]string
 }

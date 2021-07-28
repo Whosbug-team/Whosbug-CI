@@ -3,9 +3,12 @@ package whosbugAssigns
 import (
 	"bufio"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"path"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -30,54 +33,75 @@ func Analysis(repoPath, branchName, projectId string) []CommitParsedType {
 	releaseDiff := getLogInfo(repoPath, branchName, projectId)
 	// 解析logCommit
 	commitInfoList := parseCommit(releaseDiff.DiffPath, releaseDiff.CommitInfoPath)
-	// 线性读获取所有的diff起始行
 	divideCommitDiff(commitInfoList)
+	processMainMethod(commitInfoList, projectId)
+	// 线性读获取所有的diff起始行
 	// diff送入协程
-	processMain(commitInfoList)
+	//processMain(commitInfoList)
 
-	//var commits []CommitParsedType
-	//var parsedCommits []CommitParsedType
-	//for index := range commits {
-	//	commit := commits[index]
-	//	var diffPark string
-	//	if index == len(commits)-1 {
-	//		diffPark = releaseDiff.DiffPath[commit.CommitLeftIndex:]
-	//	} else {
-	//		nextCommitLeftIndex := commits[index+1].CommitLeftIndex
-	//		diffPark = releaseDiff.DiffPath[commit.CommitLeftIndex:nextCommitLeftIndex]
-	//	}
-	//	// 解析diff信息
-	//	commitDiffs := parseDiff(diffPark)
-	//	// commitDiffs切片引用传递，不需返回值
-	//	analyzeCommitDiff(projectId, commitDiffs, commit.Commit)
-	//	commit.CommitDiffs = append(commit.CommitDiffs, commitDiffs...)
-	//	parsedCommits = append(parsedCommits, commit)
-	//}
 	fmt.Println("Analysis cost: ", time.Since(t))
 	//return parsedCommits
 	return nil
 }
 
+func processACommit(commitInfo CommitInfoType) {
+
+}
+func processMainMethod(commitInfoList []CommitInfoType, projectId string) {
+	fd, _ := os.Open(workPath + "\\full-res")
+	fileReader := bufio.NewReader(fd)
+	lineNumber := 1
+	index := 0
+	var commitFull []string
+	for {
+		line, _, err := fileReader.ReadLine()
+		if err == io.EOF {
+			break
+		}
+		if lineNumber >= commitInfoList[index].StartLineNumber && lineNumber < commitInfoList[index+1].StartLineNumber {
+			commitFull = append(commitFull, string(line))
+		} else if lineNumber == commitInfoList[index+1].StartLineNumber {
+			commitDiffs := parseDiff(strings.Join(commitFull, "\n"))
+			analyzeCommitDiff(projectId, commitDiffs, commitInfoList[index].commitHash)
+
+			index++
+		}
+		lineNumber++
+	}
+}
+
 func processMain(commitInfoList []CommitInfoType) {
+	fd, _ := os.Open(workPath + "\\full-res")
+	fileScanner := bufio.NewScanner(fd)
+
 	for _, commitInfo := range commitInfoList {
 		for index := range commitInfo.DiffInfoList {
 			if index == len(commitInfo.DiffInfoList)-1 {
 				continue
 			}
-			processDiff(commitInfo.DiffInfoList[index], commitInfo.DiffInfoList[index+1])
+			processDiff(fileScanner, commitInfo.DiffInfoList[index], commitInfo.DiffInfoList[index+1], commitInfo.commitHash)
 		}
+		flag = 1
 	}
+	fd.Close()
 }
-func processDiff(diffInfo1, diffInfo2 DiffInfoType) {
-	data := readFileByLineNumber(workPath+"\\full-res", diffInfo1.diffHeadLineNumber, diffInfo2.diffHeadLineNumber)
-	fmt.Println(data)
-	return
+
+func processDiff(fileScanner *bufio.Scanner, diffInfo1, diffInfo2 DiffInfoType, commitHash string) {
+	//data := withScanner(strings.NewReader(workPath+"\\full-res"), int64(diffInfo1.diffHeadLineNumber), int64(diffInfo2.diffHeadLineNumber))
+	data := readFileByLineNumber(fileScanner, diffInfo1.diffHeadLineNumber, diffInfo2.diffHeadLineNumber)
+	fd, _ := os.OpenFile("SourceCode\\"+commitHash+diffInfo1.DiffFileName, os.O_CREATE|os.O_RDWR|os.O_SYNC, os.ModePerm)
+	_, err := fd.WriteString(strings.Join(data, "\n"))
+	if err != nil {
+		log.Println(err)
+	}
 }
 func divideCommitDiff(commitInfoList []CommitInfoType) {
 	patDiff, _ := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
 	getDiffListPerCommit1(commitInfoList, patDiff)
 	return
 }
+
+var flag int = 1
 
 func getDiffListPerCommit1(commitInfoList []CommitInfoType, patDiff *regexp.Regexp) {
 	fd, _ := os.Open(workPath + "\\full-res")
@@ -103,42 +127,42 @@ func getDiffListPerCommit1(commitInfoList []CommitInfoType, patDiff *regexp.Rege
 	}
 }
 
-//func getDiffListPerCommit(StartLineNumber int, EndLineNumber int, patDiff, patDiffPart *regexp.Regexp) []DiffInfoType {
-//	fd, _ := os.Open(workPath + "\\full-res")
-//	fileScanner := bufio.NewScanner(fd)
-//	lineNumber := 1
-//	var diffInfoList []DiffInfoType
-//	for fileScanner.Scan() {
-//		if lineNumber >= StartLineNumber && lineNumber < EndLineNumber {
-//			var diffInfo DiffInfoType
-//			diffRes := patDiff.FindStringSubmatch(fileScanner.Text())
-//			if diffRes != nil {
-//				diffInfo.StartLineNumber = lineNumber
-//				diffInfo.diffHeadLineNumber = lineNumber + 5
-//				diffInfo.DiffFilePath = diffRes[2]
-//				diffInfo.DiffFileName = path.Base(diffRes[2])
-//				diffInfoList = append(diffInfoList, diffInfo)
-//			}
-//		} else if lineNumber >= EndLineNumber {
-//			break
-//		}
-//		lineNumber++
-//	}
-//	return diffInfoList
-//}
-func readFileByLineNumber(filePath string, lineNumberStart int, lineNumberEnd int) [][]byte {
-	var res [][]byte
-	fd, _ := os.Open(filePath)
-	fileScanner := bufio.NewScanner(fd)
-	lineCount := 1
+func readFileByLineNumber(fileScanner *bufio.Scanner, lineNumberStart int, lineNumberEnd int) []string {
+	var res []string
+	lineCount := 0
+	if flag == 1 {
+		lineCount = lineNumberStart
+		flag = 0
+	}
 	for fileScanner.Scan() {
-		if lineCount >= lineNumberStart && lineCount < lineNumberEnd {
-			res = append(res, fileScanner.Bytes())
-		} else if lineCount >= lineNumberEnd {
+		if lineCount <= lineNumberEnd-lineNumberStart && flag == 0 {
+			res = append(res, fileScanner.Text())
+		} else {
 			break
 		}
 		lineCount++
 	}
-	defer fd.Close()
 	return res
 }
+
+//func ReadFile(filePath string, handle func(string)) error {
+//	f, err := os.Open(filePath)
+//	defer f.Close()
+//	if err != nil {
+//		return err
+//	}
+//	buf := bufio.NewReader(f)
+//
+//	for {
+//		line, _, err := buf.ReadLine("\n")
+//		lineTrim := strings.TrimSpace(string(line))
+//		handle(lineTrim)
+//		if err != nil {
+//			if err == io.EOF {
+//				return nil
+//			}
+//			return err
+//		}
+//		return nil
+//	}
+//}
