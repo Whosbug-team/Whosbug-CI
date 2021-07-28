@@ -1,7 +1,10 @@
 package whosbugAssigns
 
 import (
+	"bufio"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"path"
 	"regexp"
@@ -92,26 +95,80 @@ func parseDiff(data string) []DiffParsedType {
  * @author KevinMatt 2021-07-26 20:52:13
  * @function_mark PASS
 */
-func parseCommit(data string, commitInfos []string) []CommitParsedType {
+//func parseCommit1(data string, commitInfos []string) []CommitParsedType {
+//	t := time.Now()
+//	patCommit, _ := regexp.Compile(parCommitPattern)
+//	rawCommits := patCommit.FindAllStringSubmatch(data, -1)
+//	indexList := patCommit.FindAllStringSubmatchIndex(data, -1)
+//	var parsedCommitList []CommitParsedType
+//	for index, commitInfoLine := 0, commitInfos[0]; index < len(rawCommits) && index < len(commitInfos); index++ {
+//		commitInfoLine = commitInfos[index]
+//		infoList := strings.Split(commitInfoLine, ",")
+//		timeList := strings.Split(infoList[3][4:], " ")
+//		var parsedCommit CommitParsedType
+//		parsedCommit.CommitLeftIndex = indexList[index][0]
+//		parsedCommit.Commit = infoList[0]
+//		parsedCommit.CommitTime = toIso8601(timeList)
+//		parsedCommit.CommitterInfo.Name = infoList[2]
+//		parsedCommit.CommitterInfo.Email = infoList[1]
+//		parsedCommitList = append(parsedCommitList, parsedCommit)
+//	}
+//	fmt.Println("parse COM cost ", time.Since(t))
+//	return parsedCommitList
+//}
+
+/* parseCommit
+/* @Description: 解析commit信息
+ * @param diffInfoPath
+ * @param commitInfoPath
+ * @return []CommitInfoType
+ * @author KevinMatt 2021-07-28 14:12:06
+ * @function_mark PASS
+*/
+func parseCommit(diffInfoPath string, commitInfoPath string) []CommitInfoType {
 	t := time.Now()
 	patCommit, _ := regexp.Compile(parCommitPattern)
-	rawCommits := patCommit.FindAllStringSubmatch(data, -1)
-	indexList := patCommit.FindAllStringSubmatchIndex(data, -1)
-	var parsedCommitList []CommitParsedType
-	for index, commitInfoLine := 0, commitInfos[0]; index < len(rawCommits) && index < len(commitInfos); index++ {
-		commitInfoLine = commitInfos[index]
-		infoList := strings.Split(commitInfoLine, ",")
-		timeList := strings.Split(infoList[3][4:], " ")
-		var parsedCommit CommitParsedType
-		parsedCommit.CommitLeftIndex = indexList[index][0]
-		parsedCommit.Commit = infoList[0]
-		parsedCommit.CommitTime = toIso8601(timeList)
-		parsedCommit.CommitterInfo.Name = infoList[2]
-		parsedCommit.CommitterInfo.Email = infoList[1]
-		parsedCommitList = append(parsedCommitList, parsedCommit)
+	// 读diff
+	diffFileHandle, err := os.Open(diffInfoPath)
+	commitFileHandle, err := os.Open(commitInfoPath)
+	if err != nil {
+		log.Println(err)
+		return nil
 	}
-	fmt.Println("parse COM cost ", time.Since(t))
-	return parsedCommitList
+	defer diffFileHandle.Close()
+	defer commitFileHandle.Close()
+	lineReaderCommit := bufio.NewReader(commitFileHandle)
+	lineReaderDiff := bufio.NewReader(diffFileHandle)
+	lineNumber := 1
+	var commitInfoList []CommitInfoType
+	for {
+		line, _, err := lineReaderDiff.ReadLine()
+		if err == io.EOF {
+			break
+		}
+		res := patCommit.FindString(string(line))
+		if res != "" {
+			// 匹配到一个commit，从commitinfo读一行
+			commitLine, _, err := lineReaderCommit.ReadLine()
+			if err == io.EOF {
+				break
+			}
+			var commitInfo CommitInfoType
+			splitInfo := strings.Split(string(commitLine), ",")
+			if splitInfo == nil {
+				continue
+			}
+			commitInfo.StartLineNumber = lineNumber
+			commitInfo.commitHash = splitInfo[0]
+			commitInfo.CommitterEmail = splitInfo[1]
+			commitInfo.committerName = splitInfo[2]
+			commitInfo.CommitTime = toIso8601(strings.Split(splitInfo[3][4:], " "))
+			commitInfoList = append(commitInfoList, commitInfo)
+		}
+		lineNumber++
+	}
+	fmt.Println("time cost: ", time.Since(t))
+	return commitInfoList
 }
 
 /* findAllChangedLineNumbers

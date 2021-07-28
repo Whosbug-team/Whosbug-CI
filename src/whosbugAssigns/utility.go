@@ -1,10 +1,13 @@
 package whosbugAssigns
 
 import (
+	"bufio"
 	"bytes"
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -41,12 +44,72 @@ func GetInputConfig() {
 */
 func execCommandOutput(command string, args ...string) string {
 	cmd := exec.Command(command, args...)
-	output := bytes.Buffer{}
-	cmd.Stdout = &output
-	err := cmd.Run()
-	errorHandler(err, "exec command ", command)
-	return output.String()
+	fmt.Println("Cmd", cmd.Args)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = os.Stderr
+	err := cmd.Start()
+	errorHandler(err)
+	err = cmd.Wait()
+	return out.String()
 }
+
+func execCommandOutput1(fileName string, command string, args ...string) {
+	cmd := exec.Command(command, args...)
+	fmt.Println("Cmd", cmd.Args)
+	//var out bytes.Buffer
+	//cmd.Stdout = &out
+	//cmd.Stderr = os.Stderr
+
+	fd, _ := os.OpenFile(workPath+"\\"+fileName, os.O_WRONLY|os.O_CREATE|os.O_SYNC, 0755)
+	cmd.Stdout = fd
+	cmd.Stderr = fd
+	err := cmd.Start()
+	errorHandler(err)
+	err = cmd.Wait()
+	_ = fd.Close()
+}
+
+// 测试用的文本文件11M大小
+var m11 string = `G:\runtime\log\ccapi\11M.log`
+
+// 测试用的文本文件400M大小
+var m400 string = `G:\runtime\log\ccapi\400M.log`
+
+// 读取文件的每一行
+func readEachLineReader(filePath string) {
+	start1 := time.Now()
+	FileHandle, err := os.Open(filePath)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer FileHandle.Close()
+	lineReader := bufio.NewReader(FileHandle)
+	for {
+		// 相同使用场景下可以采用的方法
+		// func (b *Reader) ReadLine() (line []byte, isPrefix bool, err error)
+		// func (b *Reader) ReadBytes(delim byte) (line []byte, err error)
+		// func (b *Reader) ReadString(delim byte) (line string, err error)
+		line, _, err := lineReader.ReadLine()
+		if err == io.EOF {
+			break
+		}
+		// 如下是某些业务逻辑操作
+		// 如下代码打印每次读取的文件行内容
+		fmt.Println(string(line))
+	}
+	fmt.Println("readEachLineReader spend : ", time.Now().Sub(start1))
+}
+
+//func execCommandOutput(command string, args ...string) string {
+//	cmd := exec.Command(command, args...)
+//	output := bytes.Buffer{}
+//	cmd.Stdout = &output
+//	err := cmd.Run()
+//	errorHandler(err, "exec command ", command)
+//	return output.String()
+//}
 
 /* lanFilter
 /* @Description: 语言过滤器，确定目标文件是否为支持的语言

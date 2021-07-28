@@ -2,10 +2,6 @@ package whosbugAssigns
 
 var supportLans = []string{".java"}
 
-type ChangeLineNumberType struct {
-	LineNumber int
-	ChangeType string
-}
 type DiffParsedType struct {
 	DiffFile          string
 	DiffFilePath      string
@@ -26,8 +22,8 @@ type CommitParsedType struct {
 }
 
 type ReleaseDiffType struct {
-	CommitInfo     string
-	Diff           string
+	CommitInfoPath string
+	DiffPath       string
 	BranchName     string
 	HeadCommitInfo string
 }
@@ -64,4 +60,26 @@ var Config input_json
 func init() {
 	innerConf.username = "kevinmatt"
 	innerConf.password = "heyuheng1.22.3"
+}
+
+type CommitInfoType struct {
+	commitHash      string
+	StartLineNumber int
+	committerName   string
+	CommitterEmail  string
+	CommitTime      string
+	DiffInfoList    []DiffInfoType
+}
+
+type ChangeLineNumberType struct {
+	LineNumber int
+	ChangeType string
+}
+
+type DiffInfoType struct {
+	StartLineNumber    int
+	diffHeadLineNumber int
+	DiffFilePath       string
+	DiffFileName       string
+	changeLineList     []ChangeLineNumberType
 }
