@@ -29,10 +29,14 @@ type ReleaseDiffType struct {
 }
 
 type ObjectInfoType struct {
-	Name    string
-	Hash    string
+	Owner	string
+	FilePath string
 	ParName string
 	ParHash string
+	Name    string
+	Hash    string
+	OldName string
+	CommitTime string
 }
 
 type ChangeMethodType struct {
