@@ -132,7 +132,7 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 	objectsStr := strings.Join(objectsStrForPost, ",")
 	objectsData := "[" + objectsStr + "]"
 
-	dataForPost := fmt.Sprintf(`{"project":%s,"release":%s,"objects":%s}`,projectData, releaseData, objectsData)
+	dataForPost := fmt.Sprintf(`{"project":%s,"release":%s,"objects":%s}`, projectData, releaseData, objectsData)
 
 	//准备发送
 	urlReq := _HOST + "/whosbug/commits/diffs/"
@@ -217,10 +217,10 @@ func _encrypt(projectId, key, plainText string) string {
 	if err != nil {
 		fmt.Println(err)
 	}
-	var dest = plainText
+	var dest = []byte(plainText)
 	aesEncryptor := cipher.NewCFBEncrypter(aesBlockEncryptor, IV)
-	aesEncryptor.XORKeyStream([]byte(dest), []byte(plainText))
-	return dest
+	aesEncryptor.XORKeyStream(dest, []byte(plainText))
+	return string(dest)
 }
 
 // _decrypt
@@ -239,8 +239,8 @@ func _decrypt(projectId, key, plainText string) string {
 	if err != nil {
 		fmt.Println(err)
 	}
-	var dest = plainText
+	var dest = []byte(plainText)
 	aesDescriptor := cipher.NewCFBDecrypter(aesBlockDescriptor, IV)
-	aesDescriptor.XORKeyStream([]byte(dest), []byte(plainText))
-	return dest
+	aesDescriptor.XORKeyStream(dest, []byte(plainText))
+	return string(dest)
 }
