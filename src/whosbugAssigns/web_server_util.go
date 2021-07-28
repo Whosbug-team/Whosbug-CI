@@ -16,12 +16,15 @@ import (
 	"strings"
 )
 
-
 const _HOST = "http://127.0.0.1:8081"
-const _SECRET = ""
+const _SECRET = "456"
 const _USERNAME = "user"
 const _PASSWORD = "pwd"
 
+//为了让代码跑起来加的
+var encrypt = _encrypt
+var decrypt = _decrypt
+var secret = ""
 
 func _genToken() (string, error) {
 	urls := _HOST + "/api-token-auth/"
@@ -59,8 +62,8 @@ func getLatestRelease(projectId string) (string, error) {
 	}
 
 	token, err := _genToken()
-	errorHandler(err, "getLatestRelease2")
-	req.Header.Add("Authorization", "Token " + token)
+	errorHandler(err, "getLatestRelease")
+	req.Header.Add("Authorization", "Token "+token)
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := client.Do(req)
@@ -91,12 +94,95 @@ func getLatestRelease(projectId string) (string, error) {
 	}
 }
 
-func post_objects(projectId string, releaseVersion string, objects []ObjectInfoType) error {
-	//TODO not finished
-	return nil
+func postObjects(projectId string, releaseVersion string, commitHash string, objects []ObjectInfoType) error {
+	//TODO 待验证能否正确发送
+	//生成待发送的数据
+	//为了方便,创建一个更简单的加密函数
+	tempEncrypt := func(text string) string {
+		return _encrypt(projectId, _SECRET, text)
+	}
+	text := "123"
+	fmt.Println(tempEncrypt(text))
+	fmt.Println(_encrypt(projectId, _SECRET, text))
+
+	projectData := fmt.Sprintf("{\"pid\":\"%s\"}", tempEncrypt(projectId))
+	releaseData := fmt.Sprintf("{\"release\":\"%s\", \"commit_hash\":\"%s\"}", tempEncrypt(releaseVersion), tempEncrypt(commitHash))
+
+	const objectFormatStr = "{\"owner\":\"%s\", \"file_path\":\"%s\", \"parent_name\":\"%s\", \"parent_hash\":\"%s\", \"name\":\"%s\", \"hash\":\"%s\", \"old_name\":\"%s\", \"commit_time\":\"%s\"}"
+	//形如:
+	//{
+	//    "owner": "%s",
+	//    "file_path": "%s",
+	//    "parent_name": "%s",
+	//    "parent_hash": "%s",
+	//    "name": "%s",
+	//    "hash": "%s",
+	//    "old_name": "%s",
+	//    "commit_time": "%s"
+	//}
+	var objectsStrForPost []string
+	for _, object := range objects {
+		objectStr := fmt.Sprintf(objectFormatStr,
+			tempEncrypt(object.Owner), tempEncrypt(object.FilePath),
+			tempEncrypt(object.ParName), tempEncrypt(object.ParHash),
+			tempEncrypt(object.Name), tempEncrypt(object.Hash),
+			tempEncrypt(object.OldName), tempEncrypt(object.CommitTime))
+		objectsStrForPost = append(objectsStrForPost, objectStr)
+	}
+	objectsStr := strings.Join(objectsStrForPost, ",")
+	objectsData := "[" + objectsStr + "]"
+
+	dataForPost := fmt.Sprintf(`{"project":%s,"release":%s,"objects":%s}`,projectData, releaseData, objectsData)
+
+	//准备发送
+	urlReq := _HOST + "/whosbug/commits/diffs/"
+	method := "POST"
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, urlReq, bytes.NewBuffer([]byte(dataForPost)))
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	token, err := _genToken()
+	errorHandler(err, "postObjects")
+	req.Header.Add("Authorization", "Token "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer res.Body.Close()
+	if res.StatusCode == 201 {
+		return nil
+	} else {
+		fmt.Println(res.StatusCode)
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		fmt.Println(string(body))
+		return errors.New(string(body))
+	}
 }
 
-
+/* _hashCode64
+/* @Description: 返回sha256编码的拼接字符串
+ * @param projectId 项目ID
+ * @param objectName
+ * @param filePath 文件目录
+ * @return string 返回编码字符串
+ * @author KevinMatt 2021-07-26 20:49:17
+ * @function_mark
+*/
+func _hashCode64(projectId, objectName, filePath []byte) (text [32]byte) {
+	text = sha256.Sum256(append(append(projectId, objectName...), filePath...))
+	return
+}
 
 // _generateKIV
 /* @Description: 		生成AES-CFB需要的Key和IV
