@@ -32,7 +32,7 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) diffParsedType {
 	filePath := commitDiff.diffFileName
 
 	// 获取antlr分析结果
-	antlrAnalyzeRes := antlrAnalysis(&commitDiff.diffText, "java")
+	antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
 
 	// 创建要存入的objects
 	objects := make(map[int]map[string]string)
@@ -87,7 +87,7 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) diffParsedType {
  * @author KevinMatt 2021-07-29 19:49:37
  * @function_mark  PASS
 */
-func antlrAnalysis(diffText *string, langMode string) javaparser.AnalysisInfoType {
+func antlrAnalysis(diffText string, langMode string) javaparser.AnalysisInfoType {
 	var result javaparser.AnalysisInfoType
 	switch langMode {
 	case "java":
@@ -107,9 +107,9 @@ func antlrAnalysis(diffText *string, langMode string) javaparser.AnalysisInfoTyp
  * @author KevinMatt 2021-07-29 19:51:16
  * @function_mark PASS
 */
-func executeJava(diffText *string) javaparser.AnalysisInfoType {
+func executeJava(diffText string) javaparser.AnalysisInfoType {
 	// 截取目标文件的输入流
-	input := antlr.NewInputStream(*diffText)
+	input := antlr.NewInputStream(diffText)
 
 	// 初始化lexer
 	lexer := javaparser.NewJavaLexer(input)

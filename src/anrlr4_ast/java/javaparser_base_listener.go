@@ -144,7 +144,7 @@ func getParams(ctx antlr.ParseTree) []paramInfoType {
 func (s *BaseJavaParserListener) EnterMethodCall(ctx *MethodCallContext) {
 	lineNumber := ctx.GetStart().GetLine()
 	columnNumber := ctx.GetStart().GetColumn()
-	if ctx != nil {
+	if ctx.GetParent() != nil {
 		Infos.CallMethods = append(Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetParent().(antlr.ParseTree).GetText()))
 	}
 }

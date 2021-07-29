@@ -3,8 +3,8 @@ package whosbugPack
 import (
 	"bufio"
 	"fmt"
-	"github.com/Jeffail/tunny"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/panjf2000/ants"
 	"io"
 	"log"
 	"os"
@@ -17,7 +17,9 @@ import (
 // json 替换原始json库
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-var Pool *tunny.Pool
+var pool, _ = ants.NewPoolWithFunc(10, func(commitDiff interface{}) {
+	AnalyzeCommitDiff(commitDiff.(diffParsedType))
+})
 
 /* init
 /* @Description: 自动初始化配置
@@ -52,10 +54,7 @@ func init() {
  * @function_mark PASS
  */
 func Analysis() {
-	Pool = tunny.NewFunc(5, func(commitDiff interface{}) interface{} {
-		AnalyzeCommitDiff(commitDiff.(diffParsedType))
-		return nil
-	})
+	defer pool.Release()
 	t := time.Now()
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
 	diffPath, commitPath := getLogInfo()
