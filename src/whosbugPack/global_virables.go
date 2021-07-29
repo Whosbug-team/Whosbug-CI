@@ -23,3 +23,6 @@ const parDiffPartPattern = `(@@\ .*?\ @@)`
 
 // markPattern 匹配+/-变动行
 const markPattern = `^[\+\-]`
+
+// supportLans 语言的支持
+var supportLans = []string{".java"}

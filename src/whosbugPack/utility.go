@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"regexp"
 )
 
 // 月份转换Map
@@ -106,7 +107,34 @@ func hashCode64(projectId, objectName, filePath []byte) (text [32]byte) {
 	return
 }
 
-// forDebug 为了在debug时方便的装入未使用的参数避免出现编译错误的工具
+/* findAllChangedLineNumbers
+/* @Description: 找到所有变动行号
+ * @param lines 传入的行
+ * @return []changeLineType 返回变动行信息结构体切片
+ * @author KevinMatt 2021-07-29 19:48:01
+ * @function_mark PASS
+*/
+func findAllChangedLineNumbers(lines []string) []changeLineType {
+	markCompile, err := regexp.Compile(markPattern)
+	if err != nil {
+		log.Println(err)
+	}
+	var changeLineNumbers []changeLineType
+	lineNumber := 0
+	for index, line := range lines {
+		lineNumber = index + 1
+		res := markCompile.FindString(line)
+		if res != "" {
+			var tempStruct changeLineType
+			tempStruct.lineNumber = lineNumber
+			tempStruct.changeType = string(line[0])
+			changeLineNumbers = append(changeLineNumbers, tempStruct)
+		}
+	}
+	return changeLineNumbers
+}
+
+// forDebug 为了在debug时方便的装入未使用的参数避免出现编译错误的工具壳...
 func forDebug(a ...interface{}) {
 
 }
