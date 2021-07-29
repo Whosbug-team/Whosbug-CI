@@ -201,11 +201,11 @@ func Result(resCommits []CommitParsedType, projectId string, releaseVersion stri
 }
 
 /* hashCode64
-/* @Description: 返回sha256编码的拼接字符串
+/* @Description: 返回sha256编码的拼接32位byte编码值
  * @param projectId 项目ID
  * @param objectName
  * @param filePath 文件目录
- * @return string 返回编码字符串
+ * @return string 返回32位byte编码字符串
  * @author KevinMatt 2021-07-26 20:49:17
  * @function_mark
 */

@@ -35,8 +35,7 @@ func Analysis(repoPath, branchName, projectId string) []CommitParsedType {
 	commitInfoList := parseCommit(releaseDiff.DiffPath, releaseDiff.CommitInfoPath)
 	divideCommitDiff(commitInfoList)
 	processMainMethod(commitInfoList, projectId)
-	// 线性读获取所有的diff起始行
-	// diff送入协程
+
 	//processMain(commitInfoList)
 
 	fmt.Println("Analysis cost: ", time.Since(t))
@@ -144,25 +143,3 @@ func readFileByLineNumber(fileScanner *bufio.Scanner, lineNumberStart int, lineN
 	}
 	return res
 }
-
-//func ReadFile(filePath string, handle func(string)) error {
-//	f, err := os.Open(filePath)
-//	defer f.Close()
-//	if err != nil {
-//		return err
-//	}
-//	buf := bufio.NewReader(f)
-//
-//	for {
-//		line, _, err := buf.ReadLine("\n")
-//		lineTrim := strings.TrimSpace(string(line))
-//		handle(lineTrim)
-//		if err != nil {
-//			if err == io.EOF {
-//				return nil
-//			}
-//			return err
-//		}
-//		return nil
-//	}
-//}

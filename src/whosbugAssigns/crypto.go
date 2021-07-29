@@ -25,6 +25,13 @@ func generateKIV(projectId, key []byte) ([]byte, []byte) {
 	hIV.Write(projectId)
 	return hK.Sum(nil), hIV.Sum(nil)
 }
+func G() {
+
+	//st := "abc"
+	//a, b := generateKIV([]byte(st), []byte(st))
+	//fmt.Println(a, b)
+	fmt.Println(encrypt("abc", "abc", "123"), decrypt("abc", "abc", encrypt("abc", "abc", "123")))
+}
 
 // encrypt
 /* @Description: 		AES-CFB加密
@@ -42,10 +49,10 @@ func encrypt(projectId, key, plainText string) string {
 	if err != nil {
 		fmt.Println(err)
 	}
-	var dest = plainText
+	var dest = []byte(plainText)
 	aesEncryptor := cipher.NewCFBEncrypter(aesBlockEncryptor, IV)
-	aesEncryptor.XORKeyStream([]byte(dest), []byte(plainText))
-	return dest
+	aesEncryptor.XORKeyStream(dest, []byte(plainText))
+	return string(dest)
 }
 
 // decrypt
@@ -64,8 +71,8 @@ func decrypt(projectId, key, plainText string) string {
 	if err != nil {
 		fmt.Println(err)
 	}
-	var dest = plainText
+	var dest = []byte(plainText)
 	aesDescriptor := cipher.NewCFBDecrypter(aesBlockDescriptor, IV)
-	aesDescriptor.XORKeyStream([]byte(dest), []byte(plainText))
-	return dest
+	aesDescriptor.XORKeyStream(dest, []byte(plainText))
+	return string(dest)
 }

@@ -7,7 +7,7 @@ import (
 	"whosbugAssigns"
 )
 
-func main() {
+func main12() {
 	t := time.Now()
 	fmt.Println("Start!")
 	s, _ := os.Getwd()

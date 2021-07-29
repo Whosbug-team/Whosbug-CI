@@ -23,7 +23,7 @@ const parDiffPartPattern = `(@@\ .*?\ @@)`
  * @author KevinMatt 2021-07-26 21:32:28
  * @function_mark PASS
 */
-func parseDiff(data string) []DiffParsedType {
+func parseDiff1(data string) []DiffParsedType {
 	t := time.Now()
 	patDiff, _ := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
 	patDiffPart, _ := regexp.Compile(`(@@\ .*?\ @@)`)

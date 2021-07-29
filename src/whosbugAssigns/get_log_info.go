@@ -3,10 +3,75 @@ package whosbugAssigns
 import (
 	"fmt"
 	"os"
+	"path"
+	"regexp"
+	"strings"
 	"time"
 )
 
-var workPath string
+func parseDiff(data string) []DiffParsedType {
+	t := time.Now()
+	patDiff, _ := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
+	patDiffPart, _ := regexp.Compile(`(@@\ .*?\ @@)`)
+	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
+	diffParsedList := make([]DiffParsedType, 0)
+	indexList := patDiff.FindAllStringIndex(data, -1)
+
+	for index, rawDiff := range rawDiffs {
+		leftDiffIndex := indexList[index][0]
+		var diffPartsContent string
+		var rightDiffIndex int
+		if index == len(rawDiffs)-1 {
+			diffPartsContent = data[leftDiffIndex:]
+		} else {
+			rightDiffIndex = (indexList[index+1])[0]
+			diffPartsContent = data[leftDiffIndex:rightDiffIndex]
+		}
+
+		diffHeadMatch := patDiffPart.FindAllString(diffPartsContent, -1)
+		if diffHeadMatch == nil {
+			continue
+		}
+
+		rightDiffHeadIndex := patDiffPart.FindStringIndex(diffPartsContent)[1]
+
+		tempFileContent := diffPartsContent[rightDiffHeadIndex:]
+
+		lines := (strings.Split(tempFileContent[0:], "\n"))[1:]
+
+		var changeLineNumbers []ChangeLineNumberType
+		changeLineNumbers = findAllChangedLineNumbers(lines)
+		lines = replaceLines(lines)
+		sourceCode := strings.Join(lines, "")
+		fileName := path.Base(rawDiff[2])
+
+		if lanFilter(fileName) {
+			commitDicName := data[7:17]
+			diffFilePath := fmt.Sprintf("SourceCode/%s/%s", commitDicName, fileName)
+
+			if _, err := os.Stat(path.Dir(diffFilePath)); os.IsNotExist(err) {
+				err = os.MkdirAll(path.Dir(diffFilePath), os.ModePerm)
+				errorHandler(err, "mkdir ", diffFilePath)
+			}
+
+			fd, err := os.OpenFile(diffFilePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
+			errorHandler(err, "open ", diffFilePath)
+			_, err = fd.WriteString(sourceCode)
+			errorHandler(err, "write ", sourceCode)
+			err = fd.Close()
+			errorHandler(err, "close fd ", sourceCode)
+			var diffParsed DiffParsedType
+			diffParsed.DiffFile = rawDiff[2]
+			diffParsed.DiffFilePath = diffFilePath
+			diffParsed.ChangeLineNumbers = append(diffParsed.ChangeLineNumbers, changeLineNumbers...)
+			diffParsedList = append(diffParsedList, diffParsed)
+		} else {
+			continue
+		}
+	}
+	fmt.Println("parsDiff cost ", time.Since(t))
+	return diffParsedList
+}
 
 /* getLogInfo
 /* @Description: 获取release的diff信息
