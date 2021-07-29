@@ -20,16 +20,14 @@ func newTreeShapeListener() *TreeShapeListener {
 	return new(TreeShapeListener)
 }
 
-/* analyzeCommitDiff
+// AnalyzeCommitDiff
 /* @Description: 使用antlr分析commitDiff信息
  * @param commitDiff diff信息(path)
  * @param commitId commit的Hash值
  * @author KevinMatt 2021-07-29 22:48:28
  * @function_mark
-*/
-func analyzeCommitDiff(commitDiff diffParsedType, commitId string) diffParsedType {
-	commitDiff.commitHash = commitId
-
+ */
+func AnalyzeCommitDiff(commitDiff diffParsedType) diffParsedType {
 	// 源码路径(仓库路径)
 	filePath := commitDiff.diffFileName
 
@@ -50,7 +48,7 @@ func analyzeCommitDiff(commitDiff diffParsedType, commitId string) diffParsedTyp
 	return commitDiff
 }
 
-///* analyzeCommitDiff
+///* AnalyzeCommitDiff
 ///* @Description: 使用antlr分析commitDiff信息
 // * @param CommitDiffs diff信息(path)
 // * @param commitId commit的Hash值
