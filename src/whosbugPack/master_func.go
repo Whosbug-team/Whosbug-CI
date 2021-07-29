@@ -2,8 +2,8 @@ package whosbugPack
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
+	jsoniter "github.com/json-iterator/go"
 	"io"
 	"log"
 	"os"
@@ -13,6 +13,9 @@ import (
 	"strings"
 	"time"
 )
+
+// json 替换原始json库
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 /* init
 /* @Description: 自动初始化配置
