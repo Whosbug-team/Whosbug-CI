@@ -23,12 +23,42 @@ func newTreeShapeListener() *TreeShapeListener {
 
 /* analyzeCommitDiff
 /* @Description: 使用antlr分析commitDiff信息
+ * @param commitDiff diff信息(path)
+ * @param commitId commit的Hash值
+ * @author KevinMatt 2021-07-29 22:48:28
+ * @function_mark
+*/
+func analyzeCommitDiff(commitDiff diffParsedType, commitId string) diffParsedType {
+	commitDiff.commitHash = commitId
+
+	// 处理后的源码路径
+	tempFile := commitDiff.diffFilePath
+
+	// 变动文件名
+	filePath := commitDiff.diffFileName
+
+	// 获取antlr分析结果
+	antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
+
+	// 创建要存入的objects
+	objects := make(map[int]map[string]string)
+
+	for _, changeLineNumber := range commitDiff.changeLineNumbers {
+		// 根据行号添加object
+		objects = addObjectFromChangeLineNumber(filePath, objects, changeLineNumber, antlrAnalyzeRes)
+	}
+	commitDiff.diffContent = objects
+	return commitDiff
+}
+
+/* analyzeCommitDiff
+/* @Description: 使用antlr分析commitDiff信息
  * @param CommitDiffs diff信息(path)
  * @param commitId commit的Hash值
  * @author KevinMatt 2021-07-29 20:17:03
  * @function_mark
 */
-func analyzeCommitDiff(CommitDiffs []diffParsedType, commitId string) {
+func analyzeCommitDiff1(CommitDiffs []diffParsedType, commitId string) {
 	for index := range CommitDiffs {
 		CommitDiffs[index].commitHash = commitId
 

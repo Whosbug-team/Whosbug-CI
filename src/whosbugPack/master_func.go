@@ -105,16 +105,8 @@ func matchCommit(diffPath, commitPath string) {
 			// 强制手动触发gc，及时释放getFullCommit的原始拷贝字符串
 			runtime.GC()
 
-			// 获取单次commit中的每一次diff，并处理diff，存入SourceCode下对应commit文件夹(非支持的语言文件将会被过滤)
-			commitDiffs := parseDiffToFile(fullCommit, commitInfo.commitHash)
-
-			// 单次commit中没有含有语言文件改动的diff，直接跳过分析环节
-			if commitDiffs != nil {
-				// 分析diff对应的源码文件
-				analyzeCommitDiff(commitDiffs, commitInfo.commitHash)
-				// 将结果存入对应的res.json文件中
-				resultToFile(commitDiffs, commitInfo.commitName, commitInfo.commitEmail, commitInfo.commitTime)
-			}
+			// 获取单次commit中的每一次diff，并处理diff，送进协程
+			parseDiffToFile(fullCommit, commitInfo.commitHash)
 
 			// 指示已经处理的commit数量
 			processCommits++
@@ -133,6 +125,15 @@ func matchCommit(diffPath, commitPath string) {
 	}
 }
 
+/* resultToFile
+/* @Description: 保留函数，暂时弃用
+ * @param resCommits
+ * @param committerName
+ * @param committerEmail
+ * @param commitTime
+ * @author KevinMatt 2021-07-29 23:11:54
+ * @function_mark
+*/
 func resultToFile(resCommits []diffParsedType, committerName string, committerEmail string, commitTime string) {
 	latestCommitHash := resCommits[0].commitHash
 

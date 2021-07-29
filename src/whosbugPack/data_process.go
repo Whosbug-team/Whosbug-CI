@@ -72,11 +72,10 @@ func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) strin
 /* @Description: 将commit内的diff解析后存入SourceCode中
  * @param data 传入的fullCommit字符串
  * @param commitHash 本次commit的Hash
- * @return []diffParsedType 解析后的信息切片
- * @author KevinMatt 2021-07-29 17:58:43
+ * @author KevinMatt 2021-07-29 22:54:33
  * @function_mark PASS
 */
-func parseDiffToFile(data, commitHash string) []diffParsedType {
+func parseDiffToFile(data, commitHash string) {
 	// 编译正则
 	patDiff, _ := regexp.Compile(parDiffPattern)
 	patDiffPart, _ := regexp.Compile(parDiffPartPattern)
@@ -84,7 +83,6 @@ func parseDiffToFile(data, commitHash string) []diffParsedType {
 	// 匹配所有diffs及子匹配->匹配去除a/ or b/的纯目录
 	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
 
-	var diffParsedList []diffParsedType
 	// 匹配diff行的index列表
 	indexList := patDiff.FindAllStringIndex(data, -1)
 
@@ -154,10 +152,12 @@ func parseDiffToFile(data, commitHash string) []diffParsedType {
 			diffParsed.diffFileName = rawDiff[2]
 			diffParsed.diffFilePath = diffFilePath
 			diffParsed.changeLineNumbers = append(diffParsed.changeLineNumbers, changeLineNumbers...)
-			diffParsedList = append(diffParsedList, diffParsed)
+
+			// 得到单个diff后直接送入analyze进行分析
+			commitDiff := analyzeCommitDiff(diffParsed, commitHash)
+
 		}
 	}
-	return diffParsedList
 }
 
 /* replaceLines
