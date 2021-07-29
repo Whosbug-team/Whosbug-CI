@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"path"
 	"regexp"
 	"runtime"
 	"strings"
@@ -97,7 +96,7 @@ func matchCommit(diffPath, commitPath string) {
 			infoList := strings.Split(string(commitLine), ",")
 
 			// 填充commitInfo结构体内的各项信息
-			commitInfo.commitHash, commitInfo.commitEmail, commitInfo.commitName, commitInfo.commitTime = infoList[0], infoList[1], infoList[2], toIso8601(strings.Split(infoList[3][4:], " "))
+			commitInfo.commitHash, commitInfo.committerEmail, commitInfo.committerName, commitInfo.commitTime = infoList[0], infoList[1], infoList[2], toIso8601(strings.Split(infoList[3][4:], " "))
 
 			// 获取一次完整的commit，使用双循环交错读取方法避免跳过commit
 			fullCommit := getFullCommit(patCommit, lineReaderDiff)
@@ -125,67 +124,67 @@ func matchCommit(diffPath, commitPath string) {
 	}
 }
 
-/* resultToFile
-/* @Description: 保留函数，暂时弃用
- * @param resCommits
- * @param committerName
- * @param committerEmail
- * @param commitTime
- * @author KevinMatt 2021-07-29 23:11:54
- * @function_mark
-*/
-func resultToFile(resCommits []diffParsedType, committerName string, committerEmail string, commitTime string) {
-	latestCommitHash := resCommits[0].commitHash
-
-	project := map[string]string{
-		"pid": config.ProjectId,
-	}
-
-	release := map[string]string{
-		"release":     fmt.Sprintf("%x", encrypt(config.ProjectId, secret, config.ReleaseVersion)),
-		"commit_hash": fmt.Sprintf("%x", encrypt(config.ProjectId, secret, latestCommitHash)),
-	}
-	var objects []map[string]string
-	owner := fmt.Sprintf("%s-%s", committerName, committerEmail)
-	for _, diffFile := range resCommits {
-		filePath := path.Base(diffFile.diffFilePath)
-		for _, value := range diffFile.diffContent {
-			if value["name"] == "" {
-				continue
-			}
-			tempMap := map[string]string{
-				"owner":       fmt.Sprintf("%x", encrypt(config.ProjectId, secret, owner)),
-				"file_path":   fmt.Sprintf("%x", encrypt(config.ProjectId, secret, filePath)),
-				"parent_name": fmt.Sprintf("%x", encrypt(config.ProjectId, secret, value["parent_name"])),
-				"parent_hash": fmt.Sprintf("%x", encrypt(config.ProjectId, secret, value["parent_hash"])),
-				"name":        fmt.Sprintf("%x", encrypt(config.ProjectId, secret, value["name"])),
-				"hash":        fmt.Sprintf("%x", encrypt(config.ProjectId, secret, value["hash"])),
-				"old_name":    "",
-				"commit_time": commitTime,
-			}
-			objects = append(objects, tempMap)
-		}
-	}
-
-	res := map[string]interface{}{
-		"objects": objects,
-		"release": release,
-		"project": project,
-	}
-	if _, err := os.Stat(workPath + "/SourceCode/" + latestCommitHash[0:10] + "/"); os.IsNotExist(err) {
-		err = os.MkdirAll(path.Dir(workPath+"/SourceCode/"+latestCommitHash[0:10]+"/"), os.ModePerm)
-		if err != nil {
-			log.Println(err)
-		}
-	}
-	fd, err := os.OpenFile(workPath+"/SourceCode/"+latestCommitHash[0:10]+"/res.json", os.O_RDWR|os.O_CREATE|os.O_SYNC, os.ModePerm)
-	if err != nil {
-		log.Println(err)
-	}
-	jsonInfo, err := json.Marshal(res)
-	if err != nil {
-		log.Println(err)
-	}
-	_, _ = fd.WriteString(string(jsonInfo))
-	err = fd.Close()
-}
+///* resultToFile
+///* @Description: 保留函数，暂时弃用
+// * @param resCommits
+// * @param committerName
+// * @param committerEmail
+// * @param commitTime
+// * @author KevinMatt 2021-07-29 23:11:54
+// * @function_mark
+//*/
+//func resultToFile(resCommits []diffParsedType, committerName string, committerEmail string, commitTime string) {
+//	latestCommitHash := resCommits[0].commitHash
+//
+//	project := map[string]string{
+//		"pid": config.ProjectId,
+//	}
+//
+//	release := map[string]string{
+//		"release":     fmt.Sprintf("%x", encrypt(config.ProjectId, secret, config.ReleaseVersion)),
+//		"commit_hash": fmt.Sprintf("%x", encrypt(config.ProjectId, secret, latestCommitHash)),
+//	}
+//	var objects []map[string]string
+//	owner := fmt.Sprintf("%s-%s", committerName, committerEmail)
+//	for _, diffFile := range resCommits {
+//		filePath := path.Base(diffFile.diffFilePath)
+//		for _, value := range diffFile.diffContent {
+//			if value["name"] == "" {
+//				continue
+//			}
+//			tempMap := map[string]string{
+//				"owner":       fmt.Sprintf("%x", encrypt(config.ProjectId, secret, owner)),
+//				"file_path":   fmt.Sprintf("%x", encrypt(config.ProjectId, secret, filePath)),
+//				"parent_name": fmt.Sprintf("%x", encrypt(config.ProjectId, secret, value["parent_name"])),
+//				"parent_hash": fmt.Sprintf("%x", encrypt(config.ProjectId, secret, value["parent_hash"])),
+//				"name":        fmt.Sprintf("%x", encrypt(config.ProjectId, secret, value["name"])),
+//				"hash":        fmt.Sprintf("%x", encrypt(config.ProjectId, secret, value["hash"])),
+//				"old_name":    "",
+//				"commit_time": commitTime,
+//			}
+//			objects = append(objects, tempMap)
+//		}
+//	}
+//
+//	res := map[string]interface{}{
+//		"objects": objects,
+//		"release": release,
+//		"project": project,
+//	}
+//	if _, err := os.Stat(workPath + "/SourceCode/" + latestCommitHash[0:10] + "/"); os.IsNotExist(err) {
+//		err = os.MkdirAll(path.Dir(workPath+"/SourceCode/"+latestCommitHash[0:10]+"/"), os.ModePerm)
+//		if err != nil {
+//			log.Println(err)
+//		}
+//	}
+//	fd, err := os.OpenFile(workPath+"/SourceCode/"+latestCommitHash[0:10]+"/res.json", os.O_RDWR|os.O_CREATE|os.O_SYNC, os.ModePerm)
+//	if err != nil {
+//		log.Println(err)
+//	}
+//	jsonInfo, err := json.Marshal(res)
+//	if err != nil {
+//		log.Println(err)
+//	}
+//	_, _ = fd.WriteString(string(jsonInfo))
+//	err = fd.Close()
+//}

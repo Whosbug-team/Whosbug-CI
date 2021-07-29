@@ -89,7 +89,7 @@ func parseDiffToFile(data, commitHash string) {
 	// 遍历所有diff
 	for index, rawDiff := range rawDiffs {
 		// 如果非匹配的语言文件，直接跳过
-		if lanFilter(path.Base(rawDiff[2])) {
+		if !lanFilter(path.Base(rawDiff[2])) {
 			continue
 		} else {
 			// 获得左索引
@@ -116,46 +116,23 @@ func parseDiffToFile(data, commitHash string) {
 			// 获取所有行，并按"\n"切分，略去第一行(@@行)
 			lines := (strings.Split(diffPartsContent[rightDiffHeadIndex[1]:][0:], "\n"))[1:]
 
-			// 传入行切片，寻找所有变动行
+			// 传入行的切片，寻找所有变动行
 			changeLineNumbers := findAllChangedLineNumbers(lines)
 
 			// 替换 +/-行，删除-行内容，切片传递，无需返回值
 			replaceLines(lines)
 
-			// 要写入的目录
-			diffFilePath := fmt.Sprintf(workPath+"/SourceCode/%s/%s", commitHash[0:10], path.Base(rawDiff[2]))
-
-			// 验证目录存在性，不存在则创建
-			if _, err := os.Stat(path.Dir(diffFilePath)); os.IsNotExist(err) {
-				err = os.MkdirAll(path.Dir(diffFilePath), os.ModePerm)
-				if err != nil {
-					log.Println(err)
-				}
-			}
-
-			// 打开文件并写入，最终关闭
-			fd, err := os.OpenFile(diffFilePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
-			if err != nil {
-				log.Println(err)
-			}
-			_, err = fd.WriteString(strings.Join(lines, "\n"))
-			if err != nil {
-				log.Println(err)
-			}
-			err = fd.Close()
-			if err != nil {
-				log.Println(err)
-			}
-
-			// 填入到结构体中，准备返回到切片
+			// 填入到结构体中，准备送入协程
 			var diffParsed diffParsedType
+			diffParsed.diffText = strings.Join(lines, "\n")
 			diffParsed.diffFileName = rawDiff[2]
-			diffParsed.diffFilePath = diffFilePath
 			diffParsed.changeLineNumbers = append(diffParsed.changeLineNumbers, changeLineNumbers...)
 
 			// 得到单个diff后直接送入analyze进行分析
-			commitDiff := analyzeCommitDiff(diffParsed, commitHash)
+			// TODO 从此可以开始使用goroutine
 
+			commitDiff := analyzeCommitDiff(diffParsed, commitHash)
+			forDebug(commitDiff)
 		}
 	}
 }

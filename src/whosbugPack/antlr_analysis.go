@@ -4,7 +4,6 @@ import (
 	javaparser "anrlr4_ast/java"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"log"
 )
 
 type TreeShapeListener struct {
@@ -31,56 +30,56 @@ func newTreeShapeListener() *TreeShapeListener {
 func analyzeCommitDiff(commitDiff diffParsedType, commitId string) diffParsedType {
 	commitDiff.commitHash = commitId
 
-	// 处理后的源码路径
-	tempFile := commitDiff.diffFilePath
-
-	// 变动文件名
+	// 源码路径(仓库路径)
 	filePath := commitDiff.diffFileName
 
 	// 获取antlr分析结果
-	antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
+	antlrAnalyzeRes := antlrAnalysis(&commitDiff.diffText, "java")
 
 	// 创建要存入的objects
 	objects := make(map[int]map[string]string)
 
 	for _, changeLineNumber := range commitDiff.changeLineNumbers {
 		// 根据行号添加object
-		objects = addObjectFromChangeLineNumber(filePath, objects, changeLineNumber, antlrAnalyzeRes)
+		temp := addObjectFromChangeLineNumber(filePath, objects, changeLineNumber, antlrAnalyzeRes)
+		if temp != nil {
+			objects = temp
+		}
 	}
 	commitDiff.diffContent = objects
 	return commitDiff
 }
 
-/* analyzeCommitDiff
-/* @Description: 使用antlr分析commitDiff信息
- * @param CommitDiffs diff信息(path)
- * @param commitId commit的Hash值
- * @author KevinMatt 2021-07-29 20:17:03
- * @function_mark
-*/
-func analyzeCommitDiff1(CommitDiffs []diffParsedType, commitId string) {
-	for index := range CommitDiffs {
-		CommitDiffs[index].commitHash = commitId
-
-		// 处理后的源码路径
-		tempFile := CommitDiffs[index].diffFilePath
-
-		// 变动文件名
-		filePath := CommitDiffs[index].diffFileName
-
-		// 获取antlr分析结果
-		antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
-
-		// 创建要存入的objects
-		objects := make(map[int]map[string]string)
-
-		for _, changeLineNumber := range CommitDiffs[index].changeLineNumbers {
-			// 根据行号添加object
-			objects = addObjectFromChangeLineNumber(filePath, objects, changeLineNumber, antlrAnalyzeRes)
-		}
-		CommitDiffs[index].diffContent = objects
-	}
-}
+///* analyzeCommitDiff
+///* @Description: 使用antlr分析commitDiff信息
+// * @param CommitDiffs diff信息(path)
+// * @param commitId commit的Hash值
+// * @author KevinMatt 2021-07-29 20:17:03
+// * @function_mark
+//*/
+//func analyzeCommitDiff1(CommitDiffs []diffParsedType, commitId string) {
+//	for index := range CommitDiffs {
+//		CommitDiffs[index].commitHash = commitId
+//
+//		// 处理后的源码路径
+//		tempFile := CommitDiffs[index].diffFilePath
+//
+//		// 变动文件名
+//		filePath := CommitDiffs[index].diffFileName
+//
+//		// 获取antlr分析结果
+//		antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
+//
+//		// 创建要存入的objects
+//		objects := make(map[int]map[string]string)
+//
+//		for _, changeLineNumber := range CommitDiffs[index].changeLineNumbers {
+//			// 根据行号添加object
+//			objects = addObjectFromChangeLineNumber(filePath, objects, changeLineNumber, antlrAnalyzeRes)
+//		}
+//		CommitDiffs[index].diffContent = objects
+//	}
+//}
 
 /* antlrAnalysis
 /* @Description: antlr分析过程
@@ -90,13 +89,13 @@ func analyzeCommitDiff1(CommitDiffs []diffParsedType, commitId string) {
  * @author KevinMatt 2021-07-29 19:49:37
  * @function_mark  PASS
 */
-func antlrAnalysis(targetFilePath string, langMode string) javaparser.AnalysisInfoType {
+func antlrAnalysis(diffText *string, langMode string) javaparser.AnalysisInfoType {
 	var result javaparser.AnalysisInfoType
 	switch langMode {
 	case "java":
 		// 解析前置空javaparser的Infos结构体
 		javaparser.Infos.SetEmpty()
-		result = executeJava(targetFilePath)
+		result = executeJava(diffText)
 	default:
 		break
 	}
@@ -110,12 +109,10 @@ func antlrAnalysis(targetFilePath string, langMode string) javaparser.AnalysisIn
  * @author KevinMatt 2021-07-29 19:51:16
  * @function_mark PASS
 */
-func executeJava(targetFilePath string) javaparser.AnalysisInfoType {
+func executeJava(diffText *string) javaparser.AnalysisInfoType {
 	// 截取目标文件的输入流
-	input, err := antlr.NewFileStream(targetFilePath)
-	if err != nil {
-		log.Println(err)
-	}
+	input := antlr.NewInputStream(*diffText)
+
 	// 初始化lexer
 	lexer := javaparser.NewJavaLexer(input)
 	// 初始化Token流
@@ -150,7 +147,9 @@ func executeJava(targetFilePath string) javaparser.AnalysisInfoType {
 func addObjectFromChangeLineNumber(fileName string, objects map[int]map[string]string, changeLineNumber changeLineType, antlrAnalyzeRes javaparser.AnalysisInfoType) map[int]map[string]string {
 	// 寻找变动方法
 	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
-
+	if changeMethod.MethodName == "" {
+		return nil
+	}
 	// 判断object中是否有重复元素
 	if len(objects) > 0 {
 		if _, ok := objects[changeMethod.StartLine]; ok {

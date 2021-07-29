@@ -12,11 +12,10 @@ type inputJson struct {
 
 // commitInfoType 存储每一次commit的信息
 type commitInfoType struct {
-	startLineNum int
-	commitHash   string
-	commitEmail  string
-	commitName   string
-	commitTime   string
+	commitHash     string
+	committerEmail string
+	committerName  string
+	commitTime     string
 }
 
 // changeLineType 存储单个改变行的信息
@@ -28,8 +27,8 @@ type changeLineType struct {
 // diffParsedType 解析后的diff信息
 type diffParsedType struct {
 	diffFileName      string
-	diffFilePath      string
 	changeLineNumbers []changeLineType
 	commitHash        string
+	diffText          string
 	diffContent       map[int]map[string]string
 }
