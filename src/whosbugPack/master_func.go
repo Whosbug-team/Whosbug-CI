@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/panjf2000/ants"
 	"io"
 	"log"
 	"os"
@@ -16,9 +17,9 @@ import (
 // json 替换原始json库
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-//var pool, _ = ants.NewPoolWithFunc(5, func(commitDiff interface{}) {
-//	AnalyzeCommitDiff(commitDiff.(diffParsedType))
-//})
+var pool, _ = ants.NewPoolWithFunc(5, func(commitDiff interface{}) {
+	AnalyzeCommitDiff(commitDiff.(diffParsedType))
+})
 
 /* init
 /* @Description: 自动初始化配置
