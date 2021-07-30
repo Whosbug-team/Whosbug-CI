@@ -17,7 +17,7 @@ import (
 // json 替换原始json库
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-var pool, _ = ants.NewPoolWithFunc(10, func(commitDiff interface{}) {
+var pool, _ = ants.NewPoolWithFunc(3, func(commitDiff interface{}) {
 	AnalyzeCommitDiff(commitDiff.(diffParsedType))
 })
 
