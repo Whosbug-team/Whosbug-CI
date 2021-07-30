@@ -77,9 +77,9 @@ var Infos AnalysisInfoType
  */
 func (s *BaseJavaParserListener) ExitMethodDeclaration(ctx *MethodDeclarationContext) {
 	var methodInfo MethodInfoType
-	MethodName := ctx.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
-	ReturnType := ctx.GetChild(0).(*TypeTypeOrVoidContext).GetText()
-	Params := getParams(ctx.GetChild(2).(*FormalParametersContext))
+	MethodName := ctx.GetChild(1).(antlr.ParseTree).GetText()
+	ReturnType := ctx.GetChild(0).(antlr.ParseTree).GetText()
+	Params := getParams(ctx.GetChild(2).(antlr.ParseTree))
 	//fmt.Println(Params[0].paramName, Params[0].paramType)
 	methodInfo.ReturnType = ReturnType
 	methodInfo.StartLine = ctx.GetStart().GetLine()
@@ -98,7 +98,7 @@ func (s *BaseJavaParserListener) ExitMethodDeclaration(ctx *MethodDeclarationCon
  * @author KevinMatt 2021-07-25 16:56:35
  * @function_mark PASS
  */
-func getParams(ctx *FormalParametersContext) []paramInfoType {
+func getParams(ctx antlr.ParseTree) []paramInfoType {
 	var paramInfo paramInfoType
 	var result []paramInfoType
 	if ctx.GetChildCount() == 3 {
@@ -144,7 +144,9 @@ func getParams(ctx *FormalParametersContext) []paramInfoType {
 func (s *BaseJavaParserListener) EnterMethodCall(ctx *MethodCallContext) {
 	lineNumber := ctx.GetStart().GetLine()
 	columnNumber := ctx.GetStart().GetColumn()
-	Infos.CallMethods = append(Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetParent().(antlr.ParseTree).GetText()))
+	if ctx.GetParent() != nil {
+		Infos.CallMethods = append(Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetParent().(antlr.ParseTree).GetText()))
+	}
 }
 
 /** findImplements
@@ -189,8 +191,12 @@ func (s *BaseJavaParserListener) EnterClassDeclaration(ctx *ClassDeclarationCont
 	if childCount == 6 {
 		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		var extendsClassName string
-		if ctx.GetChild(2).GetChild(1).GetChild(2) != nil {
-			extendsClassName = ctx.GetChild(2).GetChild(1).GetChild(2).(antlr.ParseTree).GetText()
+		if ctx.GetChild(2).GetChildCount() > 2 {
+			if ctx.GetChild(2).GetChild(1).GetChildCount() > 3 {
+				if ctx.GetChild(2).GetChild(1).GetChild(2) != nil {
+					extendsClassName = ctx.GetChild(2).GetChild(1).GetChild(2).(antlr.ParseTree).GetText()
+				}
+			}
 		}
 		classInfo.ClassName = className
 		classInfo.Extends = extendsClassName
