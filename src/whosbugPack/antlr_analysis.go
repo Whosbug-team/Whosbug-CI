@@ -8,7 +8,7 @@ import (
 )
 
 type TreeShapeListener struct {
-	*javaparser.BaseJavaParserListener
+	Infos AnalysisInfoType
 }
 
 /* newTreeShapeListener
@@ -66,12 +66,12 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) diffParsedType {
  * @author KevinMatt 2021-07-29 19:49:37
  * @function_mark  PASS
 */
-func antlrAnalysis(diffText string, langMode string) javaparser.AnalysisInfoType {
-	var result javaparser.AnalysisInfoType
+func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
+	var result AnalysisInfoType
 	switch langMode {
 	case "java":
-		// 解析前置空javaparser的Infos结构体
-		javaparser.Infos.SetEmpty()
+		//// 解析前置空javaparser的Infos结构体
+		//javaparser.Infos.SetEmpty()
 		result = executeJava(diffText)
 	default:
 		break
@@ -86,7 +86,7 @@ func antlrAnalysis(diffText string, langMode string) javaparser.AnalysisInfoType
  * @author KevinMatt 2021-07-29 19:51:16
  * @function_mark PASS
 */
-func executeJava(diffText string) javaparser.AnalysisInfoType {
+func executeJava(diffText string) AnalysisInfoType {
 	// 截取目标文件的输入流
 	input := antlr.NewInputStream(diffText)
 
@@ -111,10 +111,10 @@ func executeJava(diffText string) javaparser.AnalysisInfoType {
 	tree := p.CompilationUnit()
 	// 创建listener
 	listener := newTreeShapeListener.Get().(*TreeShapeListener)
-	defer newTreeShapeListener.Put(listener)
 	// 执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return javaparser.Infos
+	defer newTreeShapeListener.Put(listener)
+	return listener.Infos
 }
 
 /* addObjectFromChangeLineNumber
@@ -127,7 +127,7 @@ func executeJava(diffText string) javaparser.AnalysisInfoType {
  * @author KevinMatt 2021-07-29 19:31:58
  * @function_mark PASS
 */
-func addObjectFromChangeLineNumber(fileName string, objects map[int]map[string]string, changeLineNumber changeLineType, antlrAnalyzeRes javaparser.AnalysisInfoType) map[int]map[string]string {
+func addObjectFromChangeLineNumber(fileName string, objects map[int]map[string]string, changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) map[int]map[string]string {
 	// 寻找变动方法
 	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
 	if changeMethod.MethodName == "" {
@@ -159,7 +159,7 @@ func addObjectFromChangeLineNumber(fileName string, objects map[int]map[string]s
  * @author KevinMatt 2021-07-29 19:38:19
  * @function_mark PASS
 */
-func findChangedMethod(changeLineNumber changeLineType, antlrAnalyzeRes javaparser.AnalysisInfoType) (changeMethodInfo javaparser.MethodInfoType) {
+func findChangedMethod(changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) (changeMethodInfo MethodInfoType) {
 	var startLineNumbers []int
 	// 遍历匹配到的方法列表，存储其首行
 	for index := range antlrAnalyzeRes.AstInfoList.Methods {
