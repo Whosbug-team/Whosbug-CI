@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/panjf2000/ants"
 	"io"
 	"log"
 	"os"
@@ -15,6 +16,10 @@ import (
 
 // json 替换原始json库
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
+var pool, _ = ants.NewPoolWithFunc(3, func(commitDiff interface{}) {
+	AnalyzeCommitDiff(commitDiff.(diffParsedType))
+})
 
 /* init
 /* @Description: 自动初始化配置
@@ -44,11 +49,12 @@ func init() {
 }
 
 // Analysis
-/* @Description: 唯一暴露给外部的函数，作为程序入口
+/* @Description: 暴露给外部的函数，作为程序入口
  * @author KevinMatt 2021-07-29 17:51:28
  * @function_mark PASS
  */
 func Analysis() {
+	defer pool.Release()
 	t := time.Now()
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
 	diffPath, commitPath := getLogInfo()

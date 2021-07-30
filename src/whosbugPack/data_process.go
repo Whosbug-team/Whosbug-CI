@@ -127,12 +127,14 @@ func parseDiffToFile(data, commitHash string) {
 			diffParsed.diffText = strings.Join(lines, "\n")
 			diffParsed.diffFileName = rawDiff[2]
 			diffParsed.changeLineNumbers = append(diffParsed.changeLineNumbers, changeLineNumbers...)
+			diffParsed.commitHash = commitHash
 
 			// 得到单个diff后直接送入analyze进行分析
 			// TODO 从此可以开始使用goroutine
-
-			commitDiff := analyzeCommitDiff(diffParsed, commitHash)
-			forDebug(commitDiff)
+			err := pool.Invoke(diffParsed)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }

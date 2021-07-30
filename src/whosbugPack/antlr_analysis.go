@@ -4,6 +4,7 @@ import (
 	javaparser "anrlr4_ast/java"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"sync"
 )
 
 type TreeShapeListener struct {
@@ -20,21 +21,28 @@ func newTreeShapeListener() *TreeShapeListener {
 	return new(TreeShapeListener)
 }
 
-/* analyzeCommitDiff
+var (
+	lexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+		return javaparser.NewJavaLexer(nil)
+	}}
+	parserPool *sync.Pool = &sync.Pool{New: func() interface{} {
+		return javaparser.NewJavaParser(nil)
+	}}
+)
+
+// AnalyzeCommitDiff
 /* @Description: 使用antlr分析commitDiff信息
  * @param commitDiff diff信息(path)
  * @param commitId commit的Hash值
  * @author KevinMatt 2021-07-29 22:48:28
  * @function_mark
-*/
-func analyzeCommitDiff(commitDiff diffParsedType, commitId string) diffParsedType {
-	commitDiff.commitHash = commitId
-
+ */
+func AnalyzeCommitDiff(commitDiff diffParsedType) diffParsedType {
 	// 源码路径(仓库路径)
 	filePath := commitDiff.diffFileName
 
 	// 获取antlr分析结果
-	antlrAnalyzeRes := antlrAnalysis(&commitDiff.diffText, "java")
+	antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
 
 	// 创建要存入的objects
 	objects := make(map[int]map[string]string)
@@ -50,37 +58,6 @@ func analyzeCommitDiff(commitDiff diffParsedType, commitId string) diffParsedTyp
 	return commitDiff
 }
 
-///* analyzeCommitDiff
-///* @Description: 使用antlr分析commitDiff信息
-// * @param CommitDiffs diff信息(path)
-// * @param commitId commit的Hash值
-// * @author KevinMatt 2021-07-29 20:17:03
-// * @function_mark
-//*/
-//func analyzeCommitDiff1(CommitDiffs []diffParsedType, commitId string) {
-//	for index := range CommitDiffs {
-//		CommitDiffs[index].commitHash = commitId
-//
-//		// 处理后的源码路径
-//		tempFile := CommitDiffs[index].diffFilePath
-//
-//		// 变动文件名
-//		filePath := CommitDiffs[index].diffFileName
-//
-//		// 获取antlr分析结果
-//		antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
-//
-//		// 创建要存入的objects
-//		objects := make(map[int]map[string]string)
-//
-//		for _, changeLineNumber := range CommitDiffs[index].changeLineNumbers {
-//			// 根据行号添加object
-//			objects = addObjectFromChangeLineNumber(filePath, objects, changeLineNumber, antlrAnalyzeRes)
-//		}
-//		CommitDiffs[index].diffContent = objects
-//	}
-//}
-
 /* antlrAnalysis
 /* @Description: antlr分析过程
  * @param targetFilePath 分析的目标文件
@@ -89,7 +66,7 @@ func analyzeCommitDiff(commitDiff diffParsedType, commitId string) diffParsedTyp
  * @author KevinMatt 2021-07-29 19:49:37
  * @function_mark  PASS
 */
-func antlrAnalysis(diffText *string, langMode string) javaparser.AnalysisInfoType {
+func antlrAnalysis(diffText string, langMode string) javaparser.AnalysisInfoType {
 	var result javaparser.AnalysisInfoType
 	switch langMode {
 	case "java":
@@ -109,16 +86,21 @@ func antlrAnalysis(diffText *string, langMode string) javaparser.AnalysisInfoTyp
  * @author KevinMatt 2021-07-29 19:51:16
  * @function_mark PASS
 */
-func executeJava(diffText *string) javaparser.AnalysisInfoType {
+func executeJava(diffText string) javaparser.AnalysisInfoType {
 	// 截取目标文件的输入流
-	input := antlr.NewInputStream(*diffText)
+	input := antlr.NewInputStream(diffText)
 
 	// 初始化lexer
-	lexer := javaparser.NewJavaLexer(input)
+	lexer := lexerPool.Get().(*javaparser.JavaLexer)
+	defer lexerPool.Put(lexer)
+	lexer.SetInputStream(input)
+
 	// 初始化Token流
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	// 初始化Parser
-	p := javaparser.NewJavaParser(stream)
+	p := parserPool.Get().(*javaparser.JavaParser)
+	defer parserPool.Put(p)
+	p.SetTokenStream(stream)
 	// 移除错误诊断监听，尝试提高性能
 	//p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
 	// 构建语法解析树
