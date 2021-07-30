@@ -32,3 +32,16 @@ type diffParsedType struct {
 	diffText          string
 	diffContent       map[int]map[string]string
 }
+
+// ObjectInfoType 生成的object信息
+type ObjectInfoType struct {
+	CommitHash string
+	Owner	string
+	FilePath string
+	ParName string
+	ParHash string
+	Name    string
+	Hash    string
+	OldName string
+	CommitTime string
+}
