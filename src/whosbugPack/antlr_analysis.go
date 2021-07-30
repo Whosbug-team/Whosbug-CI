@@ -17,9 +17,6 @@ type TreeShapeListener struct {
  * @author KevinMatt 2021-07-29 20:08:20
  * @function_mark PASS
 */
-func newTreeShapeListener() *TreeShapeListener {
-	return new(TreeShapeListener)
-}
 
 var (
 	lexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
@@ -27,6 +24,9 @@ var (
 	}}
 	parserPool *sync.Pool = &sync.Pool{New: func() interface{} {
 		return javaparser.NewJavaParser(nil)
+	}}
+	newTreeShapeListener *sync.Pool = &sync.Pool{New: func() interface{} {
+		return new(TreeShapeListener)
 	}}
 )
 
@@ -110,7 +110,7 @@ func executeJava(diffText string) javaparser.AnalysisInfoType {
 	// 解析模式->每个编译单位
 	tree := p.CompilationUnit()
 	// 创建listener
-	listener := newTreeShapeListener()
+	listener := newTreeShapeListener.Get().(*TreeShapeListener)
 	// 执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return javaparser.Infos
