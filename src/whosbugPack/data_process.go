@@ -131,7 +131,10 @@ func parseDiffToFile(data, commitHash string) {
 
 			// 得到单个diff后直接送入analyze进行分析
 			// TODO 从此可以开始使用goroutine
-			pool.Invoke(diffParsed)
+			err := pool.Invoke(diffParsed)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }
