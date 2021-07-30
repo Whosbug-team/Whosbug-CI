@@ -151,7 +151,7 @@ func replaceLines(lines []string) {
 			if string(lines[index][0]) == "+" {
 				lines[index] = "" + lines[index][1:]
 				//strings.Replace(lines[index], string(lines[index][0]), "", 1)
-			} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file\r\n" {
+			} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file" {
 				lines[index] = ""
 			} else {
 				lines[index] = "" + lines[index][1:]

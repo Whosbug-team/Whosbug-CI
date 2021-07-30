@@ -102,7 +102,13 @@ func matchCommit(diffPath, commitPath string) {
 			infoList := strings.Split(string(commitLine), ",")
 
 			// 填充commitInfo结构体内的各项信息
-			commitInfo.commitHash, commitInfo.committerEmail, commitInfo.committerName, commitInfo.commitTime = infoList[0], infoList[1], infoList[2], toIso8601(strings.Split(infoList[3][4:], " "))
+			for index := 2; index < len(infoList)-1; index++ {
+				commitInfo.committerName += infoList[index]
+				if index != len(infoList)-2 {
+					commitInfo.committerName += ","
+				}
+			}
+			commitInfo.commitHash, commitInfo.committerEmail, commitInfo.commitTime = infoList[0], infoList[1], toIso8601(strings.Split(infoList[len(infoList)-1][4:], " "))
 
 			// 获取一次完整的commit，使用双循环交错读取方法避免跳过commit
 			fullCommit := getFullCommit(patCommit, lineReaderDiff)

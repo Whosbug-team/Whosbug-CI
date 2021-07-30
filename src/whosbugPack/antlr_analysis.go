@@ -111,6 +111,7 @@ func executeJava(diffText string) javaparser.AnalysisInfoType {
 	tree := p.CompilationUnit()
 	// 创建listener
 	listener := newTreeShapeListener.Get().(*TreeShapeListener)
+	defer newTreeShapeListener.Put(listener)
 	// 执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return javaparser.Infos
