@@ -4,7 +4,7 @@ import (
 	javaparser "anrlr4_ast/java"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"sync"
+	"strings"
 )
 
 type TreeShapeListener struct {
@@ -21,14 +21,25 @@ func newTreeShapeListener() *TreeShapeListener {
 	return new(TreeShapeListener)
 }
 
-var (
-	lexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
-		return javaparser.NewJavaLexer(nil)
-	}}
-	parserPool *sync.Pool = &sync.Pool{New: func() interface{} {
-		return javaparser.NewJavaParser(nil)
-	}}
-)
+func routinesFunc(diffPartsContent string, rightDiffHeadIndex []int, commitHash, diffFileName string) {
+
+	// 获取所有行，并按"\n"切分，略去第一行(@@行)
+	lines := (strings.Split(diffPartsContent[rightDiffHeadIndex[1]:][0:], "\n"))[1:]
+
+	// 传入行的切片，寻找所有变动行
+	changeLineNumbers := findAllChangedLineNumbers(lines)
+
+	// 替换 +/-行，删除-行内容，切片传递，无需返回值
+	replaceLines(lines)
+
+	// 填入到结构体中，准备送入协程
+	var diffParsed diffParsedType
+	diffParsed.diffText = strings.Join(lines, "\n")
+	diffParsed.diffFileName = diffFileName
+	diffParsed.changeLineNumbers = append(diffParsed.changeLineNumbers, changeLineNumbers...)
+	diffParsed.commitHash = commitHash
+	AnalyzeCommitDiff(diffParsed)
+}
 
 // AnalyzeCommitDiff
 /* @Description: 使用antlr分析commitDiff信息
@@ -91,16 +102,11 @@ func executeJava(diffText string) javaparser.AnalysisInfoType {
 	input := antlr.NewInputStream(diffText)
 
 	// 初始化lexer
-	lexer := lexerPool.Get().(*javaparser.JavaLexer)
-	defer lexerPool.Put(lexer)
-	lexer.SetInputStream(input)
-
+	lexer := javaparser.NewJavaLexer(input)
 	// 初始化Token流
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	// 初始化Parser
-	p := parserPool.Get().(*javaparser.JavaParser)
-	defer parserPool.Put(p)
-	p.SetTokenStream(stream)
+	p := javaparser.NewJavaParser(stream)
 	// 移除错误诊断监听，尝试提高性能
 	//p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
 	// 构建语法解析树

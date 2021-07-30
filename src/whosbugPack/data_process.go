@@ -92,6 +92,7 @@ func parseDiffToFile(data, commitHash string) {
 		if !lanFilter(path.Base(rawDiff[2])) {
 			continue
 		} else {
+
 			// 获得左索引
 			leftDiffIndex := indexList[index][0]
 
@@ -113,25 +114,9 @@ func parseDiffToFile(data, commitHash string) {
 				continue
 			}
 
-			// 获取所有行，并按"\n"切分，略去第一行(@@行)
-			lines := (strings.Split(diffPartsContent[rightDiffHeadIndex[1]:][0:], "\n"))[1:]
-
-			// 传入行的切片，寻找所有变动行
-			changeLineNumbers := findAllChangedLineNumbers(lines)
-
-			// 替换 +/-行，删除-行内容，切片传递，无需返回值
-			replaceLines(lines)
-
-			// 填入到结构体中，准备送入协程
-			var diffParsed diffParsedType
-			diffParsed.diffText = strings.Join(lines, "\n")
-			diffParsed.diffFileName = rawDiff[2]
-			diffParsed.changeLineNumbers = append(diffParsed.changeLineNumbers, changeLineNumbers...)
-			diffParsed.commitHash = commitHash
-
 			// 得到单个diff后直接送入analyze进行分析
 			// TODO 从此可以开始使用goroutine
-			pool.Invoke(diffParsed)
+			routinesFunc(diffPartsContent, rightDiffHeadIndex, commitHash, rawDiff[2])
 		}
 	}
 }
