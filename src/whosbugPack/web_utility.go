@@ -95,13 +95,14 @@ func getLatestRelease(projectId string) (string, error) {
 
 //协程里缓存队列的长度
 const _objectBufferQueueLength = 100
+
 // 处理上传的协程
-func processObjectUpload(){
+func processObjectUpload() {
 	//object缓冲队列，满的时候再统一上传
 	objectBufferQueue := make(chan ObjectInfoType, _objectBufferQueueLength)
 	//在objectChan关闭且objectChan为空后会自然退出
 	for object := range objectChan {
-		if len(objectBufferQueue) < 100{
+		if len(objectBufferQueue) < 100 {
 			objectBufferQueue <- object
 			continue
 		} else {
@@ -111,8 +112,8 @@ func processObjectUpload(){
 	//自然退出后，缓冲队列可能还有残留
 	_processUpload(objectBufferQueue)
 }
-func _processUpload(objectBufferQueue <-chan ObjectInfoType){
-	var objects [] ObjectInfoType
+func _processUpload(objectBufferQueue <-chan ObjectInfoType) {
+	var objects []ObjectInfoType
 	//将缓冲队列内的object导入objects内
 	for object := range objectBufferQueue {
 		objects = append(objects, object)
@@ -127,7 +128,6 @@ func _processUpload(objectBufferQueue <-chan ObjectInfoType){
 		return
 	}*/
 }
-
 
 /** getLatestRelease
  * @Description: 发送解析结果到server
