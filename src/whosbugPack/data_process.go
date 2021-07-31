@@ -26,7 +26,7 @@ func getLogInfo() (string, string) {
 	}
 	fmt.Println("Work Path Change to: ", config.RepoPath)
 
-	localHashLatest := execCommandOutput("git", "rev-parse", "HEAD")
+	localHashLatest = execCommandOutput("git", "rev-parse", "HEAD")
 	// TODO 获得服务器的最新commitHash，此处主要为了验证程序主体功能，暂时没有处理
 
 	cloudHashLatest := ""

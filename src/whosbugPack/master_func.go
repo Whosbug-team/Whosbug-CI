@@ -46,6 +46,13 @@ func init() {
 		fmt.Println("Get input.json succeed!")
 	}
 	fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
+
+	objectChan = make(chan ObjectInfoType, 1000)
+	//开启处理object上传的协程
+	for i := 0; i < 1; i++ {
+		go processObjectUpload()
+	}
+
 }
 
 // Analysis
