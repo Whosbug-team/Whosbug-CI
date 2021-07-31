@@ -17,9 +17,8 @@ import (
 // json 替换原始json库
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-var pool, _ = ants.NewPoolWithFunc(10, func(commitDiff interface{}) {
+var pool, _ = ants.NewPoolWithFunc(100, func(commitDiff interface{}) {
 	AnalyzeCommitDiff(commitDiff.(diffParsedType))
-	runtime.GC()
 })
 
 /* init
@@ -122,7 +121,7 @@ func matchCommit(diffPath, commitPath string) {
 
 			// 指示已经处理的commit数量
 			processCommits++
-			fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " done.", "pool available", pool.Free())
+			fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " done.")
 		}
 		// 强制手动触发GC,避免短解析作业在golang自动gc触发的两分钟阈值内大量堆积内存
 		runtime.GC()
