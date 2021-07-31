@@ -93,6 +93,41 @@ func getLatestRelease(projectId string) (string, error) {
 	}
 }
 
+//协程里缓存队列的长度
+const _objectBufferQueueLength = 100
+// 处理上传的协程
+func processObjectUpload(){
+	//object缓冲队列，满的时候再统一上传
+	objectBufferQueue := make(chan ObjectInfoType, _objectBufferQueueLength)
+	//在objectChan关闭且objectChan为空后会自然退出
+	for object := range objectChan {
+		if len(objectBufferQueue) < 100{
+			objectBufferQueue <- object
+			continue
+		} else {
+			_processUpload(objectBufferQueue)
+		}
+	}
+	//自然退出后，缓冲队列可能还有残留
+	_processUpload(objectBufferQueue)
+}
+func _processUpload(objectBufferQueue <-chan ObjectInfoType){
+	var objects [] ObjectInfoType
+	//将缓冲队列内的object导入objects内
+	for object := range objectBufferQueue {
+		objects = append(objects, object)
+	}
+	projectId := config.ProjectId
+	releaseVersion := config.ReleaseVersion
+	println(projectId, releaseVersion)
+	//TODO之后再测试对接
+	/*err := postObjects(projectId, releaseVersion, localHashLatest, objects)
+	if err != nil {
+		log.Println(err)
+		return
+	}*/
+}
+
 
 /** getLatestRelease
  * @Description: 发送解析结果到server
@@ -129,10 +164,10 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 	var objectsStrForPost []string
 	for _, object := range objects {
 		objectStr := fmt.Sprintf(objectFormatStr,
-			tempEncrypt(object.Owner), tempEncrypt(object.FilePath),
-			tempEncrypt(object.ParName), tempEncrypt(object.ParHash),
-			tempEncrypt(object.Name), tempEncrypt(object.Hash),
-			tempEncrypt(object.OldName), object.CommitTime)
+			tempEncrypt(object["owner"]), tempEncrypt(object["file_path"]),
+			tempEncrypt(object["parent_name"]), tempEncrypt(object["parent_hash"]),
+			tempEncrypt(object["name"]), tempEncrypt(object["hash"]),
+			tempEncrypt(object["old_name"]), object["commit_time"])
 		objectsStrForPost = append(objectsStrForPost, objectStr)
 	}
 	objectsStr := strings.Join(objectsStrForPost, ",")

@@ -30,18 +30,8 @@ type diffParsedType struct {
 	changeLineNumbers []changeLineType
 	commitHash        string
 	diffText          string
-	diffContent       map[int]map[string]string
+	diffContent       map[int]ObjectInfoType
 }
 
 // ObjectInfoType 生成的object信息
-type ObjectInfoType struct {
-	CommitHash string
-	Owner      string
-	FilePath   string
-	ParName    string
-	ParHash    string
-	Name       string
-	Hash       string
-	OldName    string
-	CommitTime string
-}
+type ObjectInfoType map[string]string

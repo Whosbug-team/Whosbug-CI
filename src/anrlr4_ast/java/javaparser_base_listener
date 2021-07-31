@@ -1,4 +1,4 @@
-// Code generated from JavaParser.g4 by ANTLR 4.9.2. DO NOT EDIT.
+/*// Code generated from JavaParser.g4 by ANTLR 4.9.2. DO NOT EDIT.
 
 package javaParser // JavaParser
 
@@ -298,3 +298,4 @@ func (s *BaseJavaParserListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
 
 // ExitEveryRule is called when any rule is exited.
 func (s *BaseJavaParserListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
+*/

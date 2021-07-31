@@ -9,6 +9,12 @@ var workPath string
 // 全局变量，存储密钥
 var secret string
 
+// 全局变量，记录本地最后commit hash
+var localHashLatest string
+
+// 全局变量，object传输的通道
+var objectChan chan ObjectInfoType
+
 // parCommitPattern 匹配commit行
 const parCommitPattern = `(commit\ ([a-f0-9]{40}))`
 

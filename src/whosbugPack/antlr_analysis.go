@@ -37,7 +37,7 @@ var (
  * @author KevinMatt 2021-07-29 22:48:28
  * @function_mark
  */
-func AnalyzeCommitDiff(commitDiff diffParsedType) diffParsedType {
+func AnalyzeCommitDiff(commitDiff diffParsedType){
 	// 源码路径(仓库路径)
 	filePath := commitDiff.diffFileName
 
@@ -45,7 +45,7 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) diffParsedType {
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
 
 	// 创建要存入的objects
-	objects := make(map[int]map[string]string)
+	objects := make(map[int]ObjectInfoType)
 
 	for _, changeLineNumber := range commitDiff.changeLineNumbers {
 		// 根据行号添加object
@@ -54,8 +54,11 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) diffParsedType {
 			objects = temp
 		}
 	}
-	commitDiff.diffContent = objects
-	return commitDiff
+
+	//传入object上传对接
+	for _, object := range objects  {
+		objectChan <- object
+	}
 }
 
 /* antlrAnalysis
@@ -127,7 +130,7 @@ func executeJava(diffText string) AnalysisInfoType {
  * @author KevinMatt 2021-07-29 19:31:58
  * @function_mark PASS
 */
-func addObjectFromChangeLineNumber(fileName string, objects map[int]map[string]string, changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) map[int]map[string]string {
+func addObjectFromChangeLineNumber(fileName string, objects map[int]ObjectInfoType, changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) map[int]ObjectInfoType {
 	// 寻找变动方法
 	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
 	if changeMethod.MethodName == "" {
@@ -141,8 +144,8 @@ func addObjectFromChangeLineNumber(fileName string, objects map[int]map[string]s
 	}
 
 	// 装入变量
-	objects[changeMethod.StartLine] = make(map[string]string)
-	objects[changeMethod.StartLine] = map[string]string{
+	objects[changeMethod.StartLine] = make(ObjectInfoType)
+	objects[changeMethod.StartLine] = ObjectInfoType{
 		"name":        changeMethod.MethodName,
 		"hash":        fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MethodName), []byte(fileName))),
 		"parent_name": changeMethod.MasterObject.ObjectName,
