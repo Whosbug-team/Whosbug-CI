@@ -25,7 +25,7 @@ type MethodInfoType struct {
 
 type masterObjectInfoType struct {
 	ObjectName string
-	StartLine  string
+	StartLine  int
 }
 
 type classInfoType struct {
@@ -251,13 +251,17 @@ func findImplements(ctx antlr.ParseTree) []string {
  */
 func findMasterObjectClass(ctx *javaparser.ClassDeclarationContext, classInfo classInfoType) masterObjectInfoType {
 	var masterObject masterObjectInfoType
-	//TODO 找到匹配masterObject的合适规则
-	//parCtx := ctx.GetParent()
-	////parCtx := ctx.GetParent()
-	//masterCtx := parCtx.GetParent().GetParent().GetParent()
-	//temp := masterCtx.GetChild(1)
-	//classInfo.MasterObject.ObjectName = ""
-	//fmt.Println(temp)
+	var parCtx interface{}
+	parCtx = ctx.GetParent()
+	if _, ok := parCtx.(*javaparser.TypeDeclarationContext); ok {
+		if parCtx.(antlr.ParseTree).GetChildCount() >= 2 {
+			if parCtx.(antlr.ParseTree).GetChild(1).GetChildCount() >= 2 {
+				parClassName := parCtx.(antlr.ParseTree).GetChild(1).GetChild(1).GetText()
+				masterObject.ObjectName = parClassName
+				masterObject.StartLine = parCtx.(*javaparser.TypeDeclarationContext).GetChild(1).(*javaparser.ClassDeclarationContext).GetStart().GetLine()
+			}
+		}
+	}
 	return masterObject
 }
 
