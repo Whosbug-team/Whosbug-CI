@@ -47,7 +47,7 @@ type astInfoType struct {
 	PackageName string ``
 	Classes     []classInfoType
 	Imports     []string
-	Fileds      []fieldInfoType
+	Fields      []fieldInfoType
 	Methods     []MethodInfoType
 }
 
@@ -172,7 +172,7 @@ func (s *TreeShapeListener) EnterFieldDeclaration(ctx *javaparser.FieldDeclarati
 	var field fieldInfoType
 	field.FieldType = ctx.GetChild(0).(antlr.ParseTree).GetText()
 	field.FieldDefinition = ctx.GetChild(1).(antlr.ParseTree).GetText()
-	s.Infos.AstInfoList.Fileds = append(s.Infos.AstInfoList.Fileds, field)
+	s.Infos.AstInfoList.Fields = append(s.Infos.AstInfoList.Fields, field)
 }
 
 // getParams
