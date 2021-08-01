@@ -29,7 +29,10 @@ func getLogInfo() (string, string) {
 	localHashLatest = execCommandOutput("git", "rev-parse", "HEAD")
 	// TODO 获得服务器的最新commitHash，此处主要为了验证程序主体功能，暂时没有处理
 
-	cloudHashLatest := ""
+	cloudHashLatest, err := getLatestRelease(config.ProjectId)
+	if err != nil {
+		log.Println(err)
+	}
 	if cloudHashLatest != localHashLatest {
 		if cloudHashLatest == "" {
 			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")

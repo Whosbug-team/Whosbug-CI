@@ -18,7 +18,7 @@ import (
 )
 
 const _HOST = "http://127.0.0.1:8081"
-const _SECRET = "456"
+const _SECRET = ""
 const _USERNAME = "user"
 const _PASSWORD = "pwd"
 
@@ -98,34 +98,27 @@ const _objectBufferQueueLength = 100
 // 处理上传的协程
 func processObjectUpload(){
 	//object缓冲队列，满的时候再统一上传
-	objectBufferQueue := make(chan ObjectInfoType, _objectBufferQueueLength)
+	var objects [] ObjectInfoType
 	//在objectChan关闭且objectChan为空后会自然退出
 	for object := range objectChan {
-		if len(objectBufferQueue) < 100{
-			objectBufferQueue <- object
-			continue
+		if len(objects) < _objectBufferQueueLength{
+			objects = append(objects, object)
 		} else {
-			_processUpload(objectBufferQueue)
+			_processUpload(objects)
 		}
 	}
 	//自然退出后，缓冲队列可能还有残留
-	_processUpload(objectBufferQueue)
+	_processUpload(objects)
 }
-func _processUpload(objectBufferQueue <-chan ObjectInfoType){
-	var objects [] ObjectInfoType
-	//将缓冲队列内的object导入objects内
-	for object := range objectBufferQueue {
-		objects = append(objects, object)
-	}
+func _processUpload(objects [] ObjectInfoType){
 	projectId := config.ProjectId
 	releaseVersion := config.ReleaseVersion
-	println(projectId, releaseVersion)
-	//TODO之后再测试对接
-	/*err := postObjects(projectId, releaseVersion, localHashLatest, objects)
+	//TODO 之后再测试对接
+	err := postObjects(projectId, releaseVersion, localHashLatest, objects)
 	if err != nil {
 		log.Println(err)
 		return
-	}*/
+	}
 }
 
 

@@ -256,7 +256,7 @@ func findMasterObjectClass(ctx *javaparser.ClassDeclarationContext, classInfo cl
 	if _, ok := parCtx.(*javaparser.TypeDeclarationContext); ok {
 		if parCtx.(antlr.ParseTree).GetChildCount() >= 2 {
 			if parCtx.(antlr.ParseTree).GetChild(1).GetChildCount() >= 2 {
-				parClassName := parCtx.(antlr.ParseTree).GetChild(1).GetChild(1).GetText()
+				parClassName := parCtx.(antlr.ParseTree).GetChild(1).GetChild(1).(antlr.ParseTree).GetText()
 				masterObject.ObjectName = parClassName
 				masterObject.StartLine = parCtx.(*javaparser.TypeDeclarationContext).GetChild(1).(*javaparser.ClassDeclarationContext).GetStart().GetLine()
 			}
