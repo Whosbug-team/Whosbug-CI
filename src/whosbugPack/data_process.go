@@ -78,7 +78,7 @@ func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) strin
  * @author KevinMatt 2021-07-29 22:54:33
  * @function_mark PASS
 */
-func parseDiffToFile(data, commitHash string) {
+func parseDiffToFile(data string, commitInfo commitInfoType) {
 	// 编译正则
 	patDiff, _ := regexp.Compile(parDiffPattern)
 	patDiffPart, _ := regexp.Compile(parDiffPartPattern)
@@ -130,8 +130,9 @@ func parseDiffToFile(data, commitHash string) {
 			diffParsed.diffText = strings.Join(lines, "\n")
 			diffParsed.diffFileName = rawDiff[2]
 			diffParsed.changeLineNumbers = append(diffParsed.changeLineNumbers, changeLineNumbers...)
-			diffParsed.commitHash = commitHash
-
+			diffParsed.commitHash = commitInfo.commitHash
+			diffParsed.committerName = commitInfo.committerName
+			diffParsed.commitTime = commitInfo.commitTime
 			// 得到单个diff后直接送入analyze进行分析
 			fmt.Println("pool running: ", pool.Running())
 			// 上传任务到协程池

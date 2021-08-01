@@ -124,7 +124,7 @@ func matchCommit(diffPath, commitPath string) {
 			runtime.GC()
 
 			// 获取单次commit中的每一次diff，并处理diff，送进协程
-			parseDiffToFile(fullCommit, commitInfo.commitHash)
+			parseDiffToFile(fullCommit, commitInfo)
 
 			// 指示已经处理的commit数量
 			processCommits++

@@ -26,6 +26,8 @@ type changeLineType struct {
 
 // diffParsedType 解析后的diff信息
 type diffParsedType struct {
+	commitTime        string
+	committerName     string
 	diffFileName      string
 	changeLineNumbers []changeLineType
 	commitHash        string

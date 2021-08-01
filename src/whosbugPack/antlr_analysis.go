@@ -19,10 +19,10 @@ type TreeShapeListener struct {
 */
 
 var (
-	lexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	lexerPool = &sync.Pool{New: func() interface{} {
 		return javaparser.NewJavaLexer(nil)
 	}}
-	parserPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	parserPool = &sync.Pool{New: func() interface{} {
 		return javaparser.NewJavaParser(nil)
 	}}
 	newTreeShapeListener *sync.Pool = &sync.Pool{New: func() interface{} {
@@ -37,9 +37,7 @@ var (
  * @author KevinMatt 2021-07-29 22:48:28
  * @function_mark
  */
-func AnalyzeCommitDiff(commitDiff diffParsedType){
-	// 源码路径(仓库路径)
-	filePath := commitDiff.diffFileName
+func AnalyzeCommitDiff(commitDiff diffParsedType) {
 
 	// 获取antlr分析结果
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
@@ -49,14 +47,13 @@ func AnalyzeCommitDiff(commitDiff diffParsedType){
 
 	for _, changeLineNumber := range commitDiff.changeLineNumbers {
 		// 根据行号添加object
-		temp := addObjectFromChangeLineNumber(filePath, objects, changeLineNumber, antlrAnalyzeRes)
+		temp := addObjectFromChangeLineNumber(commitDiff, objects, changeLineNumber, antlrAnalyzeRes)
 		if temp != nil {
 			objects = temp
 		}
 	}
-
 	//传入object上传对接
-	for _, object := range objects  {
+	for _, object := range objects {
 		objectChan <- object
 	}
 }
@@ -130,7 +127,7 @@ func executeJava(diffText string) AnalysisInfoType {
  * @author KevinMatt 2021-07-29 19:31:58
  * @function_mark PASS
 */
-func addObjectFromChangeLineNumber(fileName string, objects map[int]ObjectInfoType, changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) map[int]ObjectInfoType {
+func addObjectFromChangeLineNumber(commitDiff diffParsedType, objects map[int]ObjectInfoType, changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) map[int]ObjectInfoType {
 	// 寻找变动方法
 	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
 	if changeMethod.MethodName == "" {
@@ -147,9 +144,13 @@ func addObjectFromChangeLineNumber(fileName string, objects map[int]ObjectInfoTy
 	objects[changeMethod.StartLine] = make(ObjectInfoType)
 	objects[changeMethod.StartLine] = ObjectInfoType{
 		"name":        changeMethod.MethodName,
-		"hash":        fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MethodName), []byte(fileName))),
+		"hash":        fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MethodName), []byte(commitDiff.diffFileName))),
 		"parent_name": changeMethod.MasterObject.ObjectName,
-		"parent_hash": fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(fileName))),
+		"parent_hash": fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.diffFileName))),
+		"file_path":   commitDiff.diffFileName,
+		"owner":       commitDiff.committerName,
+		"commit_time": commitDiff.commitTime,
+		"old_name":    "",
 	}
 	return objects
 }
