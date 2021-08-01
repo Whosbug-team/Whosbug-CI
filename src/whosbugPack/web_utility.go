@@ -142,15 +142,15 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 	projectData := fmt.Sprintf("{\"pid\":\"%s\"}", tempEncrypt(projectId))
 	releaseData := fmt.Sprintf("{\"release\":\"%s\", \"commit_hash\":\"%s\"}", tempEncrypt(releaseVersion), tempEncrypt(commitHash))
 
-	const objectFormatStr = "{\"owner\":\"%s\", \"file_path\":\"%s\", \"parent_name\":\"%s\", \"parent_hash\":\"%s\", \"name\":\"%s\", \"hash\":\"%s\", \"old_name\":\"%s\", \"commit_time\":\"%s\"}"
+	const objectFormatStr = "{\"owner\":\"%s\", \"file_path\":\"%s\", \"parent_name\":\"%s\", \"parent_hash\":\"%x\", \"name\":\"%s\", \"hash\":\"%x\", \"old_name\":\"%s\", \"commit_time\":\"%s\"}"
 	//形如:
 	//{
 	//    "owner": "%s",
 	//    "file_path": "%s",
 	//    "parent_name": "%s",
-	//    "parent_hash": "%s",
+	//    "parent_hash": "%x",
 	//    "name": "%s",
-	//    "hash": "%s",
+	//    "hash": "%x",
 	//    "old_name": "%s",
 	//    "commit_time": "%s"
 	//}
