@@ -95,13 +95,14 @@ func getLatestRelease(projectId string) (string, error) {
 
 //协程里缓存队列的长度
 const _objectBufferQueueLength = 100
+
 // 处理上传的协程
-func processObjectUpload(){
+func processObjectUpload() {
 	//object缓冲队列，满的时候再统一上传
-	var objects [] ObjectInfoType
+	var objects []ObjectInfoType
 	//在objectChan关闭且objectChan为空后会自然退出
 	for object := range objectChan {
-		if len(objects) < _objectBufferQueueLength{
+		if len(objects) < _objectBufferQueueLength {
 			objects = append(objects, object)
 		} else {
 			_processUpload(objects)
@@ -110,7 +111,7 @@ func processObjectUpload(){
 	//自然退出后，缓冲队列可能还有残留
 	_processUpload(objects)
 }
-func _processUpload(objects [] ObjectInfoType){
+func _processUpload(objects []ObjectInfoType) {
 	projectId := config.ProjectId
 	releaseVersion := config.ReleaseVersion
 	//TODO 之后再测试对接
@@ -120,7 +121,6 @@ func _processUpload(objects [] ObjectInfoType){
 		return
 	}
 }
-
 
 /** getLatestRelease
  * @Description: 发送解析结果到server

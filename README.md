@@ -1,632 +1,301 @@
-# Whosbug-Golang
+# 函数调用关系分析
 
-# 函数调用关系
+## 1.入口函数
 
-## `main()`
+`main()`，直接调用`WhosbugPack`下的导出方法：`Analysis()`
+
+在此之前，编译器导入包阶段，`master_func.go`下的`init`将被首先执行：
 
 ```go
-func main() {
-fmt.Println("Start!")
-whosbugAssigns.GetInputConfig()
-projectId := whosbugAssigns.Config.ProjectId
-branchName := whosbugAssigns.Config.BranchName
-repoPath := whosbugAssigns.Config.ProjectUrl
-resCommits := whosbugAssigns.Analysis(repoPath, branchName, projectId)
-whosbugAssigns.Result(resCommits, projectId, "1.0.0")
-fmt.Println("Whosbug analysis done")
+func init() {
+	// 获得密钥
+	secret = os.Getenv("WHOSBUG_SECRET")
+	if secret == "" {
+		secret = "defaultsecret"
+	}
+	// 工作目录存档
+	workPath, _ = os.Getwd()
+	file, err := os.Open("src/input.json")
+	if err != nil {
+		log.Println(err)
+	}
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&config)
+	if err != nil {
+		log.Println(err)
+	} else {
+		fmt.Println("Get input.json succeed!")
+	}
+	fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
+
+	objectChan = make(chan ObjectInfoType, 1000)
+	//开启处理object上传的协程
+	for i := 0; i < 1; i++ {
+		go processObjectUpload()
+	}
+
 }
 ```
 
-调用关系：
+获得全局变量和`input.json`中的配置信息，存入全局变量结构体`config`内.
 
-`main–>whosbugAssigns.GetInputConfig()–> whosbugAssigns.AnalysisTest()–>whosbugAssigns.result()`
-
-<img src="https://kevinmatt-1303917904.cos.ap-chengdu.myqcloud.com/temp/image-20210725142816533.png" alt="image-20210725142816533" style="zoom:50%;" />
-
-### `GetInputConfig()`
-
-```go
-func GetInputConfig() {
-file, err := os.Open("src/input.json")
-if err != nil {
-fmt.Println(err.Error())
-}
-
-decoder := json.NewDecoder(file)
-err = decoder.Decode(&config)
-if err != nil {
-fmt.Println(err.Error())
-} else {
-fmt.Println("Get input.json succeed!")
-}
-fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
-}
-// config: type input_json
-// type input_json struct {
-//	  ProjectId       string   `json:"__PROJRCT_ID"`
-//	  ReleaseVersion  string   `json:"__RELEASE_VERSION"`
-//	  ProjectUrl      string   `json:"__PROJECT_URL"`
-//	  BranchName      string   `json:"__BRANCH_NAME"`
-//	  LanguageSupport []string `json:"__LAN_SUPPORT"`
-//	  WebServerHost   string   `json:"__WEB_SRV_HOST""`
-//  }
-```
-
-读取src/input.json内的内容，存储到结构体中
-
-### `Analysis()`
-
-作为整体分析函数逻辑的主体部分，大部分调用从这里出发
+随后执行`Analysis()`:
 
 ```go
 // Analysis
-/* @Description: 分析调用主逻辑函数
- * @param repoPath 仓库地址/url
- * @param branchName 分支名
- * @param projectId 项目id
- * @return []CommitParsedType 返回解析后的commit信息
- * @author KevinMatt 2021-07-25 13:08:45
+/* @Description: 暴露给外部的函数，作为程序入口
+ * @author KevinMatt 2021-07-29 17:51:28
  * @function_mark PASS
  */
-func Analysis(repoPath, branchName, projectId string) []CommitParsedType {
-releaseDiff := getDiff(repoPath, branchName, projectId)
-commits := parseCommit(releaseDiff.Diff, strings.Split(releaseDiff.CommitInfo, "\n"))
-var parsedCommits []CommitParsedType
-for index := range commits {
-commit := commits[index]
-commitId := commit.Commit
-var diffPark string
-if index == len(commits)-1 {
-diffPark = releaseDiff.Diff[commit.CommitLeftIndex:]
-} else {
-nextCommitLeftIndex := commits[index+1].CommitLeftIndex
-diffPark = releaseDiff.Diff[commit.CommitLeftIndex:nextCommitLeftIndex]
-}
-commitDiffs := parseDiff(diffPark)
-commit = analyzeCommitDiff(projectId, commitDiffs, commitId, commit)
-parsedCommits = append(parsedCommits, commit)
-}
-return parsedCommits
+func Analysis() {
+	//defer pool.Release()
+	t := time.Now()
+	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
+	diffPath, commitPath := getLogInfo()
+	fmt.Println("Get log cost: ", time.Since(t))
+	matchCommit(diffPath, commitPath)
+	fmt.Println("Total cost: ", time.Since(t))
 }
 ```
 
-调用关系图：
+*时间统计后续可能移除
 
-<img src="https://kevinmatt-1303917904.cos.ap-chengdu.myqcloud.com/temp/image-20210725142839010.png" alt="image-20210725142839010" style="zoom: 50%;" />
+### 1.1 `getLogInfo()`
 
-#### `getDiff()`
-
-该函数通过执行`git log --full-diff -p -U1000 --pretty=raw`获取输出的Diff信息
+该函数主要依据`init()`获取的`config`信息，进入仓库目录执行`git log`命令并将输出重定向到原始工作目录下，随后返回重定向文件的路径：
 
 ```go
-// getDiff
-/* @Description: 获取release的diff信息
- * @param repoPath 仓库目录/url
- * @param branchName 分支名
- * @param projectId 项目id
- * @return ReleaseDiffType 返回releaseDiff结构体
- * @author KevinMatt 2021-07-25 13:12:07
+/* getLogInfo
+/* @Description: 获取所有的git commit记录和所有的commit+diff，并返回存储的文件目录
+ * @return string 所有diff信息的目录
+ * @return string 所有commit信息的目录
+ * @author KevinMatt 2021-07-29 17:25:39
  * @function_mark PASS
- */
-func getDiff(repoPath, branchName, projectId string) ReleaseDiffType {
+*/
+func getLogInfo() (string, string) {
+	// 切换到仓库目录
+	err := os.Chdir(config.RepoPath)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("Work Path Change to: ", config.RepoPath)
 
-secret := os.Getenv("WHOSBUG_SECRET")
-originPath, err := os.Getwd()
-errorHandler(err)
-err = os.Chdir(repoPath)
-errorHandler(err)
-fmt.Println("Work path changed to:", repoPath)
+	localHashLatest = execCommandOutput("git", "rev-parse", "HEAD")
+	// TODO 获得服务器的最新commitHash，此处主要为了验证程序主体功能，暂时没有处理
 
-newReleaseCommitHash := execCommandOutput("git", "rev-parse", "HEAD")
-
-originHash := make([]byte, len(projectId))
-err = encrypt([]byte(projectId), originHash, []byte(secret), []byte(projectId))
-errorHandler(err)
-getLatestRelease(string(originHash))
-lastReleaseCommitHash := make([]byte, len(originHash))
-
-err = decrypt([]byte(projectId), lastReleaseCommitHash, []byte(secret), originHash)
-if string(lastReleaseCommitHash) != string(originHash) {
-lastReleaseCommitHash = nil
-}
-errorHandler(err)
-fmt.Println("last release's Commit hash: ", string(lastReleaseCommitHash))
-fmt.Println("new release's Commit hash: ", newReleaseCommitHash)
-
-var diff, commitInfo string
-if string(lastReleaseCommitHash) != "" {
-diff = execCommandOutput("git", "log", "--full-diff", "-p", "-U1000", "--pretty=raw", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
-commitInfo = execCommandOutput("git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s..%s", lastReleaseCommitHash, newReleaseCommitHash))
-} else {
-diff = execCommandOutput("git", "log", "--full-diff", "-p", "-U1000", "--pretty=raw")
-commitInfo = execCommandOutput("git", "log", "--pretty=format:%H,%ce,%cn,%cd")
-}
-var releaseDiff ReleaseDiffType
-releaseDiff.CommitInfo = commitInfo
-releaseDiff.Diff = diff
-releaseDiff.BranchName = branchName
-releaseDiff.HeadCommitInfo = newReleaseCommitHash
-
-// 返回原工作目录
-err = os.Chdir(originPath)
-fmt.Println("Work path changed back to:", originPath)
-errorHandler(err)
-
-return releaseDiff
+	cloudHashLatest := ""
+	if cloudHashLatest != localHashLatest {
+		if cloudHashLatest == "" {
+			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
+			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
+		} else {
+			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s..%s", localHashLatest, cloudHashLatest))
+			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s..%s", localHashLatest, cloudHashLatest))
+		}
+	}
+	return workPath + "/allDiffs.out", workPath + "/commitInfo.out"
 }
 ```
 
-<img src="https://kevinmatt-1303917904.cos.ap-chengdu.myqcloud.com/temp/image-20210725142908729.png" alt="image-20210725142908729" style="zoom:50%;" />
+### 1.2 `matchCommit(diffPath, commitPath string)`
 
-##### `execCommandOutput()`
+该函数为整个分析过程的主体流程函数，获得的`diff`和`commit`信息将会在这里经历整个数据流动的生命周期，除去内部对其他函数的调用，该函数主要的功能为与`getFullCommit`函数完成`commitDiff`内容的**交错读取**(规避重复读取的关键方法)：
 
 ```go
-// execCommandOutput
-/* @Description: 执行命令并获取命令标准输出
- * @param command 命令程序
- * @param args 命令参数(切片)
- * @return string 标准输出内容
- * @author KevinMatt 2021-07-25 13:16:22
+/* matchCommit
+/* @Description: 主体过程，最后直接生成结果集，位置在SourceCode下(此部分可做商榷)
+ * @param diffPath diff-commit文件目录
+ * @param commitPath commit-info文件目录
+ * @author KevinMatt 2021-07-29 17:37:10
  * @function_mark PASS
- */
-func execCommandOutput(command string, args ...string) string {
-cmd := exec.Command(command, args...)
-output := bytes.Buffer{}
-cmd.Stdout = &output
-err := cmd.Run()
-errorHandler(err, "exec command error:")
-return output.String()
+*/
+func matchCommit(diffPath, commitPath string) {
+	processCommits := 0
+	patCommit, _ := regexp.Compile(parCommitPattern)
+	patTree, _ := regexp.Compile(parTreePattern)
+	commitFd, err := os.Open(commitPath)
+	if err != nil {
+		log.Println(err)
+	}
+	diffFd, err := os.Open(diffPath)
+	if err != nil {
+		log.Println(err)
+	}
+	lineReaderCommit := bufio.NewReader(commitFd)
+	lineReaderDiff := bufio.NewReader(diffFd)
+	for {
+		line, _, err := lineReaderDiff.ReadLine()
+		if err == io.EOF {
+			break
+		}
+
+		// 匹配tree行
+		res := patTree.FindString(string(line))
+		if res != "" {
+			// 匹配到一个commit的tree行，从commit info读一行
+			commitLine, _, err := lineReaderCommit.ReadLine()
+			if err == io.EOF {
+				break
+			}
+			var commitInfo commitInfoType
+			infoList := strings.Split(string(commitLine), ",")
+
+			// 填充commitInfo结构体内的各项信息
+			for index := 2; index < len(infoList)-1; index++ {
+				commitInfo.committerName += infoList[index]
+				if index != len(infoList)-2 {
+					commitInfo.committerName += ","
+				}
+			}
+			commitInfo.commitHash, commitInfo.committerEmail, commitInfo.commitTime = infoList[0], infoList[1], toIso8601(strings.Split(infoList[len(infoList)-1][4:], " "))
+
+			// 获取一次完整的commit，使用双循环交错读取方法避免跳过commit
+			fullCommit := getFullCommit(patCommit, lineReaderDiff)
+
+			// 强制手动触发gc，及时释放getFullCommit的原始拷贝字符串
+			runtime.GC()
+
+			// 获取单次commit中的每一次diff，并处理diff，送进协程
+			parseDiffToFile(fullCommit, commitInfo.commitHash)
+
+			// 指示已经处理的commit数量
+			processCommits++
+			fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " done.")
+		}
+		// 强制手动触发GC,避免短解析作业在golang自动gc触发的两分钟阈值内大量堆积内存
+		runtime.GC()
+	}
+	err = commitFd.Close()
+	if err != nil {
+		log.Println(err)
+	}
+	err = diffFd.Close()
+	if err != nil {
+		log.Println(err)
+	}
 }
 ```
 
-##### `encrypt()`
+#### 1.2.1 `getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader)`
+
+在该函数中，实现了**交错读取**的功能：
+
+`git diff`的存储模式如下：
+
+commit <commitHash>
+
+tree <treeHash>
+
+我们在主函数中逐行读取，并选择匹配**tree**行时转入此函数，此函数依据**commit**行作为匹配标准，因为二者共享同一文件描述符和同一Reader，从而避免了内外匹配标准一致导致的**commit**行丢失、跳行的问题。
 
 ```go
-// encrypt
-/* @Description: AES-CFB加密
- * @param projectId 项目ID
- * @param Dest 输出的加密后字符串(输出参数)
- * @param key 加密密钥
- * @param plainText 需要加密的文本
- * @return error 错误抛出
- * @author KevinMatt 2021-07-25 13:34:09
+/* getFullCommit
+/* @Description: 交错读取commit-diff文件
+ * @param patCommit 预编译的正则表达式
+ * @param lineReaderDiff 全局共享fd
+ * @return string 返回完整的commit串
+ * @author KevinMatt 2021-07-29 17:52:58
  * @function_mark PASS
- */
-func encrypt(projectId, Dest, key, plainText []byte) error {
-K, IV := generateKIV(projectId, key)
-aesBlockEncryptor, err := aes.NewCipher(K)
-if err != nil {
-return err
-}
-aesEncryptor := cipher.NewCFBEncrypter(aesBlockEncryptor, IV)
-aesEncryptor.XORKeyStream(Dest, plainText)
-return nil
+*/
+func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) string {
+	var lines []string
+	//lines = make([]string, 500)
+	for {
+		line, _, err := lineReaderDiff.ReadLine()
+		if err == io.EOF {
+			break
+		}
+		// 匹配commit行，交错读取
+		res := patCommit.FindString(string(line))
+		if res != "" {
+			break
+		}
+		lines = append(lines, string(line))
+	}
+	return strings.Join(lines, "\n")
 }
 ```
 
-##### `decrypt()`
+#### 1.2.2 `parseDiffToFile(data, commitHash string)`
+
+此函数为`diff`处理的主流程函数，每一个`diff`的生命周期从此处开始，在此函数内结束。
+
+此函数通过循环匹配将`diff`内容取出，随后送入协程池中进行`antlr`处理:
 
 ```go
-// decrypt
-/* @Description: AES-CFB解密
- * @param projectId 项目ID
- * @param Dest 解密完成的字符串
- * @param key 解密密钥
- * @param plainText 需要解密的文本
- * @return error 错误抛出
- * @author KevinMatt 2021-07-25 13:35:15
+/* parseDiffToFile
+/* @Description: 将commit内的diff解析后存入SourceCode中
+ * @param data 传入的fullCommit字符串
+ * @param commitHash 本次commit的Hash
+ * @author KevinMatt 2021-07-29 22:54:33
  * @function_mark PASS
- */
-func decrypt(projectId, Dest, key, plainText []byte) error {
-K, IV := generateKIV(projectId, key)
-aesBlockDescriptor, err := aes.NewCipher(K)
-if err != nil {
-return err
-}
-aesDescriptor := cipher.NewCFBDecrypter(aesBlockDescriptor, IV)
-aesDescriptor.XORKeyStream(Dest, plainText)
-return nil
+*/
+func parseDiffToFile(data, commitHash string) {
+	// 编译正则
+	patDiff, _ := regexp.Compile(parDiffPattern)
+	patDiffPart, _ := regexp.Compile(parDiffPartPattern)
+
+	// 匹配所有diffs及子匹配->匹配去除a/ or b/的纯目录
+	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
+
+	// 匹配diff行的index列表
+	indexList := patDiff.FindAllStringIndex(data, -1)
+
+	// 遍历所有diff
+	for index, rawDiff := range rawDiffs {
+		// 如果非匹配的语言文件，直接跳过
+		if !lanFilter(path.Base(rawDiff[2])) {
+			continue
+		} else {
+			// 获得左索引
+			leftDiffIndex := indexList[index][0]
+
+			var diffPartsContent string
+			var rightDiffIndex int
+			// 判断是否为最后一项diff，随后获取代码段
+			if index == len(rawDiffs)-1 {
+				diffPartsContent = data[leftDiffIndex:]
+			} else {
+				rightDiffIndex = (indexList[index+1])[0]
+				diffPartsContent = data[leftDiffIndex:rightDiffIndex]
+			}
+
+			// 匹配@@行
+			rightDiffHeadIndex := patDiffPart.FindStringIndex(diffPartsContent)
+
+			// 无有效匹配直接跳过
+			if rightDiffHeadIndex == nil {
+				continue
+			}
+
+			// 获取所有行，并按"\n"切分，略去第一行(@@行)
+			lines := (strings.Split(diffPartsContent[rightDiffHeadIndex[1]:][0:], "\n"))[1:]
+
+			// 传入行的切片，寻找所有变动行
+			changeLineNumbers := findAllChangedLineNumbers(lines)
+
+			// 替换 +/-行，删除-行内容，切片传递，无需返回值
+			replaceLines(lines)
+
+			// 填入到结构体中，准备送入协程
+			var diffParsed diffParsedType
+			diffParsed.diffText = strings.Join(lines, "\n")
+			diffParsed.diffFileName = rawDiff[2]
+			diffParsed.changeLineNumbers = append(diffParsed.changeLineNumbers, changeLineNumbers...)
+			diffParsed.commitHash = commitHash
+
+			// 得到单个diff后直接送入analyze进行分析
+			fmt.Println("pool running: ", pool.Running())
+			err := pool.Invoke(diffParsed)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+	}
 }
 ```
 
-#### `parseCommit()`
+--------
 
-通过正则匹配表达式`(commit\ ([a-f0-9]{40}))`匹配每一次commit的信息，存入`parsedCommits`中返回
-
-parsedCommit的类型：
-
-```go
-type CommitParsedType struct {
-CommitLeftIndex int
-Commit          string
-CommitTime      string
-CommitterInfo   CommitterInfoType
-CommitDiffs     []DiffParsedType
-}
-```
-
-```go
-// parseCommit
-/* @Description: 解析commit信息
- * @param data 传入数据的diff部分(git log元数据)
- * @param commitInfos  log元数据分片
- * @return []CommitParsedType
- * @author KevinMatt 2021-07-25 13:36:35
- * @function_mark PASS
- */
-func parseCommit(data string, commitInfos []string) []CommitParsedType {
-patCommit, err := regexp.Compile(`(commit\ ([a-f0-9]{40}))`)
-errorHandler(err)
-rawCommits := patCommit.FindAllStringSubmatch(data, -1)
-var parsedCommits []CommitParsedType
-for index, commitInfoLine := 0, commitInfos[0]; index < len(rawCommits) && index < len(commitInfos); index++ {
-commitInfoLine = commitInfos[index]
-infoList := strings.Split(commitInfoLine, ",")
-timeList := strings.Split(infoList[3][4:], " ")
-var parsedCommit CommitParsedType
-parsedCommit.CommitLeftIndex = patCommit.FindAllStringSubmatchIndex(data, -1)[index][0]
-parsedCommit.Commit = infoList[0]
-parsedCommit.CommitTime = toIso8601(timeList)
-parsedCommit.CommitterInfo.Name = infoList[2]
-parsedCommit.CommitterInfo.Email = infoList[1]
-parsedCommits = append(parsedCommits, parsedCommit)
-}
-return parsedCommits
-}
-```
-
-##### `toIso8601()`
-
-```go
-// toIso8601
-/* @Description: 时间戳转换
- * @param timeList
- * @return string
- * @author KevinMatt 2021-07-25 13:42:29
- * @function_mark PASS
- */
-func toIso8601(timeList []string) string {
-return fmt.Sprintf("%s-%s-%sT%s%s:%s", timeList[3], month_correspond[timeList[0]], timeList[1], timeList[2], timeList[4][3:], timeList[4][3:])
-}
-```
-
-#### `parseDiff()`
-
-通过正则表达式`(diff\ \-\-git\ a/(.*)\ b/.+)`, `(@@\ .*?\ @@)`在diff内容中匹配变动文件名、行数变化
-
-```go
-// parseDiff
-/* @Description: 将git log的信息的diff部分分解提取
- * @param data
- * @return []DiffParsedType
- * @author KevinMatt 2021-07-25 13:43:55
- * @function_mark PASS
- */
-func parseDiff(data string) []DiffParsedType {
-patDiff, err := regexp.Compile(`(diff\ \-\-git\ a/(.*)\ b/.+)`)
-errorHandler(err)
-patDiffPart, err := regexp.Compile(`(@@\ .*?\ @@)`)
-errorHandler(err)
-rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
-diffParsed := make([]DiffParsedType, 0)
-
-for index, rawCommit := range rawDiffs {
-parts := rawCommit[2]
-leftDiffIndex := patDiff.FindAllStringIndex(data, -1)[index][0]
-var diffPartsContent string
-var rightDiffIndex int
-if index == len(rawDiffs)-1 {
-diffPartsContent = data[leftDiffIndex:]
-} else {
-rightDiffIndex = (patDiff.FindAllStringIndex(data, -1)[index+1])[0]
-diffPartsContent = data[leftDiffIndex:rightDiffIndex]
-}
-diffHeadMatch := patDiffPart.FindAllString(diffPartsContent, -1)
-
-if diffHeadMatch == nil {
-continue
-}
-rightDiffHeadIndex := patDiffPart.FindStringIndex(diffPartsContent)[1]
-tempFileContent := diffPartsContent[rightDiffHeadIndex:]
-lines := (strings.SplitAfter(tempFileContent[0:], "\n"))[1:]
-var changeLineNumbers []ChangeLineNumberType
-changeLineNumbers = findAllChangedLineNumbers(lines)
-lines = replaceLines(lines)
-sourceCode := strings.Join(lines, "")
-fileName := path.Base(parts)
-
-if lanFilter(fileName) {
-commitDicName := data[7:17]
-diffFilePath := fmt.Sprintf("SourceCode/%s/%s", commitDicName, fileName)
-
-if _, err := os.Stat(path.Dir(diffFilePath)); os.IsNotExist(err) {
-err := os.MkdirAll(path.Dir(diffFilePath), os.ModePerm)
-errorHandler(err)
-}
-fd, err := os.OpenFile(diffFilePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
-errorHandler(err)
-_, err = fd.WriteString(sourceCode)
-errorHandler(err)
-err = fd.Close()
-errorHandler(err)
-var diffSingle DiffParsedType
-diffSingle.DiffFile = parts
-diffSingle.DiffFilePath = diffFilePath
-diffSingle.ChangeLineNumbers = append(diffSingle.ChangeLineNumbers, changeLineNumbers...)
-diffParsed = append(diffParsed, diffSingle)
-} else {
-continue
-}
-}
-return diffParsed
-}
-```
-
-##### `findAllChangedLineNumbers()`
-
-匹配所有变更行并存储其变更类型到结构体中：
-
-```go
-type ChangeLineNumberType struct {
-LineNumber int
-ChangeType string
-}
-```
-
-```go
-// findAllChangedLineNumbers
-/* @Description: 匹配所有改变行(以+/-开头的行)的行号
- * @param lines 传入diff中的所有代码行(完整文件代码行)
- * @return []ChangeLineNumberType 返回存储所有变更行信息的切片
- * @author KevinMatt 2021-07-25 13:47:42
- * @function_mark PASS
- */
-func findAllChangedLineNumbers(lines []string) []ChangeLineNumberType {
-markCompile, err := regexp.Compile(`^[\+\-]`)
-errorHandler(err)
-changeLineNumbers := make([]ChangeLineNumberType, 0)
-lineNumber := 0
-for _, line := range lines {
-lineNumber++
-res := markCompile.FindString(line)
-if res != "" {
-var tempStruct ChangeLineNumberType
-tempStruct.LineNumber = lineNumber
-tempStruct.ChangeType = string(line[0])
-changeLineNumbers = append(changeLineNumbers, tempStruct)
-}
-}
-return changeLineNumbers
-}
-```
-
-##### `replaceLines()`
-
-```go
-// replaceLines
-/* @Description: 清除+/-符号并移除-行和No newline提示
- * @param lines 传入行集合
- * @return []string
- * @author KevinMatt 2021-07-25 13:52:57
- * @function_mark PASS
- */
-func replaceLines(lines []string) []string {
-for index := 0; index < len(lines); index++ {
-if len(lines[index]) > 1 {
-if string(lines[index][0]) == "+" {
-lines[index] = "" + lines[index][1:]
-//strings.Replace(lines[index], string(lines[index][0]), "", 1)
-} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file\r\n" {
-lines[index] = ""
-} else {
-lines[index] = "" + lines[index][1:]
-}
-}
-}
-return lines
-}
-```
-
-#### `analyzeCommitDiff()`
-
-```go
-// analyzeCommitDiff
-/* @Description: 分析commitDiff
- * @param projectId 项目ID
- * @param commitDiffs commitDiff切片
- * @param commitId CommitHash
- * @param commit 解析后的commit信息
- * @return CommitParsedType
- * @author KevinMatt 2021-07-25 13:54:04
- * @function_mark PASS
- */
-func analyzeCommitDiff(projectId string, commitDiffs []DiffParsedType, commitId string, commit CommitParsedType) CommitParsedType {
-for index := 0; index < len(commitDiffs); index++ {
-commitDiff := commitDiffs[index]
-commitDiff.Commit = commitId
-// 处理后的源码路径
-tempFile := commitDiff.DiffFilePath
-// diff的原始路径
-filePath := commitDiff.DiffFile
-antlrAnalyzeRes := antlrAnalysis(tempFile, "java")
-
-changeLineNumbers := commitDiff.ChangeLineNumbers
-objects := make(map[int]map[string]string)
-for _, changeLineNumber := range changeLineNumbers {
-objects = addObjectFromChangeLineNumber(projectId, filePath, objects, changeLineNumber, antlrAnalyzeRes)
-}
-commitDiff.DiffContent = objects
-commit.CommitDiffs = append(commit.CommitDiffs, commitDiff)
-}
-return commit
-}
-```
-
-##### `antlrAnalysis()`
-
-```go
-// antlrAnalysis
-/* @Description: 执行antlr分析入口函数
- * @param targetFilePath 目标代码目录
- * @param langMode 解析语言模式
- * @return javaparser.AnalysisInfoType
- * @author KevinMatt 2021-07-25 13:56:08
- * @function_mark PASS
- */
-func antlrAnalysis(targetFilePath string, langMode string) javaparser.AnalysisInfoType {
-var result javaparser.AnalysisInfoType
-// TODO 目前只有Java的支持
-switch langMode {
-case "java":
-result = executeJava(targetFilePath)
-javaparser.Infos.SetEmpty()
-default:
-break
-}
-return result
-}
-```
-
-###### `excuteJava()`
-
-```go
-// executeJava
-/* @Description: 执行Java Antlr语法解析
- * @param targetFilePath 解析目标目录
- * @return javaparser.AnalysisInfoType
- * @author KevinMatt 2021-07-25 14:00:10
- * @function_mark PASS
- */
-func executeJava(targetFilePath string) javaparser.AnalysisInfoType {
-input, err := antlr.NewFileStream(targetFilePath)
-if err != nil {
-errorHandler(err)
-}
-lexer := javaparser.NewJavaLexer(input)
-stream := antlr.NewCommonTokenStream(lexer, 0)
-p := javaparser.NewJavaParser(stream)
-p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
-p.BuildParseTrees = true
-tree := p.CompilationUnit()
-listener := NewTreeShapeListener()
-antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-return javaparser.Infos
-}
-```
-
-##### `addObjectFromChangeLineNumber()`
-
-```go
-type AnalysisInfoType struct {
-CallMethods []string
-AstInfoList astInfoType
-}
-```
-
-```go
-// addObjectFromChangeLineNumber
-/* @Description:  存储分析得到的方法改变信息(基于行号索引)
- * @param projectId 项目ID
- * @param filePath	文件目录
- * @param objects 	传入的空参数
- * @param changeLineNumber 改变行行号
- * @param antlrAnalyzeRes  分析结果
- * @return map[int]map[string]string
- * @author KevinMatt 2021-07-25 14:03:36
- * @function_mark PASS
- */
-func addObjectFromChangeLineNumber(projectId string, filePath string, objects map[int]map[string]string, changeLineNumber ChangeLineNumberType, antlrAnalyzeRes javaParser.AnalysisInfoType) map[int]map[string]string {
-changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
-if len(objects) > 0 {
-if _, ok := objects[changeMethod.StartLine]; ok {
-return objects
-}
-}
-childHashCode := hashCode64(projectId, changeMethod.MethodName, filePath)
-parent := changeMethod.MasterObject
-objects[changeMethod.StartLine] = make(map[string]string)
-objects[changeMethod.StartLine] = map[string]string{
-"Name":        changeMethod.MethodName,
-"hash":        childHashCode,
-"parent_name": parent.ObjectName,
-"parent_hash": hashCode64(projectId, parent.ObjectName, filePath),
-}
-return objects
-}
-```
-
-###### `findChangedMethod()`
-
-```go
-// findChangedMethod
-/* @Description: 			寻找变更的方法
- * @param changeLineNumber 	变更行信息
- * @param antlrAnalyzeRes 	分析结果
- * @return javaParser.MethodInfoType
- * @author KevinMatt 2021-07-25 14:11:45
- * @function_mark
- */
-func findChangedMethod(changeLineNumber ChangeLineNumberType, antlrAnalyzeRes javaParser.AnalysisInfoType) javaParser.MethodInfoType {
-var changeMethodInfo javaParser.MethodInfoType
-startLineNumbers := make([]int, 0)
-for _, part := range antlrAnalyzeRes.AstInfoList.Methods {
-startLineNumbers = append(startLineNumbers, part.StartLine)
-}
-resIndex := searchInsert(startLineNumbers, changeLineNumber.LineNumber)
-if resIndex > -1 {
-changeMethodInfo = antlrAnalyzeRes.AstInfoList.Methods[resIndex]
-}
-return changeMethodInfo
-}
-```
-
-findIntervalIndex
-
-```go
-// findIntervalIndex
-/* @Description: 	寻找插入空隙
- * @param nums		切片lineNumbers
- * @param target	目标lineNumber
- * @return int 		空隙位置
- * @author KevinMatt 2021-07-25 14:17:52
- * @function_mark 	PASS
- */
-func findIntervalIndex(nums []int, target int) int {
-if nums == nil {
-return -1
-}
-if len(nums) >= 2 && target > nums[1] {
-return -1
-}
-if target < nums[0] {
-return -1
-}
-for index := range nums {
-if target < nums[index] {
-return index - 1
-} else if target == nums[index] {
-return index
-}
-}
-return -1
-}
-```
-
-###### `hashCode64`
-
-```go
-// hashCode64
-/* @Description: 返回sha256编码的拼接字符串
- * @param projectId 项目ID
- * @param objectName
- * @param filePath 文件目录
- * @return string 返回编码字符串
- * @author KevinMatt 2021-07-25 14:20:09
- * @function_mark
- */
-func hashCode64(projectId string, objectName string, filePath string) string {
-text := projectId + objectName + filePath
-return string(sha256.New().Sum([]byte(text)))
-}
-```
+后续调用待完整完成······
 

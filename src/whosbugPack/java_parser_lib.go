@@ -44,7 +44,7 @@ type fieldInfoType struct {
 }
 
 type astInfoType struct {
-	PackageName string
+	PackageName string ``
 	Classes     []classInfoType
 	Imports     []string
 	Fileds      []fieldInfoType

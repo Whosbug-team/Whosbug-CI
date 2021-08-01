@@ -133,8 +133,8 @@ func parseDiffToFile(data, commitHash string) {
 			diffParsed.commitHash = commitHash
 
 			// 得到单个diff后直接送入analyze进行分析
-			// TODO 从此可以开始使用goroutine
 			fmt.Println("pool running: ", pool.Running())
+			// 上传任务到协程池
 			err := pool.Invoke(diffParsed)
 			if err != nil {
 				log.Println(err)
