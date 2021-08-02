@@ -29,9 +29,9 @@ var pool, _ = ants.NewPoolWithFunc(6, func(commitDiff interface{}) {
 func init() {
 	// 获得密钥
 	secret = os.Getenv("WHOSBUG_SECRET")
-	if secret == "" {
-		secret = "defaultsecret"
-	}
+	//if secret == "" {
+	//	secret = "defaultsecret"
+	//}
 	// 工作目录存档
 	workPath, _ = os.Getwd()
 	file, err := os.Open("src/input.json")
@@ -68,6 +68,7 @@ func Analysis() {
 	fmt.Println("Get log cost: ", time.Since(t))
 	matchCommit(diffPath, commitPath)
 	fmt.Println("Total cost: ", time.Since(t))
+	close(objectChan)
 }
 
 /* matchCommit
@@ -128,7 +129,7 @@ func matchCommit(diffPath, commitPath string) {
 
 			// 指示已经处理的commit数量
 			processCommits++
-			fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " done.")
+			//fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " done.")
 		}
 		// 强制手动触发GC,避免短解析作业在golang自动gc触发的两分钟阈值内大量堆积内存
 		runtime.GC()
