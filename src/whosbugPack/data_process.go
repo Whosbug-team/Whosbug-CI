@@ -38,8 +38,8 @@ func getLogInfo() (string, string) {
 			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
 			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
 		} else {
-			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s..%s", localHashLatest, cloudHashLatest))
-			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s..%s", localHashLatest, cloudHashLatest))
+			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
+			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
 		}
 	}
 	return workPath + "/allDiffs.out", workPath + "/commitInfo.out"
@@ -134,7 +134,7 @@ func parseDiffToFile(data string, commitInfo commitInfoType) {
 			diffParsed.committerName = commitInfo.committerName
 			diffParsed.commitTime = commitInfo.commitTime
 			// 得到单个diff后直接送入analyze进行分析
-			fmt.Println("pool running: ", pool.Running())
+			//fmt.Println("pool running: ", pool.Running())
 			// 上传任务到协程池
 			err := pool.Invoke(diffParsed)
 			if err != nil {

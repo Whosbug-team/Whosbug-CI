@@ -131,7 +131,7 @@ func _processUpload(objects []ObjectInfoType) {
  * @author lxchx 2021-07-29 16:50:26
  * @function_mark PASS
  */
-func postObjects(projectId string, releaseVersion string, commitHash string, objects []ObjectInfoType) error {
+func postObjects1(projectId string, releaseVersion string, commitHash string, objects []ObjectInfoType) error {
 	//TODO 待验证能否正确发送
 	//生成待发送的数据
 	//为了方便,创建一个更简单的加密函数
@@ -139,10 +139,10 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 		return _encrypt(projectId, _SECRET, text)
 	}
 
-	projectData := fmt.Sprintf("{\"pid\":\"%s\"}", tempEncrypt(projectId))
-	releaseData := fmt.Sprintf("{\"release\":\"%s\", \"commit_hash\":\"%s\"}", tempEncrypt(releaseVersion), tempEncrypt(commitHash))
+	projectData := fmt.Sprintf("{\"pid\":\"%x\"}", tempEncrypt(projectId))
+	releaseData := fmt.Sprintf("{\"release\":\"%x\", \"commit_hash\":\"%x\"}", tempEncrypt(releaseVersion), tempEncrypt(commitHash))
 
-	const objectFormatStr = "{\"owner\":\"%s\", \"file_path\":\"%s\", \"parent_name\":\"%s\", \"parent_hash\":\"%x\", \"name\":\"%s\", \"hash\":\"%x\", \"old_name\":\"%s\", \"commit_time\":\"%s\"}"
+	const objectFormatStr = "{\"owner\":\"%x\", \"file_path\":\"%x\", \"parent_name\":\"%x\", \"parent_hash\":\"%x\", \"name\":\"%x\", \"hash\":\"%x\", \"old_name\":\"%x\", \"commit_time\":\"%x\"}"
 	//形如:
 	//{
 	//    "owner": "%s",
@@ -202,7 +202,7 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 			log.Println(err)
 			return err
 		}
-		fmt.Println(string(body))
+		//fmt.Println(string(body))
 		return errors.New(string(body))
 	}
 }
