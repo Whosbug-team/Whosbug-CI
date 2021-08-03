@@ -74,7 +74,8 @@ func execRedirectToFile(fileName string, command string, args ...string) {
  * @function_mark PASS
  */
 func toIso8601(timeList []string) string {
-	return fmt.Sprintf("%s-%s-%sT%s:%s:%s", timeList[3], monthCorrespond[timeList[0]], timeList[1], timeList[2], timeList[4][3:], timeList[4][3:])
+	temp := fmt.Sprintf("%s-%s-%sT%s+%s:%s", timeList[3], monthCorrespond[timeList[0]], timeList[1], timeList[2], timeList[4][1:3], timeList[4][3:])
+	return temp
 }
 
 /* lanFilter

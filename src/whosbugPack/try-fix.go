@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -89,20 +90,16 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 		return err
 	}
 
-	//if !json.Valid([]byte(data)) {
-	//	return nil
-	//}
 	defer res.Body.Close()
 	if res.StatusCode == 201 {
 		return nil
 	} else {
-		//fmt.Println(res.StatusCode)
+		fmt.Println(res.StatusCode)
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
-		//fmt.Println(string(body))
 		return errors.New(string(body))
 	}
 }
