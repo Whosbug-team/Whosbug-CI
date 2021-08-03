@@ -37,13 +37,14 @@ func _genToken() (string, error) {
 	}
 }
 
-/** getLatestRelease
- * @Description: 获得最新的Release信息
+/* getLatestRelease
+/* @Description:
  * @param projectId 项目ID
  * @return string Release信息
- * @author KevinMatt 2021-07-22 16:50:26
+ * @return error
+ * @author KevinMatt 2021-08-03 18:12:18
  * @function_mark PASS
- */
+*/
 func getLatestRelease(projectId string) (string, error) {
 	urlReq := _HOST + "/whosbug/releases/last/"
 	method := "POST"
@@ -98,7 +99,7 @@ func getLatestRelease(projectId string) (string, error) {
 }
 
 //协程里缓存队列的长度
-const _objectBufferQueueLength = 10
+const _objectBufferQueueLength = 100
 
 // 处理上传的协程
 func processObjectUpload() {

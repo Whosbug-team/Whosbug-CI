@@ -37,8 +37,8 @@ func getLogInfo() (string, string) {
 			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
 			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
 		} else {
-			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprint("%s...%s", localHashLatest, cloudHashLatest))
-			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprint("%s...%s", localHashLatest, cloudHashLatest))
+			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s...%s", localHashLatest, cloudHashLatest))
+			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s...%s", localHashLatest, cloudHashLatest))
 		}
 	}
 	return workPath + "/allDiffs.out", workPath + "/commitInfo.out"

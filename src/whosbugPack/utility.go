@@ -137,5 +137,4 @@ func findAllChangedLineNumbers(lines []string) []changeLineType {
 
 // forDebug 为了在debug时方便的装入未使用的参数避免出现编译错误的工具壳...
 func forDebug(a ...interface{}) {
-
 }
