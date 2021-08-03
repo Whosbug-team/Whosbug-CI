@@ -25,6 +25,7 @@ const _PASSWORD = "pwd"
 func _genToken() (string, error) {
 	urls := _HOST + "/api-token-auth/"
 	res, _ := http.PostForm(urls, url.Values{"username": []string{_USERNAME}, "password": []string{_PASSWORD}})
+	defer res.Body.Close()
 	if res.StatusCode == 200 {
 		resBody, _ := ioutil.ReadAll(res.Body)
 		tokenGot := strings.Split(string(resBody), "\"")[3]
@@ -32,7 +33,7 @@ func _genToken() (string, error) {
 	} else {
 		resBody, _ := ioutil.ReadAll(res.Body)
 		println(string(resBody))
-		return "", errors.New("got token failed")
+		return "", errors.New(string(resBody))
 	}
 }
 
@@ -94,7 +95,7 @@ func getLatestRelease(projectId string) (string, error) {
 }
 
 //协程里缓存队列的长度
-const _objectBufferQueueLength = 100
+const _objectBufferQueueLength = 10
 
 // 处理上传的协程
 func processObjectUpload() {
@@ -105,7 +106,9 @@ func processObjectUpload() {
 		if len(objects) < _objectBufferQueueLength {
 			objects = append(objects, object)
 		} else {
+			objects = append(objects, object)
 			_processUpload(objects)
+			objects = nil
 		}
 	}
 	//自然退出后，缓冲队列可能还有残留
@@ -117,7 +120,7 @@ func _processUpload(objects []ObjectInfoType) {
 	//TODO 之后再测试对接
 	err := postObjects(projectId, releaseVersion, localHashLatest, objects)
 	if err != nil {
-		log.Println(err)
+		//log.Println(err)
 		return
 	}
 }

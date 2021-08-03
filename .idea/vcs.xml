@@ -5,11 +5,7 @@
     <mapping directory="$PROJECT_DIR$/src/github.com/Jeffail/tunny" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/KyleBanks/depth" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/alecthomas/template" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/davecgh/go-spew" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/ghodss/yaml" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/go-openapi/spec" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/gofrs/uuid" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/google/gofuzz" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/json-iterator/go" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/modern-go/concurrent" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/modern-go/reflect2" vcs="Git" />

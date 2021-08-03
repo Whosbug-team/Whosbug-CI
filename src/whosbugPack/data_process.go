@@ -30,6 +30,7 @@ func getLogInfo() (string, string) {
 	// TODO 获得服务器的最新commitHash，此处主要为了验证程序主体功能，暂时没有处理
 
 	cloudHashLatest, err := getLatestRelease(config.ProjectId)
+	//cloudHashLatest := ""
 	if err != nil {
 		log.Println(err)
 	}
@@ -133,6 +134,7 @@ func parseDiffToFile(data string, commitInfo commitInfoType) {
 			diffParsed.commitHash = commitInfo.commitHash
 			diffParsed.committerName = commitInfo.committerName
 			diffParsed.commitTime = commitInfo.commitTime
+			diffParsed.committerEmail = commitInfo.committerEmail
 			// 得到单个diff后直接送入analyze进行分析
 			//fmt.Println("pool running: ", pool.Running())
 			// 上传任务到协程池

@@ -44,7 +44,6 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) {
 
 	// 创建要存入的objects
 	objects := make(map[int]ObjectInfoType)
-
 	for _, changeLineNumber := range commitDiff.changeLineNumbers {
 		// 根据行号添加object
 		temp := addObjectFromChangeLineNumber(commitDiff, objects, changeLineNumber, antlrAnalyzeRes)
@@ -148,7 +147,7 @@ func addObjectFromChangeLineNumber(commitDiff diffParsedType, objects map[int]Ob
 		"parent_name": changeMethod.MasterObject.ObjectName,
 		"parent_hash": fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.diffFileName))),
 		"file_path":   commitDiff.diffFileName,
-		"owner":       commitDiff.committerName,
+		"owner":       commitDiff.committerName + "-" + commitDiff.committerEmail,
 		"commit_time": commitDiff.commitTime,
 		"old_name":    "",
 	}

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -12,14 +11,14 @@ import (
 
 type postData struct {
 	Objects []struct {
-		Owner      string `json:"owner"`
-		FilePath   string `json:"file_path"`
-		ParentName string `json:"parent_name"`
-		ParentHash string `json:"parent_hash"`
-		Name       string `json:"name"`
-		Hash       string `json:"hash"`
-		OldName    string `json:"old_name"`
 		CommitTime string `json:"commit_time"`
+		FilePath   string `json:"file_path"`
+		Hash       string `json:"hash"`
+		Name       string `json:"name"`
+		OldName    string `json:"old_name"`
+		Owner      string `json:"owner"`
+		ParentHash string `json:"parent_hash"`
+		ParentName string `json:"parent_name"`
 	} `json:"objects"`
 	Project struct {
 		Pid string `json:"pid"`
@@ -31,23 +30,24 @@ type postData struct {
 }
 
 type objectForPost struct {
-	Owner      string `json:"owner"`
-	FilePath   string `json:"file_path"`
-	ParentName string `json:"parent_name"`
-	ParentHash string `json:"parent_hash"`
-	Name       string `json:"name"`
-	Hash       string `json:"hash"`
-	OldName    string `json:"old_name"`
 	CommitTime string `json:"commit_time"`
+	FilePath   string `json:"file_path"`
+	Hash       string `json:"hash"`
+	Name       string `json:"name"`
+	OldName    string `json:"old_name"`
+	Owner      string `json:"owner"`
+	ParentHash string `json:"parent_hash"`
+	ParentName string `json:"parent_name"`
 }
 
 func postObjects(projectId string, releaseVersion string, commitHash string, objects []ObjectInfoType) error {
-	tempEncrypt := func(text string) string {
-
-		return base64.StdEncoding.EncodeToString([]byte(_encrypt(projectId, _SECRET, text)))
+	token, err := _genToken()
+	if err != nil {
+		log.Println(err)
+		return err
 	}
-	if tempEncrypt(projectId) == "" {
-		return nil
+	tempEncrypt := func(text string) string {
+		return base64.StdEncoding.EncodeToString([]byte(_encrypt(projectId, _SECRET, text)))
 	}
 	var dataForPost postData
 	dataForPost.Project.Pid = tempEncrypt(projectId)
@@ -65,6 +65,7 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 		objectForAppend.CommitTime = object["commit_time"]
 		dataForPost.Objects = append(dataForPost.Objects, objectForAppend)
 	}
+
 	data, err := json.MarshalToString(&dataForPost)
 	if err != nil {
 		log.Println(err)
@@ -79,12 +80,6 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 		log.Println(err)
 		return err
 	}
-
-	token, err := _genToken()
-	if err != nil {
-		log.Println(err)
-		return err
-	}
 	req.Header.Add("Authorization", "Token "+token)
 	req.Header.Set("Content-Type", "application/json")
 
@@ -93,11 +88,15 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 		log.Println(err)
 		return err
 	}
+
+	//if !json.Valid([]byte(data)) {
+	//	return nil
+	//}
 	defer res.Body.Close()
 	if res.StatusCode == 201 {
 		return nil
 	} else {
-		fmt.Println(res.StatusCode)
+		//fmt.Println(res.StatusCode)
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			log.Println(err)
