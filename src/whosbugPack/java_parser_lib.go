@@ -65,17 +65,19 @@ type AnalysisInfoType struct {
  */
 func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarationContext) {
 	var methodInfo MethodInfoType
-	MethodName := ctx.GetChild(1).(antlr.ParseTree).GetText()
-	ReturnType := ctx.GetChild(0).(antlr.ParseTree).GetText()
-	Params := getParams(ctx.GetChild(2).(antlr.ParseTree))
-	//fmt.Println(Params[0].paramName, Params[0].paramType)
-	methodInfo.ReturnType = ReturnType
-	methodInfo.StartLine = ctx.GetStart().GetLine()
-	methodInfo.EndLine = ctx.GetStop().GetLine()
-	methodInfo.MethodName = MethodName
-	methodInfo.MasterObject = masterObjectInfoType{}
-	methodInfo.Params = append(methodInfo.Params, Params...)
-	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
+	if ctx.GetChildCount() >= 2 {
+		MethodName := ctx.GetChild(1).(antlr.ParseTree).GetText()
+		ReturnType := ctx.GetChild(0).(antlr.ParseTree).GetText()
+		Params := getParams(ctx.GetChild(2).(antlr.ParseTree))
+		//fmt.Println(Params[0].paramName, Params[0].paramType)
+		methodInfo.ReturnType = ReturnType
+		methodInfo.StartLine = ctx.GetStart().GetLine()
+		methodInfo.EndLine = ctx.GetStop().GetLine()
+		methodInfo.MethodName = MethodName
+		methodInfo.MasterObject = masterObjectInfoType{}
+		methodInfo.Params = append(methodInfo.Params, Params...)
+		s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
+	}
 }
 
 /* EnterPackageDeclaration
@@ -87,7 +89,6 @@ func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarat
 */
 func (s *TreeShapeListener) EnterPackageDeclaration(ctx *javaparser.PackageDeclarationContext) {
 	s.Infos.AstInfoList.PackageName = ctx.QualifiedName().GetText()
-	//fmt.Println(s.Infos)
 }
 
 /** EnterMethodCall

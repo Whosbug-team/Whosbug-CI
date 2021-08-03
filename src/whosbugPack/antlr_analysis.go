@@ -11,13 +11,6 @@ type TreeShapeListener struct {
 	Infos AnalysisInfoType
 }
 
-/* newTreeShapeListener
-/* @Description: 创建新的listener
- * @return *TreeShapeListener
- * @author KevinMatt 2021-07-29 20:08:20
- * @function_mark PASS
-*/
-
 var (
 	lexerPool = &sync.Pool{New: func() interface{} {
 		return javaparser.NewJavaLexer(nil)
@@ -25,7 +18,7 @@ var (
 	parserPool = &sync.Pool{New: func() interface{} {
 		return javaparser.NewJavaParser(nil)
 	}}
-	newTreeShapeListener *sync.Pool = &sync.Pool{New: func() interface{} {
+	newTreeShapeListener = &sync.Pool{New: func() interface{} {
 		return new(TreeShapeListener)
 	}}
 )
@@ -43,17 +36,17 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) {
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
 
 	// 创建要存入的objects
-	objects := make(map[int]ObjectInfoType)
-	for _, changeLineNumber := range commitDiff.changeLineNumbers {
-		// 根据行号添加object
-		temp := addObjectFromChangeLineNumber(commitDiff, objects, changeLineNumber, antlrAnalyzeRes)
-		if temp != nil {
-			objects = temp
+	objects := make([]objectInfoType, 0)
+
+	for index, _ := range commitDiff.changeLineNumbers {
+		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.changeLineNumbers[index], antlrAnalyzeRes)
+		if temp != (objectInfoType{}) {
+			objects = append(objects, temp)
 		}
 	}
 	//传入object上传对接
-	for _, object := range objects {
-		objectChan <- object
+	for index, _ := range objects {
+		ObjectChan <- objects[index]
 	}
 }
 
@@ -118,40 +111,29 @@ func executeJava(diffText string) AnalysisInfoType {
 
 /* addObjectFromChangeLineNumber
 /* @Description: 传入的参数较多，大致功能是构建object的map
- * @param filePath 变动的文件名
- * @param objects 如变量名
+ * @param commitDiff
  * @param changeLineNumber 行号变动
  * @param antlrAnalyzeRes antlr分析结果
- * @return map[int]map[string]string 返回object
- * @author KevinMatt 2021-07-29 19:31:58
+ * @return objectInfoType
+ * @author KevinMatt 2021-08-03 19:26:12
  * @function_mark PASS
 */
-func addObjectFromChangeLineNumber(commitDiff diffParsedType, objects map[int]ObjectInfoType, changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) map[int]ObjectInfoType {
+func addObjectFromChangeLineNumber(commitDiff diffParsedType, changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) objectInfoType {
 	// 寻找变动方法
 	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
 	if changeMethod.MethodName == "" {
-		return nil
+		return objectInfoType{}
 	}
-	// 判断object中是否有重复元素
-	if len(objects) > 0 {
-		if _, ok := objects[changeMethod.StartLine]; ok {
-			return objects
-		}
-	}
-
-	// 装入变量
-	objects[changeMethod.StartLine] = make(ObjectInfoType)
-	objects[changeMethod.StartLine] = ObjectInfoType{
-		"name":        changeMethod.MethodName,
-		"hash":        fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MethodName), []byte(commitDiff.diffFileName))),
-		"parent_name": changeMethod.MasterObject.ObjectName,
-		"parent_hash": fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.diffFileName))),
-		"file_path":   commitDiff.diffFileName,
-		"owner":       commitDiff.committerName + "-" + commitDiff.committerEmail,
-		"commit_time": commitDiff.commitTime,
-		"old_name":    "",
-	}
-	return objects
+	var object objectInfoType
+	object.Name = changeMethod.MethodName
+	object.Hash = fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MethodName), []byte(commitDiff.diffFileName)))
+	object.ParentName = changeMethod.MasterObject.ObjectName
+	object.ParentHash = fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.diffFileName)))
+	object.FilePath = commitDiff.diffFileName
+	object.Owner = commitDiff.committerName + "-" + commitDiff.committerEmail
+	object.CommitTime = commitDiff.commitTime
+	object.OldName = ""
+	return object
 }
 
 /* findChangedMethod

@@ -13,7 +13,7 @@ var secret string
 var localHashLatest string
 
 // 全局变量，object传输的通道
-var objectChan chan ObjectInfoType
+var ObjectChan chan objectInfoType
 
 // parCommitPattern 匹配commit行
 const parCommitPattern = `(commit\ ([a-f0-9]{40}))`

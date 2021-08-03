@@ -47,7 +47,7 @@ func init() {
 	}
 	fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
 
-	objectChan = make(chan ObjectInfoType, 1000)
+	ObjectChan = make(chan objectInfoType, 1000)
 	//开启处理object上传的协程
 	for i := 0; i < 1; i++ {
 		go processObjectUpload()
@@ -68,7 +68,7 @@ func Analysis() {
 	fmt.Println("Get log cost: ", time.Since(t))
 	matchCommit(diffPath, commitPath)
 	fmt.Println("Total cost: ", time.Since(t))
-	close(objectChan)
+
 }
 
 /* matchCommit

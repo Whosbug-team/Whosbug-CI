@@ -24,21 +24,7 @@ type changeLineType struct {
 	changeType string
 }
 
-// diffParsedType 解析后的diff信息
-type diffParsedType struct {
-	committerEmail    string
-	commitTime        string
-	committerName     string
-	diffFileName      string
-	changeLineNumbers []changeLineType
-	commitHash        string
-	diffText          string
-	diffContent       map[int]ObjectInfoType
-}
-
-// ObjectInfoType 生成的object信息
-type ObjectInfoType map[string]string
-
+// postData 存储要发送的json信息
 type postData struct {
 	Objects []struct {
 		CommitTime string `json:"commit_time"`
@@ -59,7 +45,19 @@ type postData struct {
 	} `json:"release"`
 }
 
-type objectForPost struct {
+// diffParsedType 解析后的diff信息
+type diffParsedType struct {
+	committerEmail    string
+	commitTime        string
+	committerName     string
+	diffFileName      string
+	changeLineNumbers []changeLineType
+	commitHash        string
+	diffText          string
+}
+
+// objectInfoType
+type objectInfoType struct {
 	CommitTime string `json:"commit_time"`
 	FilePath   string `json:"file_path"`
 	Hash       string `json:"hash"`

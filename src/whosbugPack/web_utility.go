@@ -104,9 +104,9 @@ const _objectBufferQueueLength = 100
 // 处理上传的协程
 func processObjectUpload() {
 	//object缓冲队列，满的时候再统一上传
-	var objects []ObjectInfoType
+	var objects []objectInfoType
 	//在objectChan关闭且objectChan为空后会自然退出
-	for object := range objectChan {
+	for object := range ObjectChan {
 		if len(objects) < _objectBufferQueueLength {
 			objects = append(objects, object)
 		} else {
@@ -118,10 +118,9 @@ func processObjectUpload() {
 	//自然退出后，缓冲队列可能还有残留
 	_processUpload(objects)
 }
-func _processUpload(objects []ObjectInfoType) {
+func _processUpload(objects []objectInfoType) {
 	projectId := config.ProjectId
 	releaseVersion := config.ReleaseVersion
-	//TODO 之后再测试对接
 	err := postObjects(projectId, releaseVersion, localHashLatest, objects)
 	if err != nil {
 		//log.Println(err)
@@ -139,7 +138,7 @@ func _processUpload(objects []ObjectInfoType) {
  * @author KevinMatt 2021-08-03 17:22:13
  * @function_mark PASS
 */
-func postObjects(projectId string, releaseVersion string, commitHash string, objects []ObjectInfoType) error {
+func postObjects(projectId string, releaseVersion string, commitHash string, objects []objectInfoType) error {
 	token, err := _genToken()
 	if err != nil {
 		log.Println(err)
@@ -152,16 +151,16 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 	dataForPost.Project.Pid = tempEncrypt(projectId)
 	dataForPost.Release.Release = tempEncrypt(releaseVersion)
 	dataForPost.Release.CommitHash = tempEncrypt(commitHash)
-	for _, object := range objects {
-		var objectForAppend objectForPost
-		objectForAppend.Owner = tempEncrypt(object["owner"])
-		objectForAppend.FilePath = tempEncrypt(object["file_path"])
-		objectForAppend.ParentName = tempEncrypt(object["parent_name"])
-		objectForAppend.ParentHash = tempEncrypt(object["parent_hash"])
-		objectForAppend.Name = tempEncrypt(object["name"])
-		objectForAppend.Hash = tempEncrypt(object["hash"])
-		objectForAppend.OldName = tempEncrypt(object["old_name"])
-		objectForAppend.CommitTime = object["commit_time"]
+	for index, _ := range objects {
+		var objectForAppend objectInfoType
+		objectForAppend.Owner = tempEncrypt(objects[index].Owner)
+		objectForAppend.FilePath = tempEncrypt(objects[index].FilePath)
+		objectForAppend.ParentName = tempEncrypt(objects[index].ParentName)
+		objectForAppend.ParentHash = tempEncrypt(objects[index].ParentHash)
+		objectForAppend.Name = tempEncrypt(objects[index].Name)
+		objectForAppend.Hash = tempEncrypt(objects[index].Hash)
+		objectForAppend.OldName = tempEncrypt(objects[index].OldName)
+		objectForAppend.CommitTime = objects[index].CommitTime
 		dataForPost.Objects = append(dataForPost.Objects, objectForAppend)
 	}
 
