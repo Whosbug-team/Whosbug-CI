@@ -8,31 +8,31 @@
 
 ```go
 func init() {
-	// 获得密钥
-	secret = os.Getenv("WHOSBUG_SECRET")
-	if secret == "" {
-		secret = "defaultsecret"
-	}
-	// 工作目录存档
-	workPath, _ = os.Getwd()
-	file, err := os.Open("src/input.json")
-	if err != nil {
-		log.Println(err)
-	}
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&config)
-	if err != nil {
-		log.Println(err)
-	} else {
-		fmt.Println("Get input.json succeed!")
-	}
-	fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
+// 获得密钥
+secret = os.Getenv("WHOSBUG_SECRET")
+if secret == "" {
+secret = "defaultsecret"
+}
+// 工作目录存档
+workPath, _ = os.Getwd()
+file, err := os.Open("src/input.json")
+if err != nil {
+log.Println(err)
+}
+decoder := json.NewDecoder(file)
+err = decoder.Decode(&config)
+if err != nil {
+log.Println(err)
+} else {
+fmt.Println("Get input.json succeed!")
+}
+fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
 
-	objectChan = make(chan ObjectInfoType, 1000)
-	//开启处理object上传的协程
-	for i := 0; i < 1; i++ {
-		go processObjectUpload()
-	}
+objectChan = make(chan ObjectInfoType, 1000)
+//开启处理object上传的协程
+for i := 0; i < 1; i++ {
+go processObjectUpload()
+}
 
 }
 ```
@@ -48,13 +48,13 @@ func init() {
  * @function_mark PASS
  */
 func Analysis() {
-	//defer pool.Release()
-	t := time.Now()
-	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
-	diffPath, commitPath := getLogInfo()
-	fmt.Println("Get log cost: ", time.Since(t))
-	matchCommit(diffPath, commitPath)
-	fmt.Println("Total cost: ", time.Since(t))
+//defer pool.Release()
+t := time.Now()
+// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
+diffPath, commitPath := getLogInfo()
+fmt.Println("Get log cost: ", time.Since(t))
+matchCommit(diffPath, commitPath)
+fmt.Println("Total cost: ", time.Since(t))
 }
 ```
 
@@ -73,27 +73,27 @@ func Analysis() {
  * @function_mark PASS
 */
 func getLogInfo() (string, string) {
-	// 切换到仓库目录
-	err := os.Chdir(config.RepoPath)
-	if err != nil {
-		log.Println(err)
-	}
-	fmt.Println("Work Path Change to: ", config.RepoPath)
+// 切换到仓库目录
+err := os.Chdir(config.RepoPath)
+if err != nil {
+log.Println(err)
+}
+fmt.Println("Work Path Change to: ", config.RepoPath)
 
-	localHashLatest = execCommandOutput("git", "rev-parse", "HEAD")
-	// TODO 获得服务器的最新commitHash，此处主要为了验证程序主体功能，暂时没有处理
+localHashLatest = execCommandOutput("git", "rev-parse", "HEAD")
+// TODO 获得服务器的最新commitHash，此处主要为了验证程序主体功能，暂时没有处理
 
-	cloudHashLatest := ""
-	if cloudHashLatest != localHashLatest {
-		if cloudHashLatest == "" {
-			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
-			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
-		} else {
-			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s..%s", localHashLatest, cloudHashLatest))
-			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s..%s", localHashLatest, cloudHashLatest))
-		}
-	}
-	return workPath + "/allDiffs.out", workPath + "/commitInfo.out"
+cloudHashLatest := ""
+if cloudHashLatest != localHashLatest {
+if cloudHashLatest == "" {
+execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
+execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
+} else {
+execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s..%s", localHashLatest, cloudHashLatest))
+execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s..%s", localHashLatest, cloudHashLatest))
+}
+}
+return workPath + "/allDiffs.out", workPath + "/commitInfo.out"
 }
 ```
 
@@ -110,69 +110,69 @@ func getLogInfo() (string, string) {
  * @function_mark PASS
 */
 func matchCommit(diffPath, commitPath string) {
-	processCommits := 0
-	patCommit, _ := regexp.Compile(parCommitPattern)
-	patTree, _ := regexp.Compile(parTreePattern)
-	commitFd, err := os.Open(commitPath)
-	if err != nil {
-		log.Println(err)
-	}
-	diffFd, err := os.Open(diffPath)
-	if err != nil {
-		log.Println(err)
-	}
-	lineReaderCommit := bufio.NewReader(commitFd)
-	lineReaderDiff := bufio.NewReader(diffFd)
-	for {
-		line, _, err := lineReaderDiff.ReadLine()
-		if err == io.EOF {
-			break
-		}
+processCommits := 0
+patCommit, _ := regexp.Compile(parCommitPattern)
+patTree, _ := regexp.Compile(parTreePattern)
+commitFd, err := os.Open(commitPath)
+if err != nil {
+log.Println(err)
+}
+diffFd, err := os.Open(diffPath)
+if err != nil {
+log.Println(err)
+}
+lineReaderCommit := bufio.NewReader(commitFd)
+lineReaderDiff := bufio.NewReader(diffFd)
+for {
+line, _, err := lineReaderDiff.ReadLine()
+if err == io.EOF {
+break
+}
 
-		// 匹配tree行
-		res := patTree.FindString(string(line))
-		if res != "" {
-			// 匹配到一个commit的tree行，从commit info读一行
-			commitLine, _, err := lineReaderCommit.ReadLine()
-			if err == io.EOF {
-				break
-			}
-			var commitInfo commitInfoType
-			infoList := strings.Split(string(commitLine), ",")
+// 匹配tree行
+res := patTree.FindString(string(line))
+if res != "" {
+// 匹配到一个commit的tree行，从commit info读一行
+commitLine, _, err := lineReaderCommit.ReadLine()
+if err == io.EOF {
+break
+}
+var commitInfo commitInfoType
+infoList := strings.Split(string(commitLine), ",")
 
-			// 填充commitInfo结构体内的各项信息
-			for index := 2; index < len(infoList)-1; index++ {
-				commitInfo.committerName += infoList[index]
-				if index != len(infoList)-2 {
-					commitInfo.committerName += ","
-				}
-			}
-			commitInfo.commitHash, commitInfo.committerEmail, commitInfo.commitTime = infoList[0], infoList[1], toIso8601(strings.Split(infoList[len(infoList)-1][4:], " "))
+// 填充commitInfo结构体内的各项信息
+for index := 2; index < len(infoList)-1; index++ {
+commitInfo.committerName += infoList[index]
+if index != len(infoList)-2 {
+commitInfo.committerName += ","
+}
+}
+commitInfo.commitHash, commitInfo.committerEmail, commitInfo.commitTime = infoList[0], infoList[1], toIso8601(strings.Split(infoList[len(infoList)-1][4:], " "))
 
-			// 获取一次完整的commit，使用双循环交错读取方法避免跳过commit
-			fullCommit := getFullCommit(patCommit, lineReaderDiff)
+// 获取一次完整的commit，使用双循环交错读取方法避免跳过commit
+fullCommit := getFullCommit(patCommit, lineReaderDiff)
 
-			// 强制手动触发gc，及时释放getFullCommit的原始拷贝字符串
-			runtime.GC()
+// 强制手动触发gc，及时释放getFullCommit的原始拷贝字符串
+runtime.GC()
 
-			// 获取单次commit中的每一次diff，并处理diff，送进协程
-			parseDiffToFile(fullCommit, commitInfo.commitHash)
+// 获取单次commit中的每一次diff，并处理diff，送进协程
+parseDiffToFile(fullCommit, commitInfo.commitHash)
 
-			// 指示已经处理的commit数量
-			processCommits++
-			fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " done.")
-		}
-		// 强制手动触发GC,避免短解析作业在golang自动gc触发的两分钟阈值内大量堆积内存
-		runtime.GC()
-	}
-	err = commitFd.Close()
-	if err != nil {
-		log.Println(err)
-	}
-	err = diffFd.Close()
-	if err != nil {
-		log.Println(err)
-	}
+// 指示已经处理的commit数量
+processCommits++
+fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " done.")
+}
+// 强制手动触发GC,避免短解析作业在golang自动gc触发的两分钟阈值内大量堆积内存
+runtime.GC()
+}
+err = commitFd.Close()
+if err != nil {
+log.Println(err)
+}
+err = diffFd.Close()
+if err != nil {
+log.Println(err)
+}
 }
 ```
 
@@ -198,21 +198,21 @@ tree <treeHash>
  * @function_mark PASS
 */
 func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) string {
-	var lines []string
-	//lines = make([]string, 500)
-	for {
-		line, _, err := lineReaderDiff.ReadLine()
-		if err == io.EOF {
-			break
-		}
-		// 匹配commit行，交错读取
-		res := patCommit.FindString(string(line))
-		if res != "" {
-			break
-		}
-		lines = append(lines, string(line))
-	}
-	return strings.Join(lines, "\n")
+var lines []string
+//lines = make([]string, 500)
+for {
+line, _, err := lineReaderDiff.ReadLine()
+if err == io.EOF {
+break
+}
+// 匹配commit行，交错读取
+res := patCommit.FindString(string(line))
+if res != "" {
+break
+}
+lines = append(lines, string(line))
+}
+return strings.Join(lines, "\n")
 }
 ```
 
@@ -231,71 +231,188 @@ func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) strin
  * @function_mark PASS
 */
 func parseDiffToFile(data, commitHash string) {
-	// 编译正则
-	patDiff, _ := regexp.Compile(parDiffPattern)
-	patDiffPart, _ := regexp.Compile(parDiffPartPattern)
+// 编译正则
+patDiff, _ := regexp.Compile(parDiffPattern)
+patDiffPart, _ := regexp.Compile(parDiffPartPattern)
 
-	// 匹配所有diffs及子匹配->匹配去除a/ or b/的纯目录
-	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
+// 匹配所有diffs及子匹配->匹配去除a/ or b/的纯目录
+rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
 
-	// 匹配diff行的index列表
-	indexList := patDiff.FindAllStringIndex(data, -1)
+// 匹配diff行的index列表
+indexList := patDiff.FindAllStringIndex(data, -1)
 
-	// 遍历所有diff
-	for index, rawDiff := range rawDiffs {
-		// 如果非匹配的语言文件，直接跳过
-		if !lanFilter(path.Base(rawDiff[2])) {
-			continue
-		} else {
-			// 获得左索引
-			leftDiffIndex := indexList[index][0]
+// 遍历所有diff
+for index, rawDiff := range rawDiffs {
+// 如果非匹配的语言文件，直接跳过
+if !lanFilter(path.Base(rawDiff[2])) {
+continue
+} else {
+// 获得左索引
+leftDiffIndex := indexList[index][0]
 
-			var diffPartsContent string
-			var rightDiffIndex int
-			// 判断是否为最后一项diff，随后获取代码段
-			if index == len(rawDiffs)-1 {
-				diffPartsContent = data[leftDiffIndex:]
-			} else {
-				rightDiffIndex = (indexList[index+1])[0]
-				diffPartsContent = data[leftDiffIndex:rightDiffIndex]
-			}
+var diffPartsContent string
+var rightDiffIndex int
+// 判断是否为最后一项diff，随后获取代码段
+if index == len(rawDiffs)-1 {
+diffPartsContent = data[leftDiffIndex:]
+} else {
+rightDiffIndex = (indexList[index+1])[0]
+diffPartsContent = data[leftDiffIndex:rightDiffIndex]
+}
 
-			// 匹配@@行
-			rightDiffHeadIndex := patDiffPart.FindStringIndex(diffPartsContent)
+// 匹配@@行
+rightDiffHeadIndex := patDiffPart.FindStringIndex(diffPartsContent)
 
-			// 无有效匹配直接跳过
-			if rightDiffHeadIndex == nil {
-				continue
-			}
+// 无有效匹配直接跳过
+if rightDiffHeadIndex == nil {
+continue
+}
 
-			// 获取所有行，并按"\n"切分，略去第一行(@@行)
-			lines := (strings.Split(diffPartsContent[rightDiffHeadIndex[1]:][0:], "\n"))[1:]
+// 获取所有行，并按"\n"切分，略去第一行(@@行)
+lines := (strings.Split(diffPartsContent[rightDiffHeadIndex[1]:][0:], "\n"))[1:]
 
-			// 传入行的切片，寻找所有变动行
-			changeLineNumbers := findAllChangedLineNumbers(lines)
+// 传入行的切片，寻找所有变动行
+changeLineNumbers := findAllChangedLineNumbers(lines)
 
-			// 替换 +/-行，删除-行内容，切片传递，无需返回值
-			replaceLines(lines)
+// 替换 +/-行，删除-行内容，切片传递，无需返回值
+replaceLines(lines)
 
-			// 填入到结构体中，准备送入协程
-			var diffParsed diffParsedType
-			diffParsed.diffText = strings.Join(lines, "\n")
-			diffParsed.diffFileName = rawDiff[2]
-			diffParsed.changeLineNumbers = append(diffParsed.changeLineNumbers, changeLineNumbers...)
-			diffParsed.commitHash = commitHash
+// 填入到结构体中，准备送入协程
+var diffParsed diffParsedType
+diffParsed.diffText = strings.Join(lines, "\n")
+diffParsed.diffFileName = rawDiff[2]
+diffParsed.changeLineNumbers = append(diffParsed.changeLineNumbers, changeLineNumbers...)
+diffParsed.commitHash = commitHash
 
-			// 得到单个diff后直接送入analyze进行分析
-			fmt.Println("pool running: ", pool.Running())
-			err := pool.Invoke(diffParsed)
-			if err != nil {
-				log.Println(err)
-			}
-		}
-	}
+// 得到单个diff后直接送入analyze进行分析
+fmt.Println("pool running: ", pool.Running())
+err := pool.Invoke(diffParsed)
+if err != nil {
+log.Println(err)
+}
+}
+}
 }
 ```
 
---------
+##### 1.2.2.1 `lanFilter(fileName string)`
 
-后续调用待完整完成······
+此函数用于判断接收的文件名是否为支持的语言的代码文件。
 
+```go
+/* lanFilter
+/* @Description: 语言过滤器，确定目标文件是否为支持的语言
+ * @param fileName 文件名
+ * @return bool 是否支持语言
+ * @author KevinMatt 2021-07-26 20:48:57
+ * @function_mark PASS
+*/
+func lanFilter(fileName string) bool {
+for index := range supportLans {
+if path.Ext(fileName) == supportLans[index] {
+return true
+}
+}
+return false
+}
+```
+
+##### 1.2.2.2 `findAllChangedLineNumbers(lines []string)`
+
+此函数找到所有变动的行号，并记录其变动类型。(+/-)
+
+````go
+/* findAllChangedLineNumbers
+/* @Description: 找到所有变动行号
+ * @param lines 传入的行
+ * @return []changeLineType 返回变动行信息结构体切片
+ * @author KevinMatt 2021-07-29 19:48:01
+ * @function_mark PASS
+*/
+func findAllChangedLineNumbers(lines []string) []changeLineType {
+markCompile, err := regexp.Compile(markPattern)
+if err != nil {
+log.Println(err)
+}
+var changeLineNumbers []changeLineType
+lineNumber := 0
+for index, line := range lines {
+lineNumber = index + 1
+res := markCompile.FindString(line)
+if res != "" {
+var tempStruct changeLineType
+tempStruct.lineNumber = lineNumber
+tempStruct.changeType = string(line[0])
+changeLineNumbers = append(changeLineNumbers, tempStruct)
+}
+}
+return changeLineNumbers
+}
+````
+
+##### 1.2.2.3 `replaceLines(lines []string)`
+
+此函数用于检测并替换每一变动行：-行直接置为空行，+行去除+号
+
+```go
+/* replaceLines
+/* @Description: 替换处理传入的行
+ * @param lines 传入的行切片
+ * @author KevinMatt 2021-07-29 19:07:41
+ * @function_mark PASS
+*/
+func replaceLines(lines []string) {
+for index := range lines {
+if len(lines[index]) >= 1 {
+if string(lines[index][0]) == "+" {
+lines[index] = "" + lines[index][1:]
+//strings.Replace(lines[index], string(lines[index][0]), "", 1)
+} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file" {
+lines[index] = ""
+} else {
+lines[index] = "" + lines[index][1:]
+}
+}
+}
+}
+```
+
+##### 1.2.2.4 `pool.Invoke()`–>`AnalyzeCommitDiff(commitDiff diffParsedType)`
+
+向协程池中提交任务，任务函数预定义：
+
+```go
+var pool, _ = ants.NewPoolWithFunc(6, func (commitDiff interface{}) {
+AnalyzeCommitDiff(commitDiff.(diffParsedType))
+})
+```
+
+此函数将向协程池中提交相应的任务，协程池将维护任务队列，分别执行`AnalyzeCommitDiff(commitDiff diffParsedType)`函数：
+
+此函数中完成Antlr分析，并将分析结果存储到object结构体中，并逐个送入channel
+
+```go
+/* AnalyzeCommitDiff
+/* @Description: 使用antlr分析commitDiff信息
+ * @param commitDiff diff信息(path)
+ * @author KevinMatt 2021-08-03 21:41:08
+ * @function_mark
+*/
+func AnalyzeCommitDiff(commitDiff diffParsedType) {
+
+// 获取antlr分析结果
+antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
+
+for index, _ := range commitDiff.changeLineNumbers {
+temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.changeLineNumbers[index], antlrAnalyzeRes)
+if temp != (objectInfoType{}) {
+// 送入channel
+ObjectChan <- temp
+}
+}
+}
+```
+
+------
+
+未完待续

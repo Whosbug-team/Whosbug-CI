@@ -23,30 +23,23 @@ var (
 	}}
 )
 
-// AnalyzeCommitDiff
+/* AnalyzeCommitDiff
 /* @Description: 使用antlr分析commitDiff信息
  * @param commitDiff diff信息(path)
- * @param commitId commit的Hash值
- * @author KevinMatt 2021-07-29 22:48:28
+ * @author KevinMatt 2021-08-03 21:41:08
  * @function_mark
- */
+*/
 func AnalyzeCommitDiff(commitDiff diffParsedType) {
 
 	// 获取antlr分析结果
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
 
-	// 创建要存入的objects
-	objects := make([]objectInfoType, 0)
-
 	for index, _ := range commitDiff.changeLineNumbers {
 		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.changeLineNumbers[index], antlrAnalyzeRes)
 		if temp != (objectInfoType{}) {
-			objects = append(objects, temp)
+			// 送入channel
+			ObjectChan <- temp
 		}
-	}
-	//传入object上传对接
-	for index, _ := range objects {
-		ObjectChan <- objects[index]
 	}
 }
 
