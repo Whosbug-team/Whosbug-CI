@@ -308,12 +308,12 @@ log.Println(err)
  * @function_mark PASS
 */
 func lanFilter(fileName string) bool {
-for index := range supportLans {
-if path.Ext(fileName) == supportLans[index] {
-return true
-}
-}
-return false
+	for index := range supportLans {
+		if path.Ext(fileName) == supportLans[index] {
+			return true
+		}
+	}
+	return false
 }
 ```
 
@@ -330,23 +330,23 @@ return false
  * @function_mark PASS
 */
 func findAllChangedLineNumbers(lines []string) []changeLineType {
-markCompile, err := regexp.Compile(markPattern)
-if err != nil {
-log.Println(err)
-}
-var changeLineNumbers []changeLineType
-lineNumber := 0
-for index, line := range lines {
-lineNumber = index + 1
-res := markCompile.FindString(line)
-if res != "" {
-var tempStruct changeLineType
-tempStruct.lineNumber = lineNumber
-tempStruct.changeType = string(line[0])
-changeLineNumbers = append(changeLineNumbers, tempStruct)
-}
-}
-return changeLineNumbers
+	markCompile, err := regexp.Compile(markPattern)
+	if err != nil {
+		log.Println(err)
+	}
+	var changeLineNumbers []changeLineType
+	lineNumber := 0
+	for index, line := range lines {
+		lineNumber = index + 1
+		res := markCompile.FindString(line)
+		if res != "" {
+			var tempStruct changeLineType
+			tempStruct.lineNumber = lineNumber
+			tempStruct.changeType = string(line[0])
+			changeLineNumbers = append(changeLineNumbers, tempStruct)
+		}
+	}
+	return changeLineNumbers
 }
 ````
 
@@ -362,18 +362,18 @@ return changeLineNumbers
  * @function_mark PASS
 */
 func replaceLines(lines []string) {
-for index := range lines {
-if len(lines[index]) >= 1 {
-if string(lines[index][0]) == "+" {
-lines[index] = "" + lines[index][1:]
-//strings.Replace(lines[index], string(lines[index][0]), "", 1)
-} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file" {
-lines[index] = ""
-} else {
-lines[index] = "" + lines[index][1:]
-}
-}
-}
+	for index := range lines {
+		if len(lines[index]) >= 1 {
+			if string(lines[index][0]) == "+" {
+				lines[index] = "" + lines[index][1:]
+				//strings.Replace(lines[index], string(lines[index][0]), "", 1)
+			} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file" {
+				lines[index] = ""
+			} else {
+				lines[index] = "" + lines[index][1:]
+			}
+		}
+	}
 }
 ```
 
@@ -382,8 +382,8 @@ lines[index] = "" + lines[index][1:]
 向协程池中提交任务，任务函数预定义：
 
 ```go
-var pool, _ = ants.NewPoolWithFunc(6, func (commitDiff interface{}) {
-AnalyzeCommitDiff(commitDiff.(diffParsedType))
+var pool, _ = ants.NewPoolWithFunc(6, func(commitDiff interface{}) {
+	AnalyzeCommitDiff(commitDiff.(diffParsedType))
 })
 ```
 
@@ -397,19 +397,19 @@ AnalyzeCommitDiff(commitDiff.(diffParsedType))
  * @param commitDiff diff信息(path)
  * @author KevinMatt 2021-08-03 21:41:08
  * @function_mark
-*/
+ */
 func AnalyzeCommitDiff(commitDiff diffParsedType) {
 
-// 获取antlr分析结果
-antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
+	// 获取antlr分析结果
+	antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
 
-for index, _ := range commitDiff.changeLineNumbers {
-temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.changeLineNumbers[index], antlrAnalyzeRes)
-if temp != (objectInfoType{}) {
-// 送入channel
-ObjectChan <- temp
-}
-}
+	for index, _ := range commitDiff.changeLineNumbers {
+		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.changeLineNumbers[index], antlrAnalyzeRes)
+		if temp != (objectInfoType{}) {
+			// 送入channel
+			ObjectChan <- temp
+		}
+	}
 }
 ```
 
