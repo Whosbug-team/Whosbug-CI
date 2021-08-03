@@ -75,10 +75,13 @@ func getLatestRelease(projectId string) (string, error) {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			log.Println(err)
-			fmt.Println(string(body))
+			//fmt.Println(string(body))
 			return "", err
 		}
-		return _decrypt(projectId, _SECRET, string(body)), nil
+		fmt.Println(string(body))
+		commitHash := json.Get(body, "commit_hash").ToString()
+		commitHashByte, err := base64.StdEncoding.DecodeString(commitHash)
+		return _decrypt(projectId, _SECRET, string(commitHashByte)), nil
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {

@@ -41,6 +41,16 @@ type objectForPost struct {
 	ParentName string `json:"parent_name"`
 }
 
+/* postObjects
+/* @Description:
+ * @param projectId
+ * @param releaseVersion
+ * @param commitHash
+ * @param objects
+ * @return error
+ * @author KevinMatt 2021-08-03 17:22:13
+ * @function_mark PASS
+*/
 func postObjects(projectId string, releaseVersion string, commitHash string, objects []ObjectInfoType) error {
 	token, err := _genToken()
 	if err != nil {
