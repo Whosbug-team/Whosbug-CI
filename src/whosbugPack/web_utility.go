@@ -129,64 +129,52 @@ func _processUpload(objects []ObjectInfoType) {
 	}
 }
 
-/** getLatestRelease
- * @Description: 发送解析结果到server
- * @param projectId 项目ID
- * @param releaseVersion release版本
- * @param commitHash 本地最新commitHash
- * @param objects 待上传的object集
- * @author lxchx 2021-07-29 16:50:26
+/* postObjects
+/* @Description:
+ * @param projectId
+ * @param releaseVersion
+ * @param commitHash
+ * @param objects
+ * @return error
+ * @author KevinMatt 2021-08-03 17:22:13
  * @function_mark PASS
- */
-func postObjects1(projectId string, releaseVersion string, commitHash string, objects []ObjectInfoType) error {
-	//TODO 待验证能否正确发送
-	//生成待发送的数据
-	//为了方便,创建一个更简单的加密函数
+*/
+func postObjects(projectId string, releaseVersion string, commitHash string, objects []ObjectInfoType) error {
+	token, err := _genToken()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	tempEncrypt := func(text string) string {
-		return _encrypt(projectId, _SECRET, text)
+		return base64.StdEncoding.EncodeToString([]byte(_encrypt(projectId, _SECRET, text)))
 	}
-
-	projectData := fmt.Sprintf("{\"pid\":\"%x\"}", tempEncrypt(projectId))
-	releaseData := fmt.Sprintf("{\"release\":\"%x\", \"commit_hash\":\"%x\"}", tempEncrypt(releaseVersion), tempEncrypt(commitHash))
-
-	const objectFormatStr = "{\"owner\":\"%x\", \"file_path\":\"%x\", \"parent_name\":\"%x\", \"parent_hash\":\"%x\", \"name\":\"%x\", \"hash\":\"%x\", \"old_name\":\"%x\", \"commit_time\":\"%x\"}"
-	//形如:
-	//{
-	//    "owner": "%s",
-	//    "file_path": "%s",
-	//    "parent_name": "%s",
-	//    "parent_hash": "%x",
-	//    "name": "%s",
-	//    "hash": "%x",
-	//    "old_name": "%s",
-	//    "commit_time": "%s"
-	//}
-	var objectsStrForPost []string
+	var dataForPost postData
+	dataForPost.Project.Pid = tempEncrypt(projectId)
+	dataForPost.Release.Release = tempEncrypt(releaseVersion)
+	dataForPost.Release.CommitHash = tempEncrypt(commitHash)
 	for _, object := range objects {
-		objectStr := fmt.Sprintf(objectFormatStr,
-			tempEncrypt(object["owner"]), tempEncrypt(object["file_path"]),
-			tempEncrypt(object["parent_name"]), tempEncrypt(object["parent_hash"]),
-			tempEncrypt(object["name"]), tempEncrypt(object["hash"]),
-			tempEncrypt(object["old_name"]), object["commit_time"])
-		objectsStrForPost = append(objectsStrForPost, objectStr)
+		var objectForAppend objectForPost
+		objectForAppend.Owner = tempEncrypt(object["owner"])
+		objectForAppend.FilePath = tempEncrypt(object["file_path"])
+		objectForAppend.ParentName = tempEncrypt(object["parent_name"])
+		objectForAppend.ParentHash = tempEncrypt(object["parent_hash"])
+		objectForAppend.Name = tempEncrypt(object["name"])
+		objectForAppend.Hash = tempEncrypt(object["hash"])
+		objectForAppend.OldName = tempEncrypt(object["old_name"])
+		objectForAppend.CommitTime = object["commit_time"]
+		dataForPost.Objects = append(dataForPost.Objects, objectForAppend)
 	}
-	objectsStr := strings.Join(objectsStrForPost, ",")
-	objectsData := "[" + objectsStr + "]"
 
-	dataForPost := fmt.Sprintf(`{"project":%s,"release":%s,"objects":%s}`, projectData, releaseData, objectsData)
-
+	data, err := json.MarshalToString(&dataForPost)
+	if err != nil {
+		log.Println(err)
+	}
 	//准备发送
 	urlReq := _HOST + "/whosbug/commits/diffs/"
 	method := "POST"
 
 	client := &http.Client{}
-	req, err := http.NewRequest(method, urlReq, bytes.NewBuffer([]byte(dataForPost)))
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	token, err := _genToken()
+	req, err := http.NewRequest(method, urlReq, bytes.NewBuffer([]byte(data)))
 	if err != nil {
 		log.Println(err)
 		return err
@@ -199,17 +187,17 @@ func postObjects1(projectId string, releaseVersion string, commitHash string, ob
 		log.Println(err)
 		return err
 	}
+
 	defer res.Body.Close()
 	if res.StatusCode == 201 {
 		return nil
 	} else {
-		fmt.Println(res.StatusCode)
+		//fmt.Println(res.StatusCode)
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
-		//fmt.Println(string(body))
 		return errors.New(string(body))
 	}
 }

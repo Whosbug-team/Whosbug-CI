@@ -38,3 +38,34 @@ type diffParsedType struct {
 
 // ObjectInfoType 生成的object信息
 type ObjectInfoType map[string]string
+
+type postData struct {
+	Objects []struct {
+		CommitTime string `json:"commit_time"`
+		FilePath   string `json:"file_path"`
+		Hash       string `json:"hash"`
+		Name       string `json:"name"`
+		OldName    string `json:"old_name"`
+		Owner      string `json:"owner"`
+		ParentHash string `json:"parent_hash"`
+		ParentName string `json:"parent_name"`
+	} `json:"objects"`
+	Project struct {
+		Pid string `json:"pid"`
+	} `json:"project"`
+	Release struct {
+		Release    string `json:"release"`
+		CommitHash string `json:"commit_hash"`
+	} `json:"release"`
+}
+
+type objectForPost struct {
+	CommitTime string `json:"commit_time"`
+	FilePath   string `json:"file_path"`
+	Hash       string `json:"hash"`
+	Name       string `json:"name"`
+	OldName    string `json:"old_name"`
+	Owner      string `json:"owner"`
+	ParentHash string `json:"parent_hash"`
+	ParentName string `json:"parent_name"`
+}
