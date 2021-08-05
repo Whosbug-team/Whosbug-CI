@@ -104,7 +104,7 @@ func getLatestRelease(projectId string) (string, error) {
 }
 
 //协程里缓存队列的长度
-const _objectBufferQueueLength = 100
+const _objectBufferQueueLength = 1000
 
 // 处理上传的协程
 func processObjectUpload() {
@@ -138,9 +138,11 @@ func _processUpload(objects []objectInfoType) {
 	releaseVersion := config.ReleaseVersion
 	err := postObjects(projectId, releaseVersion, localHashLatest, objects)
 	sendCount++
-	fmt.Println("Sent count: ", objects[0].Hash, sendCount)
+	if len(objects) > 0 {
+		fmt.Println("Sent count: ", objects[0].Hash, sendCount)
+	}
 	if err != nil {
-		//log.Println(err)
+		log.Println(err)
 		return
 	}
 }

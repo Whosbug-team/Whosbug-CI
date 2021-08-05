@@ -70,12 +70,12 @@ func init() {
  * @function_mark PASS
  */
 func Analysis() {
-	//defer pool.Release()
 	t := time.Now()
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
 	diffPath, commitPath := getLogInfo()
 	fmt.Println("Get log cost: ", time.Since(t))
 	matchCommit(diffPath, commitPath)
+	// 等待关闭pool和channel
 	for {
 		if pool.Running() == 0 {
 			fmt.Println("Close pool!")
@@ -85,9 +85,10 @@ func Analysis() {
 		}
 		time.Sleep(time.Second)
 	}
-	fmt.Println("Total cost: ", time.Since(t))
+	fmt.Println("Analyse cost: ", time.Since(t))
 	// 等待上传协程的结束
 	wg.Wait()
+	fmt.Println("Total cost: ", time.Since(t))
 }
 
 /* matchCommit
@@ -134,7 +135,6 @@ func matchCommit(diffPath, commitPath string) {
 				}
 			}
 			commitInfo.commitHash, commitInfo.committerEmail, commitInfo.commitTime = infoList[0], infoList[1], toIso8601(strings.Split(infoList[len(infoList)-1][4:], " "))
-
 			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
 			fullCommit := getFullCommit(patCommit, lineReaderDiff)
 
