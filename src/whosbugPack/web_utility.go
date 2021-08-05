@@ -107,6 +107,12 @@ func processObjectUpload() {
 	var objects []objectInfoType
 	//在objectChan关闭且objectChan为空后会自然退出
 	for object := range ObjectChan {
+		if object == (objectInfoType{}) {
+			continue
+		}
+		if len(objects) > 0 && object == objects[len(objects)-1] {
+			continue
+		}
 		if len(objects) < _objectBufferQueueLength {
 			objects = append(objects, object)
 		} else {
@@ -118,10 +124,15 @@ func processObjectUpload() {
 	//自然退出后，缓冲队列可能还有残留
 	_processUpload(objects)
 }
+
+var count = 0
+
 func _processUpload(objects []objectInfoType) {
 	projectId := config.ProjectId
 	releaseVersion := config.ReleaseVersion
 	err := postObjects(projectId, releaseVersion, localHashLatest, objects)
+	count++
+	fmt.Println("Sent count: ", objects[0].Hash, count)
 	if err != nil {
 		//log.Println(err)
 		return

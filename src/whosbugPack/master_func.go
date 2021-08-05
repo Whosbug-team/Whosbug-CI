@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -21,6 +22,8 @@ var pool, _ = ants.NewPoolWithFunc(6, func(commitDiff interface{}) {
 	AnalyzeCommitDiff(commitDiff.(diffParsedType))
 })
 
+var wg sync.WaitGroup
+
 /* init
 /* @Description: 自动初始化配置
  * @author KevinMatt 2021-07-29 20:18:18
@@ -29,9 +32,9 @@ var pool, _ = ants.NewPoolWithFunc(6, func(commitDiff interface{}) {
 func init() {
 	// 获得密钥
 	secret = os.Getenv("WHOSBUG_SECRET")
-	//if secret == "" {
-	//	secret = "defaultsecret"
-	//}
+	if secret == "" {
+		secret = "defaultsecret"
+	}
 	// 工作目录存档
 	workPath, _ = os.Getwd()
 	file, err := os.Open("src/input.json")
@@ -48,9 +51,19 @@ func init() {
 	fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
 
 	ObjectChan = make(chan objectInfoType, 1000)
+	err = os.Remove("allDiffs.out")
+	if err != nil {
+		log.Println(err)
+	}
+	err = os.Remove("commitInfo.out")
+	if err != nil {
+		log.Println(err)
+	}
 	//开启处理object上传的协程
 	for i := 0; i < 1; i++ {
+		wg.Add(1)
 		go processObjectUpload()
+		wg.Done()
 	}
 
 }
@@ -67,8 +80,18 @@ func Analysis() {
 	diffPath, commitPath := getLogInfo()
 	fmt.Println("Get log cost: ", time.Since(t))
 	matchCommit(diffPath, commitPath)
+	for {
+		if pool.Running() == 0 {
+			fmt.Println("Close pool!")
+			pool.Release()
+			close(ObjectChan)
+			break
+		}
+		time.Sleep(time.Second)
+	}
 	fmt.Println("Total cost: ", time.Since(t))
-
+	// 等待上传协程的结束
+	wg.Wait()
 }
 
 /* matchCommit
@@ -128,7 +151,7 @@ func matchCommit(diffPath, commitPath string) {
 
 			// 指示已经处理的commit数量
 			processCommits++
-			//fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " done.")
+			fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " Sent In Channel.")
 		}
 		// 强制手动触发GC,避免短解析作业在golang自动gc触发的两分钟阈值内大量堆积内存
 		runtime.GC()

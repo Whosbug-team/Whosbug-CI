@@ -41,7 +41,7 @@ func getLogInfo() (string, string) {
 			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s...%s", localHashLatest, cloudHashLatest))
 		}
 	}
-	return workPath + "/allDiffs.out", workPath + "/commitInfo.out"
+	return workPath + "\\allDiffs.out", workPath + "\\commitInfo.out"
 }
 
 /* getFullCommit

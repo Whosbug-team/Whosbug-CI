@@ -33,13 +33,17 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) {
 
 	// 获取antlr分析结果
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
-
+	var tempCompare objectInfoType
 	for index, _ := range commitDiff.changeLineNumbers {
 		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.changeLineNumbers[index], antlrAnalyzeRes)
+		if temp == tempCompare {
+			continue
+		}
 		if temp != (objectInfoType{}) {
 			// 送入channel
 			ObjectChan <- temp
 		}
+		tempCompare = temp
 	}
 }
 
@@ -119,7 +123,7 @@ func addObjectFromChangeLineNumber(commitDiff diffParsedType, changeLineNumber c
 	}
 	var object objectInfoType
 	object.Name = changeMethod.MethodName
-	object.Hash = fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MethodName), []byte(commitDiff.diffFileName)))
+	object.Hash = commitDiff.commitHash
 	object.ParentName = changeMethod.MasterObject.ObjectName
 	object.ParentHash = fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.diffFileName)))
 	object.FilePath = commitDiff.diffFileName
