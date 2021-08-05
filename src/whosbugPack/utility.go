@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
+	"strings"
 )
 
 // 月份转换Map
@@ -133,6 +134,21 @@ func findAllChangedLineNumbers(lines []string) []changeLineType {
 		}
 	}
 	return changeLineNumbers
+}
+
+/* conCatStrings
+/* @Description: 字符串有效拼接
+ * @param stringList
+ * @return string
+ * @author KevinMatt 2021-08-05 20:03:50
+ * @function_mark
+*/
+func conCatStrings(stringList ...string) string {
+	var builder strings.Builder
+	for index := range stringList {
+		builder.WriteString(stringList[index])
+	}
+	return builder.String()
 }
 
 // forDebug 为了在debug时方便的装入未使用的参数避免出现编译错误的工具壳...

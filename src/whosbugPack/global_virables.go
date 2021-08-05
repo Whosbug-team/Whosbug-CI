@@ -1,5 +1,10 @@
 package whosbugPack
 
+import (
+	"regexp"
+	"sync"
+)
+
 // 全局变量，存储config信息
 var config inputJson
 
@@ -32,3 +37,20 @@ const markPattern = `^[\+\-]`
 
 // supportLans 语言的支持
 var supportLans = []string{".java"}
+
+// patCommit, patTree 预编译正则匹配
+var patCommit, _ = regexp.Compile(parCommitPattern)
+var patTree, _ = regexp.Compile(parTreePattern)
+
+// sendCount 上传计数器
+var sendCount int
+
+// postDataPool, objectInfoPool 上传数据变量同步池
+var (
+	postDataPool = &sync.Pool{New: func() interface{} {
+		return new(postData)
+	}}
+	objectInfoPool = &sync.Pool{New: func() interface{} {
+		return new(objectInfoType)
+	}}
+)

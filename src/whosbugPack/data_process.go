@@ -41,7 +41,7 @@ func getLogInfo() (string, string) {
 			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s...%s", localHashLatest, cloudHashLatest))
 		}
 	}
-	return workPath + "\\allDiffs.out", workPath + "\\commitInfo.out"
+	return conCatStrings(workPath, "\\allDiffs.out"), conCatStrings(workPath, "\\commitInfo.out")
 }
 
 /* getFullCommit
@@ -54,7 +54,6 @@ func getLogInfo() (string, string) {
 */
 func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) string {
 	var lines []string
-	//lines = make([]string, 500)
 	for {
 		line, _, err := lineReaderDiff.ReadLine()
 		if err == io.EOF {
@@ -154,12 +153,11 @@ func replaceLines(lines []string) {
 	for index := range lines {
 		if len(lines[index]) >= 1 {
 			if string(lines[index][0]) == "+" {
-				lines[index] = "" + lines[index][1:]
-				//strings.Replace(lines[index], string(lines[index][0]), "", 1)
+				lines[index] = conCatStrings("", lines[index][1:])
 			} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file" {
 				lines[index] = ""
 			} else {
-				lines[index] = "" + lines[index][1:]
+				lines[index] = conCatStrings("", lines[index][1:])
 			}
 		}
 	}

@@ -23,7 +23,12 @@ const _USERNAME = "user"
 const _PASSWORD = "pwd"
 
 func _genToken() (string, error) {
-	urls := _HOST + "/api-token-auth/"
+	// 拼接字符串
+	var builder strings.Builder
+	builder.WriteString(_HOST)
+	builder.WriteString("/api-token-auth/")
+	urls := builder.String()
+
 	res, _ := http.PostForm(urls, url.Values{"username": []string{_USERNAME}, "password": []string{_PASSWORD}})
 	defer res.Body.Close()
 	if res.StatusCode == 200 {
@@ -46,7 +51,7 @@ func _genToken() (string, error) {
  * @function_mark PASS
 */
 func getLatestRelease(projectId string) (string, error) {
-	urlReq := _HOST + "/whosbug/releases/last/"
+	urlReq := conCatStrings(_HOST, "/whosbug/releases/last/")
 	method := "POST"
 
 	pid := base64.StdEncoding.EncodeToString([]byte(_encrypt(projectId, _SECRET, projectId)))
@@ -55,7 +60,7 @@ func getLatestRelease(projectId string) (string, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, urlReq, bytes.NewBuffer(data))
 	if err != nil {
-		fmt.Println(err)
+		err = fmt.Errorf("GetLatestRelease->Sending NewRequest: %w", err)
 		return "", err
 	}
 
@@ -63,7 +68,7 @@ func getLatestRelease(projectId string) (string, error) {
 	if err != nil {
 		log.Println(err)
 	}
-	req.Header.Add("Authorization", "Token "+token)
+	req.Header.Add("Authorization", conCatStrings("Token ", token))
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := client.Do(req)
@@ -103,6 +108,7 @@ const _objectBufferQueueLength = 100
 
 // 处理上传的协程
 func processObjectUpload() {
+	wg.Add(1)
 	//object缓冲队列，满的时候再统一上传
 	var objects []objectInfoType
 	//在objectChan关闭且objectChan为空后会自然退出
@@ -123,16 +129,16 @@ func processObjectUpload() {
 	}
 	//自然退出后，缓冲队列可能还有残留
 	_processUpload(objects)
+	wg.Done()
+	fmt.Println("Sending Finished")
 }
-
-var count = 0
 
 func _processUpload(objects []objectInfoType) {
 	projectId := config.ProjectId
 	releaseVersion := config.ReleaseVersion
 	err := postObjects(projectId, releaseVersion, localHashLatest, objects)
-	count++
-	fmt.Println("Sent count: ", objects[0].Hash, count)
+	sendCount++
+	fmt.Println("Sent count: ", objects[0].Hash, sendCount)
 	if err != nil {
 		//log.Println(err)
 		return
@@ -158,12 +164,15 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 	tempEncrypt := func(text string) string {
 		return base64.StdEncoding.EncodeToString([]byte(_encrypt(projectId, _SECRET, text)))
 	}
-	var dataForPost postData
+	// 使用sync池并回收变量
+	dataForPost := postDataPool.Get().(*postData)
+	defer postDataPool.Put(dataForPost)
+
 	dataForPost.Project.Pid = tempEncrypt(projectId)
 	dataForPost.Release.Release = tempEncrypt(releaseVersion)
 	dataForPost.Release.CommitHash = tempEncrypt(commitHash)
 	for index, _ := range objects {
-		var objectForAppend objectInfoType
+		objectForAppend := objectInfoPool.Get().(*objectInfoType)
 		objectForAppend.Owner = tempEncrypt(objects[index].Owner)
 		objectForAppend.FilePath = tempEncrypt(objects[index].FilePath)
 		objectForAppend.ParentName = tempEncrypt(objects[index].ParentName)
@@ -172,7 +181,8 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 		objectForAppend.Hash = tempEncrypt(objects[index].Hash)
 		objectForAppend.OldName = tempEncrypt(objects[index].OldName)
 		objectForAppend.CommitTime = objects[index].CommitTime
-		dataForPost.Objects = append(dataForPost.Objects, objectForAppend)
+		dataForPost.Objects = append(dataForPost.Objects, *objectForAppend)
+		objectInfoPool.Put(objectForAppend)
 	}
 
 	data, err := json.MarshalToString(&dataForPost)
@@ -180,16 +190,17 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 		log.Println(err)
 	}
 	//准备发送
-	urlReq := _HOST + "/whosbug/commits/diffs/"
+	urlReq := conCatStrings(_HOST, "/whosbug/commits/diffs/")
 	method := "POST"
 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, urlReq, bytes.NewBuffer([]byte(data)))
+
 	if err != nil {
 		log.Println(err)
 		return err
 	}
-	req.Header.Add("Authorization", "Token "+token)
+	req.Header.Add("Authorization", conCatStrings("Token ", token))
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := client.Do(req)
@@ -202,7 +213,6 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 	if res.StatusCode == 201 {
 		return nil
 	} else {
-		//fmt.Println(res.StatusCode)
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			log.Println(err)

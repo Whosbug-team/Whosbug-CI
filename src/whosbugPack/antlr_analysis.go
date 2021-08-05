@@ -18,7 +18,7 @@ var (
 	parserPool = &sync.Pool{New: func() interface{} {
 		return javaparser.NewJavaParser(nil)
 	}}
-	newTreeShapeListener = &sync.Pool{New: func() interface{} {
+	newTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(TreeShapeListener)
 	}}
 )
@@ -43,6 +43,7 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) {
 			// 送入channel
 			ObjectChan <- temp
 		}
+		// 用于比较两次的结构体是否重复(匹配行范围导致的重复结果)
 		tempCompare = temp
 	}
 }
@@ -59,9 +60,8 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	var result AnalysisInfoType
 	switch langMode {
 	case "java":
-		//// 解析前置空javaparser的Infos结构体
-		//javaparser.Infos.SetEmpty()
 		result = executeJava(diffText)
+	// TODO 其他语言的适配支持
 	default:
 		break
 	}
@@ -76,33 +76,29 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
  * @function_mark PASS
 */
 func executeJava(diffText string) AnalysisInfoType {
-	// 截取目标文件的输入流
+	// 截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
-
 	// 初始化lexer
 	lexer := lexerPool.Get().(*javaparser.JavaLexer)
 	defer lexerPool.Put(lexer)
 	lexer.SetInputStream(input)
-
 	// 初始化Token流
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	// 初始化Parser
 	p := parserPool.Get().(*javaparser.JavaParser)
 	defer parserPool.Put(p)
 	p.SetTokenStream(stream)
-	// 移除错误诊断监听，尝试提高性能
-	//p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
 	// 构建语法解析树
 	p.BuildParseTrees = true
-	// ! 启用SLL两阶段加速解析模式
+	// 启用SLL两阶段加速解析模式
 	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
 	// 解析模式->每个编译单位
 	tree := p.CompilationUnit()
 	// 创建listener
-	listener := newTreeShapeListener.Get().(*TreeShapeListener)
+	listener := newTreeShapeListenerPool.Get().(*TreeShapeListener)
+	defer newTreeShapeListenerPool.Put(listener)
 	// 执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	defer newTreeShapeListener.Put(listener)
 	return listener.Infos
 }
 
@@ -119,6 +115,7 @@ func addObjectFromChangeLineNumber(commitDiff diffParsedType, changeLineNumber c
 	// 寻找变动方法
 	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
 	if changeMethod.MethodName == "" {
+		// 为空直接跳过执行
 		return objectInfoType{}
 	}
 	var object objectInfoType
@@ -127,7 +124,7 @@ func addObjectFromChangeLineNumber(commitDiff diffParsedType, changeLineNumber c
 	object.ParentName = changeMethod.MasterObject.ObjectName
 	object.ParentHash = fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.diffFileName)))
 	object.FilePath = commitDiff.diffFileName
-	object.Owner = commitDiff.committerName + "-" + commitDiff.committerEmail
+	object.Owner = conCatStrings(commitDiff.committerName, "-", commitDiff.committerEmail)
 	object.CommitTime = commitDiff.commitTime
 	object.OldName = ""
 	return object
@@ -147,10 +144,8 @@ func findChangedMethod(changeLineNumber changeLineType, antlrAnalyzeRes Analysis
 	for index := range antlrAnalyzeRes.AstInfoList.Methods {
 		startLineNumbers = append(startLineNumbers, antlrAnalyzeRes.AstInfoList.Methods[index].StartLine)
 	}
-
-	// 寻找方法行可以插入的位置
+	// 寻找方法行所在的范围位置
 	resIndex := findIntervalIndex(startLineNumbers, changeLineNumber.lineNumber)
-
 	// 判断是否有位置插入
 	if resIndex > -1 {
 		changeMethodInfo = antlrAnalyzeRes.AstInfoList.Methods[resIndex]
