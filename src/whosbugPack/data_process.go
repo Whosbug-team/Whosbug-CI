@@ -135,10 +135,12 @@ func parseDiffToFile(data string, commitInfo commitInfoType) {
 			// 得到单个diff后直接送入analyze进行分析
 			//fmt.Println("pool running: ", pool.Running())
 			// 上传任务到协程池
-			err := pool.Invoke(diffParsed)
-			if err != nil {
-				log.Println(err)
-			}
+			go func() {
+				err := pool.Invoke(diffParsed)
+				if err != nil {
+					log.Println(err)
+				}
+			}()
 		}
 	}
 }

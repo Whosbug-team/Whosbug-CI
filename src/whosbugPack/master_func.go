@@ -17,7 +17,7 @@ import (
 // json 替换原始json库
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-var pool, _ = ants.NewPoolWithFunc(runtime.NumCPU(), func(commitDiff interface{}) {
+var pool, _ = ants.NewPoolWithFunc(6, func(commitDiff interface{}) {
 	AnalyzeCommitDiff(commitDiff.(diffParsedType))
 })
 
@@ -49,7 +49,7 @@ func init() {
 	}
 	fmt.Println("Version:\t", config.ReleaseVersion, "\nProjectId:\t", config.ProjectId, "\nBranchName:\t", config.BranchName)
 
-	ObjectChan = make(chan objectInfoType, 1000)
+	ObjectChan = make(chan objectInfoType, 100000)
 	err = os.Remove("allDiffs.out")
 	if err != nil {
 		log.Println(err)
@@ -89,6 +89,10 @@ func Analysis() {
 	// 等待上传协程的结束
 	wg.Wait()
 	fmt.Println("Total cost: ", time.Since(t))
+	_, err := fmt.Scan()
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 /* matchCommit

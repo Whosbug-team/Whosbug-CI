@@ -104,7 +104,7 @@ func getLatestRelease(projectId string) (string, error) {
 }
 
 //协程里缓存队列的长度
-const _objectBufferQueueLength = 1000
+const _objectBufferQueueLength = 10000
 
 // 处理上传的协程
 func processObjectUpload() {
@@ -172,7 +172,8 @@ func postObjects(commitHash string, objects []objectInfoType) error {
 	dataForPost.Release.Release = tempEncrypt(config.ReleaseVersion)
 	dataForPost.Release.CommitHash = tempEncrypt(commitHash)
 	for index, _ := range objects {
-		var objectForAppend objectInfoType
+		//var objectForAppend objectInfoType
+		objectForAppend := objectInfoPool.Get().(*objectInfoType)
 		objectForAppend.Owner = tempEncrypt(objects[index].Owner)
 		objectForAppend.FilePath = tempEncrypt(objects[index].FilePath)
 		objectForAppend.ParentName = tempEncrypt(objects[index].ParentName)
@@ -181,7 +182,8 @@ func postObjects(commitHash string, objects []objectInfoType) error {
 		objectForAppend.Hash = tempEncrypt(objects[index].Hash)
 		objectForAppend.OldName = tempEncrypt(objects[index].OldName)
 		objectForAppend.CommitTime = objects[index].CommitTime
-		dataForPost.Objects = append(dataForPost.Objects, objectForAppend)
+		dataForPost.Objects = append(dataForPost.Objects, *objectForAppend)
+		objectInfoPool.Put(objectForAppend)
 	}
 
 	data, err := json.MarshalToString(&dataForPost)
