@@ -31,9 +31,9 @@ var wg sync.WaitGroup
 func init() {
 	// 获得密钥
 	secret = os.Getenv("WHOSBUG_SECRET")
-	if secret == "" {
-		secret = "defaultsecret"
-	}
+	//if secret == "" {
+	//	secret = "defaultsecret"
+	//}
 	// 工作目录存档
 	workPath, _ = os.Getwd()
 	file, err := os.Open("src/input.json")
@@ -77,13 +77,13 @@ func Analysis() {
 	matchCommit(diffPath, commitPath)
 	// 等待关闭pool和channel
 	for {
+		time.Sleep(time.Millisecond * 500)
 		if pool.Running() == 0 {
 			fmt.Println("Close pool!")
 			pool.Release()
 			close(ObjectChan)
 			break
 		}
-		time.Sleep(time.Second)
 	}
 	fmt.Println("Analyse cost: ", time.Since(t))
 	// 等待上传协程的结束

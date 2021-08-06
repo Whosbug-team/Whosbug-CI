@@ -109,9 +109,9 @@ const _objectBufferQueueLength = 1000
 // 处理上传的协程
 func processObjectUpload() {
 	wg.Add(1)
-	//object缓冲队列，满的时候再统一上传
+	// object缓冲队列，满的时候再统一上传
 	var objects []objectInfoType
-	//在objectChan关闭且objectChan为空后会自然退出
+	// 在objectChan关闭且objectChan为空后会自然退出
 	for object := range ObjectChan {
 		if object == (objectInfoType{}) {
 			continue
@@ -134,15 +134,13 @@ func processObjectUpload() {
 }
 
 func _processUpload(objects []objectInfoType) {
-	projectId := config.ProjectId
-	releaseVersion := config.ReleaseVersion
-	err := postObjects(projectId, releaseVersion, localHashLatest, objects)
+	err := postObjects(localHashLatest, objects)
 	sendCount++
 	if len(objects) > 0 {
 		fmt.Println("Sent count: ", objects[0].Hash, sendCount)
 	}
 	if err != nil {
-		log.Println(err)
+		//log.Println(err)
 		return
 	}
 }
@@ -157,24 +155,24 @@ func _processUpload(objects []objectInfoType) {
  * @author KevinMatt 2021-08-03 17:22:13
  * @function_mark PASS
 */
-func postObjects(projectId string, releaseVersion string, commitHash string, objects []objectInfoType) error {
+func postObjects(commitHash string, objects []objectInfoType) error {
 	token, err := _genToken()
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 	tempEncrypt := func(text string) string {
-		return base64.StdEncoding.EncodeToString([]byte(_encrypt(projectId, _SECRET, text)))
+		return base64.StdEncoding.EncodeToString([]byte(_encrypt(config.ProjectId, _SECRET, text)))
 	}
 	// 使用sync池并回收变量
 	dataForPost := postDataPool.Get().(*postData)
 	defer postDataPool.Put(dataForPost)
 
-	dataForPost.Project.Pid = tempEncrypt(projectId)
-	dataForPost.Release.Release = tempEncrypt(releaseVersion)
+	dataForPost.Project.Pid = tempEncrypt(config.ProjectId)
+	dataForPost.Release.Release = tempEncrypt(config.ReleaseVersion)
 	dataForPost.Release.CommitHash = tempEncrypt(commitHash)
 	for index, _ := range objects {
-		objectForAppend := objectInfoPool.Get().(*objectInfoType)
+		var objectForAppend objectInfoType
 		objectForAppend.Owner = tempEncrypt(objects[index].Owner)
 		objectForAppend.FilePath = tempEncrypt(objects[index].FilePath)
 		objectForAppend.ParentName = tempEncrypt(objects[index].ParentName)
@@ -183,8 +181,7 @@ func postObjects(projectId string, releaseVersion string, commitHash string, obj
 		objectForAppend.Hash = tempEncrypt(objects[index].Hash)
 		objectForAppend.OldName = tempEncrypt(objects[index].OldName)
 		objectForAppend.CommitTime = objects[index].CommitTime
-		dataForPost.Objects = append(dataForPost.Objects, *objectForAppend)
-		objectInfoPool.Put(objectForAppend)
+		dataForPost.Objects = append(dataForPost.Objects, objectForAppend)
 	}
 
 	data, err := json.MarshalToString(&dataForPost)
