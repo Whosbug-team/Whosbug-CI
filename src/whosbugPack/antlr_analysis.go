@@ -2,6 +2,7 @@ package whosbugPack
 
 import (
 	javaparser "anrlr4_ast/java"
+	"encoding/base64"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"sync"
@@ -121,13 +122,16 @@ func addObjectFromChangeLineNumber(commitDiff diffParsedType, changeLineNumber c
 		// 为空直接跳过执行
 		return objectInfoType{}
 	}
+	tempEncrypt := func(text string) string {
+		return base64.StdEncoding.EncodeToString([]byte(_encrypt(config.ProjectId, _SECRET, text)))
+	}
 	var object objectInfoType
-	object.Name = changeMethod.MethodName
-	object.Hash = commitDiff.commitHash
-	object.ParentName = changeMethod.MasterObject.ObjectName
-	object.ParentHash = fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.diffFileName)))
-	object.FilePath = commitDiff.diffFileName
-	object.Owner = conCatStrings(commitDiff.committerName, "-", commitDiff.committerEmail)
+	object.Name = tempEncrypt(changeMethod.MethodName)
+	object.Hash = tempEncrypt(commitDiff.commitHash)
+	object.ParentName = tempEncrypt(changeMethod.MasterObject.ObjectName)
+	object.ParentHash = tempEncrypt(fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.diffFileName))))
+	object.FilePath = tempEncrypt(commitDiff.diffFileName)
+	object.Owner = tempEncrypt(conCatStrings(commitDiff.committerName, "-", commitDiff.committerEmail))
 	object.CommitTime = commitDiff.commitTime
 	object.OldName = ""
 	return object

@@ -26,16 +26,7 @@ type changeLineType struct {
 
 // postData 存储要发送的json信息
 type postData struct {
-	Objects []struct {
-		CommitTime string `json:"commit_time"`
-		FilePath   string `json:"file_path"`
-		Hash       string `json:"hash"`
-		Name       string `json:"name"`
-		OldName    string `json:"old_name"`
-		Owner      string `json:"owner"`
-		ParentHash string `json:"parent_hash"`
-		ParentName string `json:"parent_name"`
-	} `json:"objects"`
+	Objects []objectInfoType `json:"objects"`
 	Project struct {
 		Pid string `json:"pid"`
 	} `json:"project"`

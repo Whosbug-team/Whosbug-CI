@@ -171,20 +171,7 @@ func postObjects(commitHash string, objects []objectInfoType) error {
 	dataForPost.Project.Pid = tempEncrypt(config.ProjectId)
 	dataForPost.Release.Release = tempEncrypt(config.ReleaseVersion)
 	dataForPost.Release.CommitHash = tempEncrypt(commitHash)
-	for index, _ := range objects {
-		//var objectForAppend objectInfoType
-		objectForAppend := objectInfoPool.Get().(*objectInfoType)
-		objectForAppend.Owner = tempEncrypt(objects[index].Owner)
-		objectForAppend.FilePath = tempEncrypt(objects[index].FilePath)
-		objectForAppend.ParentName = tempEncrypt(objects[index].ParentName)
-		objectForAppend.ParentHash = tempEncrypt(objects[index].ParentHash)
-		objectForAppend.Name = tempEncrypt(objects[index].Name)
-		objectForAppend.Hash = tempEncrypt(objects[index].Hash)
-		objectForAppend.OldName = tempEncrypt(objects[index].OldName)
-		objectForAppend.CommitTime = objects[index].CommitTime
-		dataForPost.Objects = append(dataForPost.Objects, *objectForAppend)
-		objectInfoPool.Put(objectForAppend)
-	}
+	dataForPost.Objects = objects
 
 	data, err := json.MarshalToString(&dataForPost)
 	if err != nil {
