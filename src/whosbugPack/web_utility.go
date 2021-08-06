@@ -119,7 +119,7 @@ func processObjectUpload() {
 		if len(objects) > 0 && object == objects[len(objects)-1] {
 			continue
 		}
-		if len(objects) < _objectBufferQueueLength {
+		if len(objects) < _objectBufferQueueLength/5 {
 			objects = append(objects, object)
 		} else {
 			objects = append(objects, object)

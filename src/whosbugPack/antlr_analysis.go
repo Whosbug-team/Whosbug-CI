@@ -67,6 +67,9 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	}
 	return result
 }
+func TestJava(diffText string) {
+	executeJava(diffText)
+}
 
 /* executeJava
 /* @Description: 执行java分析

@@ -74,7 +74,7 @@ func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarat
 		methodInfo.StartLine = ctx.GetStart().GetLine()
 		methodInfo.EndLine = ctx.GetStop().GetLine()
 		methodInfo.MethodName = MethodName
-		methodInfo.MasterObject = masterObjectInfoType{}
+		methodInfo.MasterObject = findMasterObjectClass(ctx)
 		methodInfo.Params = append(methodInfo.Params, Params...)
 		s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
 	}
@@ -158,7 +158,7 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
 		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		classInfo.ClassName = className
 	}
-	classInfo.MasterObject = findMasterObjectClass(ctx, classInfo)
+	classInfo.MasterObject = findMasterObjectClass(ctx)
 	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, classInfo)
 }
 
@@ -248,22 +248,25 @@ func findImplements(ctx antlr.ParseTree) []string {
  * @param ctx
  * @param classInfo
  * @author KevinMatt 2021-07-24 11:45:14
- * @function_mark
+ * @function_mark PASS
  */
-func findMasterObjectClass(ctx *javaparser.ClassDeclarationContext, classInfo classInfoType) masterObjectInfoType {
+func findMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
+	temp := ctx.GetParent()
+	if temp == nil {
+		return masterObjectInfoType{}
+	}
 	var masterObject masterObjectInfoType
-	var parCtx interface{}
-	parCtx = ctx.GetParent()
-	if _, ok := parCtx.(*javaparser.TypeDeclarationContext); ok {
-		if parCtx.(antlr.ParseTree).GetChildCount() >= 2 {
-			if parCtx.(antlr.ParseTree).GetChild(1).GetChildCount() >= 2 {
-				parClassName := parCtx.(antlr.ParseTree).GetChild(1).GetChild(1).(antlr.ParseTree).GetText()
-				masterObject.ObjectName = parClassName
-				masterObject.StartLine = parCtx.(*javaparser.TypeDeclarationContext).GetChild(1).(*javaparser.ClassDeclarationContext).GetStart().GetLine()
-			}
+	for {
+		if _, ok := temp.(*javaparser.ClassDeclarationContext); ok {
+			masterObject.ObjectName = temp.GetChild(1).GetText()
+			masterObject.StartLine = temp.GetChild(temp.GetChildCount() - 1).(*javaparser.ClassBodyContext).GetStart().GetLine()
+			return masterObject
+		}
+		temp = temp.GetParent()
+		if temp == nil {
+			return masterObjectInfoType{}
 		}
 	}
-	return masterObject
 }
 
 // VisitTerminal is called when a terminal node is visited.
