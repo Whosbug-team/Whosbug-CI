@@ -42,11 +42,20 @@ func AnalyzeCommitDiff(commitDiff diffParsedType) {
 		}
 		if temp != (objectInfoType{}) {
 			// 送入channel
-			ObjectChan <- temp
+			if len(commitDiff.changeLineNumbers) > 100000 {
+				ObjectChanLarge = make(chan objectInfoType, len(commitDiff.changeLineNumbers))
+				ObjectChanLarge <- temp
+				go processLargeObjectUpload()
+			} else {
+				ObjectChan <- temp
+			}
 		}
 		// 用于比较两次的结构体是否重复(匹配行范围导致的重复结果)
 		tempCompare = temp
 	}
+	// 指示已经处理的commit数量
+	processCommits++
+	fmt.Println("Commit No.", processCommits, " ", commitDiff.commitHash, " Sent Into Channel.")
 }
 
 /* antlrAnalysis

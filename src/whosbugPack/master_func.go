@@ -89,10 +89,6 @@ func Analysis() {
 	// 等待上传协程的结束
 	wg.Wait()
 	fmt.Println("Total cost: ", time.Since(t))
-	_, err := fmt.Scan()
-	if err != nil {
-		log.Println(err)
-	}
 }
 
 /* matchCommit
@@ -103,7 +99,7 @@ func Analysis() {
  * @function_mark PASS
 */
 func matchCommit(diffPath, commitPath string) {
-	processCommits := 0
+
 	commitFd, err := os.Open(commitPath)
 	if err != nil {
 		log.Println(err)
@@ -145,9 +141,6 @@ func matchCommit(diffPath, commitPath string) {
 			// 获取单次commit中的每一次diff，并处理diff，送进协程
 			parseDiffToFile(fullCommit, commitInfo)
 
-			// 指示已经处理的commit数量
-			processCommits++
-			fmt.Println("Commit No.", processCommits, " ", commitInfo.commitHash, " Sent Into Channel.")
 		}
 		// 强制触发GC,避免短解析作业在golang自动gc触发的两分钟阈值内大量堆积
 		runtime.GC()

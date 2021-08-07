@@ -104,7 +104,34 @@ func getLatestRelease(projectId string) (string, error) {
 }
 
 //协程里缓存队列的长度
-const _objectBufferQueueLength = 10000
+const _objectBufferQueueLength = 20000
+
+func processLargeObjectUpload() {
+	fmt.Println("Sending Large start")
+	wg.Add(1)
+	// object缓冲队列，满的时候再统一上传
+	var objects []objectInfoType
+	// 在objectChan关闭且objectChan为空后会自然退出
+	for object := range ObjectChanLarge {
+		if object == (objectInfoType{}) {
+			continue
+		}
+		if len(objects) > 0 && object == objects[len(objects)-1] {
+			continue
+		}
+		if len(objects) < _objectBufferQueueLength {
+			objects = append(objects, object)
+		} else {
+			objects = append(objects, object)
+			_processUpload(objects)
+			objects = nil
+		}
+	}
+	//自然退出后，缓冲队列可能还有残留
+	_processUpload(objects)
+	wg.Done()
+	fmt.Println("Sending Large Finished")
+}
 
 // 处理上传的协程
 func processObjectUpload() {
@@ -119,7 +146,7 @@ func processObjectUpload() {
 		if len(objects) > 0 && object == objects[len(objects)-1] {
 			continue
 		}
-		if len(objects) < _objectBufferQueueLength/5 {
+		if len(objects) < _objectBufferQueueLength {
 			objects = append(objects, object)
 		} else {
 			objects = append(objects, object)

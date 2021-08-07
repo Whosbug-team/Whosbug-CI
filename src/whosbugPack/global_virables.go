@@ -20,6 +20,9 @@ var localHashLatest string
 // 全局变量，object传输的通道
 var ObjectChan chan objectInfoType
 
+// 全局变量，大型object传输的通道
+var ObjectChanLarge chan objectInfoType
+
 // parCommitPattern 匹配commit行
 const parCommitPattern = `(commit\ ([a-f0-9]{40}))`
 
@@ -44,6 +47,9 @@ var patTree, _ = regexp.Compile(parTreePattern)
 
 // sendCount 上传计数器
 var sendCount int
+
+// processCommits 已处理的commit数
+var processCommits = 0
 
 // postDataPool, objectInfoPool 上传数据变量同步池
 var (
