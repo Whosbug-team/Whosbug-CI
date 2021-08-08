@@ -46,7 +46,7 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	var result AnalysisInfoType
 	switch langMode {
 	case "java":
-		result = executeJava(diffText)
+		result = ExecuteJava(diffText)
 	// TODO 其他语言的适配支持
 	default:
 		break
@@ -54,14 +54,14 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	return result
 }
 
-/* executeJava
+/* ExecuteJava
 /* @Description: 执行java分析
  * @param targetFilePath 分析目标路径
  * @return javaparser.AnalysisInfoType 返回分析结果结构体
  * @author KevinMatt 2021-07-29 19:51:16
  * @function_mark PASS
 */
-func executeJava(diffText string) AnalysisInfoType {
+func ExecuteJava(diffText string) AnalysisInfoType {
 	// 截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	// 初始化lexer

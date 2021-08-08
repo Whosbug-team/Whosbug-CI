@@ -48,7 +48,7 @@ func ToIso8601(timeList []string) string {
 	return temp
 }
 
-// _generateKIV
+// GenerateKIV
 /* @Description: 		生成AES-CFB需要的Key和IV
  * @param projectId 	项目ID
  * @param key 			加密密钥
@@ -57,7 +57,7 @@ func ToIso8601(timeList []string) string {
  * @author KevinMatt 2021-07-25 20:07:20
  * @function_mark PASS
  */
-func _generateKIV(projectId, key []byte) ([]byte, []byte) {
+func GenerateKIV(projectId, key []byte) ([]byte, []byte) {
 	hK := hmac.New(sha256.New, key)
 	hIV := hmac.New(md5.New, key)
 	hK.Write(projectId)
@@ -76,7 +76,7 @@ func _generateKIV(projectId, key []byte) ([]byte, []byte) {
  * @function_mark PASS
  */
 func Encrypt(projectId, key, plainText string) string {
-	K, IV := _generateKIV([]byte(projectId), []byte(key))
+	K, IV := GenerateKIV([]byte(projectId), []byte(key))
 	aesBlockEncryptor, err := aes.NewCipher(K)
 	if err != nil {
 		fmt.Println(err)
@@ -98,7 +98,7 @@ func Encrypt(projectId, key, plainText string) string {
  * @function_mark PASS
  */
 func _decrypt(projectId, key, plainText string) string {
-	K, IV := _generateKIV([]byte(projectId), []byte(key))
+	K, IV := GenerateKIV([]byte(projectId), []byte(key))
 	aesBlockDescriptor, err := aes.NewCipher(K)
 	if err != nil {
 		fmt.Println(err)
@@ -123,7 +123,7 @@ func GenToken() (string, error) {
 	builder.WriteString("/api-token-auth/")
 	urls := builder.String()
 
-	res, err := http.PostForm(urls, url.Values{"username": []string{global_type.Config.WebServerUserName}, "password": []string{global_type.Config.WebserverPassWord}})
+	res, err := http.PostForm(urls, url.Values{"username": []string{global_type.Config.WebServerUserName}, "password": []string{global_type.Config.WebserverKey}})
 	if err != nil {
 		log.Printf("%s", ErrorMessage(errors.Wrapf(err, "Genarate Key Failure. Check the username&password or the status of the server.\n")))
 		os.Exit(1)

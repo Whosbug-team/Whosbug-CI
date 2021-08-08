@@ -108,7 +108,7 @@ func PostObjects(commitHash string, objects []global_type.ObjectInfoType) error 
 		return err
 	}
 	tempEncrypt := func(text string) string {
-		return base64.StdEncoding.EncodeToString([]byte(utility.Encrypt(global_type.Config.ProjectId, _SECRET, text)))
+		return base64.StdEncoding.EncodeToString([]byte(utility.Encrypt(global_type.Config.ProjectId, global_type.Config.CryptoKey, text)))
 	}
 
 	// 使用sync池并回收变量
@@ -125,7 +125,7 @@ func PostObjects(commitHash string, objects []global_type.ObjectInfoType) error 
 		log.Println(err)
 	}
 	//准备发送
-	urlReq := utility.ConCatStrings(_HOST, "/whosbug/commits/diffs/")
+	urlReq := utility.ConCatStrings(global_type.Config.WebServerHost, "/whosbug/commits/diffs/")
 	method := "POST"
 
 	client := &http.Client{}

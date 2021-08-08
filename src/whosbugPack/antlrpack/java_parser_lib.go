@@ -44,7 +44,7 @@ type fieldInfoType struct {
 }
 
 type astInfoType struct {
-	PackageName string ``
+	PackageName string
 	Classes     []classInfoType
 	Imports     []string
 	Fields      []fieldInfoType
@@ -69,7 +69,6 @@ func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarat
 		MethodName := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		ReturnType := ctx.GetChild(0).(antlr.ParseTree).GetText()
 		Params := getParams(ctx.GetChild(2).(antlr.ParseTree))
-		//fmt.Println(Params[0].paramName, Params[0].paramType)
 		methodInfo.ReturnType = ReturnType
 		methodInfo.StartLine = ctx.GetStart().GetLine()
 		methodInfo.EndLine = ctx.GetStop().GetLine()
