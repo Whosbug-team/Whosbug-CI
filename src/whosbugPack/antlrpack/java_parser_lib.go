@@ -1,4 +1,4 @@
-package whosbugPack
+package antlrpack
 
 import (
 	javaparser "anrlr4_ast/java"

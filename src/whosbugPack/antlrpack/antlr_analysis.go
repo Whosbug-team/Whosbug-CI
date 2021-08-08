@@ -1,61 +1,50 @@
-package whosbugPack
+package antlrpack
 
 import (
 	javaparser "anrlr4_ast/java"
 	"encoding/base64"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"sync"
-)
-
-type TreeShapeListener struct {
-	Infos AnalysisInfoType
-}
-
-var (
-	lexerPool = &sync.Pool{New: func() interface{} {
-		return javaparser.NewJavaLexer(nil)
-	}}
-	parserPool = &sync.Pool{New: func() interface{} {
-		return javaparser.NewJavaParser(nil)
-	}}
-	newTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
-		return new(TreeShapeListener)
-	}}
+	"whosbugPack/global_type"
+	"whosbugPack/utility"
 )
 
 /* AnalyzeCommitDiff
 /* @Description: 使用antlr分析commitDiff信息
  * @param commitDiff diff信息(path)
  * @author KevinMatt 2021-08-03 21:41:08
- * @function_mark
+ * @function_mark PASS
 */
-func AnalyzeCommitDiff(commitDiff diffParsedType) {
+func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 
 	// 获取antlr分析结果
-	antlrAnalyzeRes := antlrAnalysis(commitDiff.diffText, "java")
-	var tempCompare objectInfoType
-	for index, _ := range commitDiff.changeLineNumbers {
-		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.changeLineNumbers[index], antlrAnalyzeRes)
+	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, "java")
+	var tempCompare global_type.ObjectInfoType
+	for index, _ := range commitDiff.ChangeLineNumbers {
+		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
 		if temp == tempCompare {
 			continue
 		}
-		if temp != (objectInfoType{}) {
+		if temp != (global_type.ObjectInfoType{}) {
 			// 送入channel
-			if len(commitDiff.changeLineNumbers) > 100000 {
-				ObjectChanLarge = make(chan objectInfoType, len(commitDiff.changeLineNumbers))
-				ObjectChanLarge <- temp
-				go processLargeObjectUpload()
-			} else {
-				ObjectChan <- temp
-			}
+			// 大型文件送入LargeChannel
+			//if len(commitDiff.ChangeLineNumbers) > LargeObjects {
+			//	global_type.ObjectChanLarge = make(chan global_type.ObjectInfoType, len(commitDiff.ChangeLineNumbers))
+			//	global_type.ObjectChanLarge <- temp
+			//} else {
+			global_type.ObjectChan <- temp
+			//}
 		}
 		// 用于比较两次的结构体是否重复(匹配行范围导致的重复结果)
 		tempCompare = temp
 	}
+	//if len(commitDiff.ChangeLineNumbers) > LargeObjects {
+	//	// 启动大型文件处理协程
+	//	go uploadpack.ProcessLargeObjectUpload()
+	//}
 	// 指示已经处理的commit数量
-	processCommits++
-	fmt.Println("Commit No.", processCommits, " ", commitDiff.commitHash, " Sent Into Channel.")
+	processDiffs++
+	fmt.Println("Diff No.", processDiffs, " From", commitDiff.CommitHash, " Sent Into Channel.")
 }
 
 /* antlrAnalysis
@@ -76,9 +65,6 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 		break
 	}
 	return result
-}
-func TestJava(diffText string) {
-	executeJava(diffText)
 }
 
 /* executeJava
@@ -124,24 +110,24 @@ func executeJava(diffText string) AnalysisInfoType {
  * @author KevinMatt 2021-08-03 19:26:12
  * @function_mark PASS
 */
-func addObjectFromChangeLineNumber(commitDiff diffParsedType, changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) objectInfoType {
+func addObjectFromChangeLineNumber(commitDiff global_type.DiffParsedType, changeLineNumber global_type.ChangeLineType, antlrAnalyzeRes AnalysisInfoType) global_type.ObjectInfoType {
 	// 寻找变动方法
 	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
 	if changeMethod.MethodName == "" {
 		// 为空直接跳过执行
-		return objectInfoType{}
+		return global_type.ObjectInfoType{}
 	}
 	tempEncrypt := func(text string) string {
-		return base64.StdEncoding.EncodeToString([]byte(_encrypt(config.ProjectId, _SECRET, text)))
+		return base64.StdEncoding.EncodeToString([]byte(utility.Encrypt(global_type.Config.ProjectId, "", text)))
 	}
-	var object objectInfoType
+	var object global_type.ObjectInfoType
 	object.Name = tempEncrypt(changeMethod.MethodName)
-	object.Hash = tempEncrypt(commitDiff.commitHash)
+	object.Hash = tempEncrypt(commitDiff.CommitHash)
 	object.ParentName = tempEncrypt(changeMethod.MasterObject.ObjectName)
-	object.ParentHash = tempEncrypt(fmt.Sprintf("%x", hashCode64([]byte(config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.diffFileName))))
-	object.FilePath = tempEncrypt(commitDiff.diffFileName)
-	object.Owner = tempEncrypt(conCatStrings(commitDiff.committerName, "-", commitDiff.committerEmail))
-	object.CommitTime = commitDiff.commitTime
+	object.ParentHash = tempEncrypt(fmt.Sprintf("%x", hashCode64([]byte(global_type.Config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.DiffFileName))))
+	object.FilePath = tempEncrypt(commitDiff.DiffFileName)
+	object.Owner = tempEncrypt(utility.ConCatStrings(commitDiff.CommitterName, "-", commitDiff.CommitterEmail))
+	object.CommitTime = commitDiff.CommitTime
 	object.OldName = ""
 	return object
 }
@@ -154,14 +140,14 @@ func addObjectFromChangeLineNumber(commitDiff diffParsedType, changeLineNumber c
  * @author KevinMatt 2021-07-29 19:38:19
  * @function_mark PASS
 */
-func findChangedMethod(changeLineNumber changeLineType, antlrAnalyzeRes AnalysisInfoType) (changeMethodInfo MethodInfoType) {
+func findChangedMethod(changeLineNumber global_type.ChangeLineType, antlrAnalyzeRes AnalysisInfoType) (changeMethodInfo MethodInfoType) {
 	var startLineNumbers []int
 	// 遍历匹配到的方法列表，存储其首行
 	for index := range antlrAnalyzeRes.AstInfoList.Methods {
 		startLineNumbers = append(startLineNumbers, antlrAnalyzeRes.AstInfoList.Methods[index].StartLine)
 	}
 	// 寻找方法行所在的范围位置
-	resIndex := findIntervalIndex(startLineNumbers, changeLineNumber.lineNumber)
+	resIndex := findIntervalIndex(startLineNumbers, changeLineNumber.LineNumber)
 	// 判断是否有位置插入
 	if resIndex > -1 {
 		changeMethodInfo = antlrAnalyzeRes.AstInfoList.Methods[resIndex]

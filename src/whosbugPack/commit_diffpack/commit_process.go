@@ -1,0 +1,102 @@
+package commit_diffpack
+
+import (
+	"bufio"
+	"io"
+	"log"
+	"os"
+	"regexp"
+	"runtime"
+	"strings"
+	"whosbugPack/importHelper"
+	"whosbugPack/utility"
+)
+
+/* MatchCommit
+/* @Description: 主体过程，最后直接生成结果集，位置在SourceCode下(此部分可做商榷)
+ * @param diffPath diff-commit文件目录
+ * @param commitPath commit-info文件目录
+ * @author KevinMatt 2021-07-29 17:37:10
+ * @function_mark PASS
+*/
+func MatchCommit(diffPath, commitPath string) {
+
+	commitFd, err := os.Open(commitPath)
+	if err != nil {
+		log.Println(err)
+	}
+	diffFd, err := os.Open(diffPath)
+	if err != nil {
+		log.Println(err)
+	}
+	lineReaderCommit := bufio.NewReader(commitFd)
+	lineReaderDiff := bufio.NewReader(diffFd)
+	for {
+		line, _, err := lineReaderDiff.ReadLine()
+		if err == io.EOF {
+			break
+		}
+
+		// 匹配tree行
+		res := patTree.FindString(string(line))
+		if res != "" {
+			// 匹配到一个commit的tree行，从commit info读一行
+			commitLine, _, err := lineReaderCommit.ReadLine()
+			if err == io.EOF {
+				break
+			}
+			var commitInfo importHelper.CommitInfoType
+			infoList := strings.Split(string(commitLine), ",")
+
+			// 填充commitInfo结构体内的各项信息
+			for index := 2; index < len(infoList)-1; index++ {
+				commitInfo.CommitterName += infoList[index]
+				if index != len(infoList)-2 {
+					commitInfo.CommitterName += ","
+				}
+			}
+			commitInfo.CommitHash, commitInfo.CommitterEmail, commitInfo.CommitTime = infoList[0], infoList[1], utility.ToIso8601(strings.Split(infoList[len(infoList)-1][4:], " "))
+			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
+			fullCommit := getFullCommit(patCommit, lineReaderDiff)
+
+			// 获取单次commit中的每一次diff，并处理diff，送进协程
+			ParseDiffToFile(fullCommit, commitInfo)
+
+		}
+		// 强制触发GC,避免短解析作业在golang自动gc触发的两分钟阈值内大量堆积
+		runtime.GC()
+	}
+	err = commitFd.Close()
+	if err != nil {
+		log.Println(err)
+	}
+	err = diffFd.Close()
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+/* getFullCommit
+/* @Description: 交错读取commit-diff文件
+ * @param patCommit 预编译的正则表达式
+ * @param lineReaderDiff 全局共享fd
+ * @return string 返回完整的commit串
+ * @author KevinMatt 2021-07-29 17:52:58
+ * @function_mark PASS
+*/
+func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) string {
+	var lines []string
+	for {
+		line, _, err := lineReaderDiff.ReadLine()
+		if err == io.EOF {
+			break
+		}
+		// 匹配commit行，交错读取
+		res := patCommit.FindString(string(line))
+		if res != "" {
+			break
+		}
+		lines = append(lines, string(line))
+	}
+	return strings.Join(lines, "\n")
+}
