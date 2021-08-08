@@ -17,3 +17,4 @@ src/test.go
 /src/github.com/swaggo/
 /src/gopkg.in/
 /src/github.com/
+/src/anrlr4_ast/

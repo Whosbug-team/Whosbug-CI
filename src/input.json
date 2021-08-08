@@ -1,5 +1,5 @@
 {
-  "__PROJECT_ID": "aalssssdss",
+  "__PROJECT_ID": "test",
   "__RELEASE_VERSION": "1.0.0",
   "__PROJECT_URL": "C:\\Users\\KevinMatt\\Desktop\\test\\Java",
   "__BRANCH_NAME": "master",
@@ -7,9 +7,9 @@
     "java",
     "python"
   ],
-  "__WEB_SRV_HOST": "http://127.0.0.1:8081",
-  "__WEB_SRV_USERNAME": "user",
-  "__WEB_SRV_PASSWORD": "pwd",
-  "__ENCRYPT_SECRET": ""
+  "__WEB_SRV_HOST": "http://localhost:8081",
+  "__WEB_SRV_USERNAME__": "user",
+  "__WEB_SRV_KEY__": "pwd",
+  "__ENCRYPT_SECRET__": ""
 }
 

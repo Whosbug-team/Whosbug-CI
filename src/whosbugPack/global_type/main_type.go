@@ -41,9 +41,9 @@ type InputJson struct {
 	BranchName        string   `json:"__BRANCH_NAME"`
 	LanguageSupport   []string `json:"__LAN_SUPPORT"`
 	WebServerHost     string   `json:"__WEB_SRV_HOST"`
-	WebServerUserName string   `json:"__WEB_SRV_USERNAME"`
-	WebserverPassWord string   `json:"__WEB_SRV_PASSWORD"`
-	CryptoSecret      string   `json:"__ENCRYPT_SECRET"`
+	WebServerUserName string   `json:"__WEB_SRV_USERNAME__"`
+	WebserverKey      string   `json:"__WEB_SRV_PASSWORD__"`
+	CryptoKey         string   `json:"__ENCRYPT_SECRET__"`
 }
 
 // 全局变量，存储config信息

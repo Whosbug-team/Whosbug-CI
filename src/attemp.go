@@ -6,8 +6,5 @@ import (
 )
 
 func main() {
-	//go func() {
 	whosbugPack.Analysis()
-	//}()
-	//panic(http.ListenAndServe("0.0.0.0:6060", nil))
 }
