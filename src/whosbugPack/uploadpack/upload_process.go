@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"whosbugPack/global_type"
+	"whosbugPack/logpack"
 	"whosbugPack/utility"
 )
 
@@ -67,7 +68,8 @@ func ProcessObjectUpload() {
 	//自然退出后，缓冲队列可能还有残留
 	_processUpload(objects)
 	UploadWaitGroup.Done()
-	fmt.Println("Sending Finished")
+	log.SetOutput(logpack.LogFile)
+	log.Println("Sending Finished")
 }
 
 /* _processUpload
@@ -80,7 +82,8 @@ func _processUpload(objects []global_type.ObjectInfoType) {
 	err := PostObjects(global_type.LocalHashLatest, objects)
 	sendCount++
 	if len(objects) > 0 {
-		fmt.Println("Sent count: ", objects[0].Hash, sendCount)
+		log.SetOutput(logpack.LogFile)
+		log.Println("Sent count: ", objects[0].Hash, sendCount)
 	}
 	if err != nil {
 		//log.Println(err)
@@ -143,7 +146,6 @@ func PostObjects(commitHash string, objects []global_type.ObjectInfoType) error 
 
 	defer res.Body.Close()
 	if res.StatusCode == 201 {
-		fmt.Println("Send one")
 		return nil
 	} else {
 		body, err := ioutil.ReadAll(res.Body)

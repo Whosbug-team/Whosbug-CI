@@ -3,6 +3,7 @@ package logpack
 import (
 	"bytes"
 	"fmt"
+	"github.com/pkg/errors"
 	"log"
 	"os"
 	"os/exec"
@@ -29,15 +30,27 @@ func GetLogInfo() (string, string) {
 
 	cloudHashLatest, err := utility.GetLatestRelease(global_type.Config.ProjectId)
 	if err != nil {
-		log.Println(err)
+		fmt.Println(utility.ErrorMessage(errors.WithStack(err)))
 	}
 	if cloudHashLatest != global_type.LocalHashLatest {
 		if cloudHashLatest == "" {
-			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
-			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
+			err = execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
+			if err != nil {
+				fmt.Println(utility.ErrorStack(err))
+			}
+			err = execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
+			if err != nil {
+				fmt.Println(utility.ErrorStack(err))
+			}
 		} else {
-			execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
-			execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
+			err = execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
+			if err != nil {
+				fmt.Println(utility.ErrorStack(err))
+			}
+			err = execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
+			if err != nil {
+				fmt.Println(utility.ErrorStack(err))
+			}
 		}
 	}
 	return utility.ConCatStrings(global_type.WorkPath, "\\allDiffs.out"), utility.ConCatStrings(global_type.WorkPath, "\\commitInfo.out")
@@ -53,16 +66,19 @@ func GetLogInfo() (string, string) {
 */
 func execCommandOutput(command string, args ...string) string {
 	cmd := exec.Command(command, args...)
-	fmt.Println("Cmd", cmd.Args)
+	log.SetOutput(LogFile)
+	log.Println("Cmd", cmd.Args)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
 	err := cmd.Start()
 	if err != nil {
+		fmt.Println(err)
 		log.Println(err)
 	}
 	err = cmd.Wait()
 	if err != nil {
+		fmt.Println(err)
 		log.Println(err)
 	}
 	return out.String()
@@ -76,16 +92,24 @@ func execCommandOutput(command string, args ...string) string {
  * @author KevinMatt 2021-07-29 17:31:00
  * @function_mark PASS
 */
-func execRedirectToFile(fileName string, command string, args ...string) {
+func execRedirectToFile(fileName string, command string, args ...string) error {
 	cmd := exec.Command(command, args...)
-	fmt.Println("Cmd", cmd.Args)
+	log.SetOutput(LogFile)
+	log.Println("Cmd", cmd.Args)
 	fd, _ := os.OpenFile(global_type.WorkPath+"\\"+fileName, os.O_WRONLY|os.O_CREATE|os.O_SYNC, 0755)
 	cmd.Stdout = fd
 	cmd.Stderr = fd
 	err := cmd.Start()
 	if err != nil {
-		log.Println(err.Error())
+		return errors.Wrap(err, "Start cmd Fails.")
 	}
 	err = cmd.Wait()
-	_ = fd.Close()
+	if err != nil {
+		return errors.Wrap(err, "cmd Wait Fails.")
+	}
+	err = fd.Close()
+	if err != nil {
+		return errors.Wrap(err, "FD close Fails.")
+	}
+	return err
 }

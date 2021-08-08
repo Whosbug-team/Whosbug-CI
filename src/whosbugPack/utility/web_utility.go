@@ -3,8 +3,8 @@ package utility
 import (
 	"bytes"
 	"encoding/base64"
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -27,30 +27,32 @@ func GetLatestRelease(projectId string) (string, error) {
 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, urlReq, bytes.NewBuffer(data))
+
 	if err != nil {
-		err = fmt.Errorf("GetLatestRelease->Sending NewRequest: %w", err)
-		return "", err
+		return "", errors.Wrapf(err, "GetLatestRelease->Sending NewRequest")
 	}
 
 	token, err := GenToken()
 	if err != nil {
-		log.Println(err)
+		return "", errors.WithStack(err)
 	}
 	req.Header.Add("Authorization", ConCatStrings("Token ", token))
 	req.Header.Set("Content-Type", "application/Json")
 
 	res, err := client.Do(req)
 	if err != nil {
-		log.Println(err)
-		return "", err
+		return "", errors.WithStack(err)
 	}
-	defer res.Body.Close()
+	defer func() {
+		err = res.Body.Close()
+		if err != nil {
+			log.Println(ErrorStack(errors.WithStack(err)))
+		}
+	}()
 	if res.StatusCode == 200 {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			log.Println(err)
-			//fmt.Println(string(body))
-			return "", err
+			return "", errors.WithStack(err)
 		}
 		fmt.Println(string(body))
 		commitHash := Json.Get(body, "commit_hash").ToString()
@@ -59,13 +61,11 @@ func GetLatestRelease(projectId string) (string, error) {
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			log.Println(err)
-			return "", err
+			return "", errors.WithStack(err)
 		}
-		fmt.Println(string(body))
-		//TODO 改成相应的业务异常类型
+		//fmt.Println(string(body))
 		if res.StatusCode == 404 {
-			return "", errors.New("The Project Not Found.")
+			return "", errors.New("The Project Not Found. Get all commit to Initialize.")
 		}
 		return "", errors.New(string(body))
 	}

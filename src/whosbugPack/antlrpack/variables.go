@@ -16,9 +16,3 @@ var (
 		return new(TreeShapeListener)
 	}}
 )
-
-// processDiffs 已处理的commit数
-var processDiffs = 0
-
-// LargeObjects 大型objects值
-const LargeObjects = 100000

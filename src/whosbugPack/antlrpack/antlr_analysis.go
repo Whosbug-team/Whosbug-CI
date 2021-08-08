@@ -27,24 +27,11 @@ func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 		}
 		if temp != (global_type.ObjectInfoType{}) {
 			// 送入channel
-			// 大型文件送入LargeChannel
-			//if len(commitDiff.ChangeLineNumbers) > LargeObjects {
-			//	global_type.ObjectChanLarge = make(chan global_type.ObjectInfoType, len(commitDiff.ChangeLineNumbers))
-			//	global_type.ObjectChanLarge <- temp
-			//} else {
 			global_type.ObjectChan <- temp
-			//}
 		}
 		// 用于比较两次的结构体是否重复(匹配行范围导致的重复结果)
 		tempCompare = temp
 	}
-	//if len(commitDiff.ChangeLineNumbers) > LargeObjects {
-	//	// 启动大型文件处理协程
-	//	go uploadpack.ProcessLargeObjectUpload()
-	//}
-	// 指示已经处理的commit数量
-	processDiffs++
-	fmt.Println("Diff No.", processDiffs, " From", commitDiff.CommitHash, " Sent Into Channel.")
 }
 
 /* antlrAnalysis

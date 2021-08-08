@@ -2,13 +2,15 @@ package commit_diffpack
 
 import (
 	"bufio"
+	"fmt"
+	"github.com/pkg/errors"
 	"io"
 	"log"
 	"os"
 	"regexp"
 	"runtime"
 	"strings"
-	"whosbugPack/importHelper"
+	"whosbugPack/global_type"
 	"whosbugPack/utility"
 )
 
@@ -23,11 +25,13 @@ func MatchCommit(diffPath, commitPath string) {
 
 	commitFd, err := os.Open(commitPath)
 	if err != nil {
-		log.Println(err)
+		log.Println("OpenFile Error: ", err)
+		os.Exit(1)
 	}
 	diffFd, err := os.Open(diffPath)
 	if err != nil {
-		log.Println(err)
+		log.Println("OpenFile Error: ", err)
+		os.Exit(1)
 	}
 	lineReaderCommit := bufio.NewReader(commitFd)
 	lineReaderDiff := bufio.NewReader(diffFd)
@@ -45,20 +49,22 @@ func MatchCommit(diffPath, commitPath string) {
 			if err == io.EOF {
 				break
 			}
-			var commitInfo importHelper.CommitInfoType
+			var commitInfo global_type.CommitInfoType
 			infoList := strings.Split(string(commitLine), ",")
 
 			// 填充commitInfo结构体内的各项信息
 			for index := 2; index < len(infoList)-1; index++ {
 				commitInfo.CommitterName += infoList[index]
 				if index != len(infoList)-2 {
-					commitInfo.CommitterName += ","
+					commitInfo.CommitterName = utility.ConCatStrings(commitInfo.CommitterName, ",")
 				}
 			}
 			commitInfo.CommitHash, commitInfo.CommitterEmail, commitInfo.CommitTime = infoList[0], infoList[1], utility.ToIso8601(strings.Split(infoList[len(infoList)-1][4:], " "))
 			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
-			fullCommit := getFullCommit(patCommit, lineReaderDiff)
-
+			fullCommit, err := getFullCommit(patCommit, lineReaderDiff)
+			if err != nil {
+				fmt.Println(utility.ErrorStack(err))
+			}
 			// 获取单次commit中的每一次diff，并处理diff，送进协程
 			ParseDiffToFile(fullCommit, commitInfo)
 
@@ -68,11 +74,11 @@ func MatchCommit(diffPath, commitPath string) {
 	}
 	err = commitFd.Close()
 	if err != nil {
-		log.Println(err)
+		log.Println(errors.WithStack(err))
 	}
 	err = diffFd.Close()
 	if err != nil {
-		log.Println(err)
+		log.Println(errors.WithStack(err))
 	}
 }
 
@@ -84,7 +90,7 @@ func MatchCommit(diffPath, commitPath string) {
  * @author KevinMatt 2021-07-29 17:52:58
  * @function_mark PASS
 */
-func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) string {
+func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) (string, error) {
 	var lines []string
 	for {
 		line, _, err := lineReaderDiff.ReadLine()
@@ -98,5 +104,5 @@ func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) strin
 		}
 		lines = append(lines, string(line))
 	}
-	return strings.Join(lines, "\n")
+	return strings.Join(lines, "\n"), nil
 }

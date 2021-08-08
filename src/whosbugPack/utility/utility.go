@@ -6,13 +6,16 @@ import (
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha256"
-	"errors"
 	"fmt"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/pkg/errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
+	"whosbugPack/global_type"
 )
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -120,7 +123,11 @@ func GenToken() (string, error) {
 	builder.WriteString("/api-token-auth/")
 	urls := builder.String()
 
-	res, _ := http.PostForm(urls, url.Values{"username": []string{_USERNAME}, "password": []string{_PASSWORD}})
+	res, err := http.PostForm(urls, url.Values{"username": []string{_USERNAME}, "password": []string{_PASSWORD}})
+	if err != nil {
+		log.Printf("%s", ErrorMessage(errors.Wrapf(err, "Genarate Key Failure. Check the username&password or the status of the server.\n")))
+		os.Exit(1)
+	}
 	defer res.Body.Close()
 	if res.StatusCode == 200 {
 		resBody, _ := ioutil.ReadAll(res.Body)
@@ -134,11 +141,11 @@ func GenToken() (string, error) {
 }
 
 /* ConCatStrings
-/* @Description: 字符串有效拼接
+/* @Description: 字符串高效拼接
  * @param stringList
  * @return string
  * @author KevinMatt 2021-08-05 20:03:50
- * @function_mark
+ * @function_mark PASS
 */
 func ConCatStrings(stringList ...string) string {
 	var builder strings.Builder
@@ -146,4 +153,38 @@ func ConCatStrings(stringList ...string) string {
 		builder.WriteString(stringList[index])
 	}
 	return builder.String()
+}
+
+/* ErrorMessage
+/* @Description: 只打印错误信息，不打印堆栈
+ * @param err
+ * @return string
+ * @author KevinMatt 2021-08-08 16:14:42
+ * @function_mark PASS
+*/
+func ErrorMessage(err error) string {
+	return err.Error()
+}
+
+/* ErrorStack
+/* @Description: 打印含堆栈的错误信息
+ * @param err 错误
+ * @return string 字符串
+ * @author KevinMatt 2021-08-08 16:13:58
+ * @function_mark PASS
+*/
+func ErrorStack(err error) string {
+	errMsg := fmt.Sprintf("%+v", err)
+	return CleanPath(errMsg)
+}
+
+/* CleanPath
+/* @Description: 信息脱敏
+ * @param s 传入信息
+ * @return string 返回脱敏字符串
+ * @author KevinMatt 2021-08-08 16:03:40
+ * @function_mark PASS
+*/
+func CleanPath(s string) string {
+	return strings.ReplaceAll(s, strings.ReplaceAll(global_type.WorkPath, "\\", "/")+"/", "")
 }

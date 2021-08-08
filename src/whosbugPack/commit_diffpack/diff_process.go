@@ -1,12 +1,11 @@
 package commit_diffpack
 
 import (
+	"github.com/pkg/errors"
 	"log"
 	"path"
-	"regexp"
 	"strings"
 	"whosbugPack/global_type"
-	"whosbugPack/importHelper"
 	"whosbugPack/utility"
 )
 
@@ -17,11 +16,7 @@ import (
  * @author KevinMatt 2021-07-29 22:54:33
  * @function_mark PASS
 */
-func ParseDiffToFile(data string, commitInfo importHelper.CommitInfoType) {
-	// 编译正则
-	patDiff, _ := regexp.Compile(parDiffPattern)
-	patDiffPart, _ := regexp.Compile(parDiffPartPattern)
-
+func ParseDiffToFile(data string, commitInfo global_type.CommitInfoType) {
 	// 匹配所有diffs及子匹配->匹配去除a/ or b/的纯目录
 	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
 
@@ -30,6 +25,7 @@ func ParseDiffToFile(data string, commitInfo importHelper.CommitInfoType) {
 
 	// 遍历所有diff
 	for index, rawDiff := range rawDiffs {
+
 		// 如果非匹配的语言文件，直接跳过
 		if !lanFilter(path.Base(rawDiff[2])) {
 			continue
@@ -79,7 +75,7 @@ func ParseDiffToFile(data string, commitInfo importHelper.CommitInfoType) {
 			go func() {
 				err := Pool.Invoke(diffParsed)
 				if err != nil {
-					log.Println(err)
+					log.Println(utility.ErrorStack(errors.WithStack(err)))
 				}
 			}()
 		}
@@ -94,10 +90,6 @@ func ParseDiffToFile(data string, commitInfo importHelper.CommitInfoType) {
  * @function_mark PASS
 */
 func findAllChangedLineNumbers(lines []string) []global_type.ChangeLineType {
-	markCompile, err := regexp.Compile(markPattern)
-	if err != nil {
-		log.Println(err)
-	}
 	var changeLineNumbers []global_type.ChangeLineType
 	lineNumber := 0
 	for index, line := range lines {
