@@ -35,12 +35,15 @@ type ObjectInfoType struct {
 
 // inputJson 存储从input.json读取到的配置信息
 type InputJson struct {
-	ProjectId       string   `json:"__PROJECT_ID"`
-	ReleaseVersion  string   `json:"__RELEASE_VERSION"`
-	RepoPath        string   `json:"__PROJECT_URL"`
-	BranchName      string   `json:"__BRANCH_NAME"`
-	LanguageSupport []string `json:"__LAN_SUPPORT"`
-	WebServerHost   string   `json:"__WEB_SRV_HOST"`
+	ProjectId         string   `json:"__PROJECT_ID"`
+	ReleaseVersion    string   `json:"__RELEASE_VERSION"`
+	RepoPath          string   `json:"__PROJECT_URL"`
+	BranchName        string   `json:"__BRANCH_NAME"`
+	LanguageSupport   []string `json:"__LAN_SUPPORT"`
+	WebServerHost     string   `json:"__WEB_SRV_HOST"`
+	WebServerUserName string   `json:"__WEB_SRV_USERNAME"`
+	WebserverPassWord string   `json:"__WEB_SRV_PASSWORD"`
+	CryptoSecret      string   `json:"__ENCRYPT_SECRET"`
 }
 
 // 全局变量，存储config信息

@@ -3,11 +3,11 @@ package utility
 import (
 	"bytes"
 	"encoding/base64"
-	"fmt"
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"whosbugPack/global_type"
 )
 
 /* GetLatestRelease
@@ -19,10 +19,10 @@ import (
  * @function_mark PASS
 */
 func GetLatestRelease(projectId string) (string, error) {
-	urlReq := ConCatStrings(_HOST, "/whosbug/releases/last/")
+	urlReq := ConCatStrings(global_type.Config.WebServerHost, "/whosbug/releases/last/")
 	method := "POST"
 
-	pid := base64.StdEncoding.EncodeToString([]byte(Encrypt(projectId, _SECRET, projectId)))
+	pid := base64.StdEncoding.EncodeToString([]byte(Encrypt(projectId, global_type.Config.CryptoSecret, projectId)))
 	data := []byte("{\"pid\":\"" + pid + "\"}")
 
 	client := &http.Client{}
@@ -54,10 +54,9 @@ func GetLatestRelease(projectId string) (string, error) {
 		if err != nil {
 			return "", errors.WithStack(err)
 		}
-		fmt.Println(string(body))
 		commitHash := Json.Get(body, "commit_hash").ToString()
 		commitHashByte, err := base64.StdEncoding.DecodeString(commitHash)
-		return _decrypt(projectId, _SECRET, string(commitHashByte)), nil
+		return _decrypt(projectId, global_type.Config.CryptoSecret, string(commitHashByte)), nil
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {

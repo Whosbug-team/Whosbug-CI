@@ -119,11 +119,11 @@ func _decrypt(projectId, key, plainText string) string {
 func GenToken() (string, error) {
 	// 拼接字符串
 	var builder strings.Builder
-	builder.WriteString(_HOST)
+	builder.WriteString(global_type.Config.WebServerHost)
 	builder.WriteString("/api-token-auth/")
 	urls := builder.String()
 
-	res, err := http.PostForm(urls, url.Values{"username": []string{_USERNAME}, "password": []string{_PASSWORD}})
+	res, err := http.PostForm(urls, url.Values{"username": []string{global_type.Config.WebServerUserName}, "password": []string{global_type.Config.WebserverPassWord}})
 	if err != nil {
 		log.Printf("%s", ErrorMessage(errors.Wrapf(err, "Genarate Key Failure. Check the username&password or the status of the server.\n")))
 		os.Exit(1)

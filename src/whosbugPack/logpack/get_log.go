@@ -32,7 +32,10 @@ func GetLogInfo() (string, string) {
 	if err != nil {
 		fmt.Println(utility.ErrorMessage(errors.WithStack(err)))
 	}
-	if cloudHashLatest != global_type.LocalHashLatest {
+	if cloudHashLatest == global_type.LocalHashLatest {
+		fmt.Println("The server commit list is up-to-date.")
+		os.Exit(0)
+	} else {
 		if cloudHashLatest == "" {
 			err = execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
 			if err != nil {

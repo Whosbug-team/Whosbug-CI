@@ -7,6 +7,9 @@
     "java",
     "python"
   ],
-  "__WEB_SRV_HOST": ""
+  "__WEB_SRV_HOST": "http://127.0.0.1:8081",
+  "__WEB_SRV_USERNAME": "user",
+  "__WEB_SRV_PASSWORD": "pwd",
+  "__ENCRYPT_SECRET": ""
 }
 
