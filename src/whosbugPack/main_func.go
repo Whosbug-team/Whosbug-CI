@@ -91,13 +91,13 @@ func Analysis() {
 	// 等待上传协程的结束
 	uploadpack.UploadWaitGroup.Wait()
 
-	// 回收所有内存，准备转入完成上传的通知
+	// 回收所有内存，准备转入完成上传的FIN通知
 	runtime.GC()
 
 	// 通知Webservice上传结束
-	err := uploadpack.PostFinished(commitPath)
+	err := uploadpack.PostFin()
 	if err != nil {
-		fmt.Println(utility.ErrorStack(err))
+		log.Println(utility.ErrorStack(err))
 	}
 	fmt.Println("Total cost: ", time.Since(t))
 }

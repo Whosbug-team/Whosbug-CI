@@ -16,8 +16,8 @@ type postData struct {
 	} `json:"release"`
 }
 
-// postDataFin 发送完成的指示信息
-type postDataFin struct {
+// postCommits 发送的commit信息
+type postCommits struct {
 	Project struct {
 		Pid string `json:"pid"`
 	} `json:"project"`
@@ -26,4 +26,15 @@ type postDataFin struct {
 		CommitHash string `json:"commit_hash"`
 	} `json:"release"`
 	Commit []global_type.CommitInfoType `json:"commits"`
+}
+
+// postFin 发送完成的指示信息
+type postFin struct {
+	Project struct {
+		Pid string `json:"pid"`
+	} `json:"project"`
+	Release struct {
+		Release    string `json:"release"`
+		CommitHash string `json:"commit_hash"`
+	} `json:"release"`
 }

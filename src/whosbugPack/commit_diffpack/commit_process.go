@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"whosbugPack/global_type"
+	"whosbugPack/uploadpack"
 	"whosbugPack/utility"
 )
 
@@ -51,7 +52,7 @@ func MatchCommit(diffPath, commitPath string) {
 
 			var commitInfo global_type.CommitInfoType
 
-			commitInfo = GetCommitInfo(string(commitLine))
+			commitInfo = utility.GetCommitInfo(string(commitLine))
 			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
 			fullCommit, err := getFullCommit(patCommit, lineReaderDiff)
 			if err != nil {
@@ -68,6 +69,10 @@ func MatchCommit(diffPath, commitPath string) {
 	err = diffFd.Close()
 	if err != nil {
 		log.Println(errors.WithStack(err))
+	}
+	err = uploadpack.PostCommitsInfo(commitPath)
+	if err != nil {
+		log.Println(utility.ErrorStack(err))
 	}
 }
 
@@ -94,29 +99,4 @@ func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) (stri
 		lines = append(lines, string(line))
 	}
 	return strings.Join(lines, "\n"), nil
-}
-
-/* GetCommitInfo
-/* @Description: 获取commit信息
- * @param line commitInfo行
- * @return global_type.CommitInfoType 返回结构体
- * @author KevinMatt 2021-08-10 01:04:21
- * @function_mark PASS
-*/
-func GetCommitInfo(line string) global_type.CommitInfoType {
-	infoList := strings.Split(line, ",")
-	var tempCommitInfo global_type.CommitInfoType
-	tempCommitInfo = global_type.CommitInfoType{
-		CommitHash:     infoList[0],
-		CommitterEmail: infoList[1],
-		CommitTime:     utility.ToIso8601(strings.Split(infoList[len(infoList)-1][4:], " ")),
-	}
-	// 赋值commitAuthor(考虑多个Author的可能)
-	for index := 2; index < len(infoList)-1; index++ {
-		tempCommitInfo.CommitAuthor += infoList[index]
-		if index != len(infoList)-2 {
-			tempCommitInfo.CommitAuthor = utility.ConCatStrings(tempCommitInfo.CommitAuthor, ",")
-		}
-	}
-	return tempCommitInfo
 }

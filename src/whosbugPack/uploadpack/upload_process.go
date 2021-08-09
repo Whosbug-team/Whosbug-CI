@@ -10,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"whosbugPack/commit_diffpack"
 	"whosbugPack/global_type"
 	"whosbugPack/logpack"
 	"whosbugPack/utility"
@@ -136,20 +135,20 @@ func PostObjects(objects []global_type.ObjectInfoType) error {
 	return err
 }
 
-/* PostFinished
+/* PostCommitsInfo
 /* @Description: 发送结束信息
  * @param commitPath commit文件的目录
  * @return error 返回错误
  * @author KevinMatt 2021-08-10 01:06:05
  * @function_mark PASS
 */
-func PostFinished(commitPath string) error {
+func PostCommitsInfo(commitPath string) error {
 	commitFd, err := os.Open(commitPath)
 	if err != nil {
 		return errors.Wrap(err, "Open commitPath to Post FIN fails:")
 	}
 	lineReaderCommit := bufio.NewReader(commitFd)
-	var FinMessage postDataFin
+	var FinMessage postCommits
 	FinMessage.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
 	FinMessage.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)
 	FinMessage.Release.CommitHash = utility.Base64Encrypt(global_type.LocalHashLatest)
@@ -158,7 +157,7 @@ func PostFinished(commitPath string) error {
 		if err == io.EOF {
 			break
 		}
-		CommitInfo := commit_diffpack.GetCommitInfo(string(line))
+		CommitInfo := utility.GetCommitInfo(string(line))
 		FinMessage.Commit = append(FinMessage.Commit, CommitInfo)
 	}
 
@@ -212,4 +211,25 @@ func ReqWithToken(token, url, method, data string) error {
 		}
 		return errors.New(string(body))
 	}
+}
+
+func PostFin() error {
+	url := global_type.Config.WebServerHost + "/whosbug/commits/upload-done"
+	var FinMessage postFin
+	FinMessage.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
+	FinMessage.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)
+	FinMessage.Release.CommitHash = utility.Base64Encrypt(global_type.LocalHashLatest)
+	data, err := json.MarshalToString(FinMessage)
+	if err != nil {
+		return errors.Wrap(err, "json MarshalToString Fail")
+	}
+	token, err := utility.GenToken()
+	if err != nil {
+		return errors.Wrap(err, "GenToken Fail")
+	}
+	err = ReqWithToken(token, url, "POST", data)
+	if err != nil {
+		return err
+	}
+	return nil
 }

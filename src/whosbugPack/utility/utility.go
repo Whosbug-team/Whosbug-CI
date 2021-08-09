@@ -216,3 +216,28 @@ var Base64Encrypt = func(text string) string {
 func ForDebug(any ...interface{}) {
 	return
 }
+
+/* GetCommitInfo
+/* @Description: 获取commit信息
+ * @param line commitInfo行
+ * @return global_type.CommitInfoType 返回结构体
+ * @author KevinMatt 2021-08-10 01:04:21
+ * @function_mark PASS
+*/
+func GetCommitInfo(line string) global_type.CommitInfoType {
+	infoList := strings.Split(line, ",")
+	var tempCommitInfo global_type.CommitInfoType
+	tempCommitInfo = global_type.CommitInfoType{
+		CommitHash:     infoList[0],
+		CommitterEmail: infoList[1],
+		CommitTime:     ToIso8601(strings.Split(infoList[len(infoList)-1][4:], " ")),
+	}
+	// 赋值commitAuthor(考虑多个Author的可能)
+	for index := 2; index < len(infoList)-1; index++ {
+		tempCommitInfo.CommitAuthor += infoList[index]
+		if index != len(infoList)-2 {
+			tempCommitInfo.CommitAuthor = ConCatStrings(tempCommitInfo.CommitAuthor, ",")
+		}
+	}
+	return tempCommitInfo
+}
