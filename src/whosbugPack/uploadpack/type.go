@@ -16,8 +16,8 @@ type postData struct {
 	} `json:"release"`
 }
 
-// postDataFin 发送完成的指示信息
-type postDataFin struct {
+// postCommits 发送完成的指示信息
+type postCommits struct {
 	Project struct {
 		Pid string `json:"pid"`
 	} `json:"project"`

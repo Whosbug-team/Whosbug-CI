@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"whosbugPack/global_type"
+	"whosbugPack/uploadpack"
 	"whosbugPack/utility"
 )
 
@@ -68,6 +69,10 @@ func MatchCommit(diffPath, commitPath string) {
 	err = diffFd.Close()
 	if err != nil {
 		log.Println(errors.WithStack(err))
+	}
+	err = uploadpack.PostCommitsInfo(commitPath)
+	if err != nil {
+		log.Println(utility.ErrorStack(err))
 	}
 }
 
