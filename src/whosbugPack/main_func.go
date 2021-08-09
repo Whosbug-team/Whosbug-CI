@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"log"
 	"os"
+	"runtime"
 	"time"
 	"whosbugPack/commit_diffpack"
 	"whosbugPack/global_type"
@@ -21,7 +22,7 @@ import (
 */
 func init() {
 	// 获得密钥
-	global_type.Secret = os.Getenv("WHOSBUG_SECRET")
+	global_type.Config.CryptoKey = os.Getenv("WHOSBUG_SECRET")
 	// 工作目录存档
 	global_type.WorkPath, _ = os.Getwd()
 	file, err := os.Open("src/input.json")
@@ -89,5 +90,14 @@ func Analysis() {
 	}
 	// 等待上传协程的结束
 	uploadpack.UploadWaitGroup.Wait()
+
+	// 回收所有内存，准备转入完成上传的通知
+	runtime.GC()
+
+	// 通知Webservice上传结束
+	err := uploadpack.PostFinished(commitPath)
+	if err != nil {
+		fmt.Println(utility.ErrorStack(err))
+	}
 	fmt.Println("Total cost: ", time.Since(t))
 }

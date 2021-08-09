@@ -2,24 +2,22 @@ package antlrpack
 
 import (
 	javaparser "anrlr4_ast/java"
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"strconv"
+	"whosbugPack/utility"
 )
 
-type paramInfoType struct {
-	ParamType string
-	ParamName string
-}
+//type paramInfoType struct {
+//	ParamType string
+//	ParamName string
+//}
 
 type MethodInfoType struct {
-	StartLine    int
-	EndLine      int
-	ReturnType   string
-	MethodName   string
-	Params       []paramInfoType
+	StartLine  int
+	EndLine    int
+	ReturnType string
+	MethodName string
+	//Params       []paramInfoType
 	MasterObject masterObjectInfoType
-	Depth        int
 	CallMethods  []string
 }
 
@@ -35,7 +33,6 @@ type classInfoType struct {
 	Extends      string
 	Implements   []string
 	MasterObject masterObjectInfoType
-	Depth        int
 }
 
 type fieldInfoType struct {
@@ -50,9 +47,12 @@ type astInfoType struct {
 	Fields      []fieldInfoType
 	Methods     []MethodInfoType
 }
-
+type CallMethodType struct {
+	StartLine int
+	Id        string
+}
 type AnalysisInfoType struct {
-	CallMethods []string
+	CallMethods []CallMethodType
 	AstInfoList astInfoType
 }
 
@@ -68,15 +68,44 @@ func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarat
 	if ctx.GetChildCount() >= 2 {
 		MethodName := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		ReturnType := ctx.GetChild(0).(antlr.ParseTree).GetText()
-		Params := getParams(ctx.GetChild(2).(antlr.ParseTree))
-		methodInfo.ReturnType = ReturnType
-		methodInfo.StartLine = ctx.GetStart().GetLine()
-		methodInfo.EndLine = ctx.GetStop().GetLine()
-		methodInfo.MethodName = MethodName
-		methodInfo.MasterObject = findMasterObjectClass(ctx)
-		methodInfo.Params = append(methodInfo.Params, Params...)
+		//Params := getParams(ctx.GetChild(2).(antlr.ParseTree))
+		methodInfo = MethodInfoType{
+			StartLine:    ctx.GetStart().GetLine(),
+			EndLine:      ctx.GetStop().GetLine(),
+			ReturnType:   ReturnType,
+			MethodName:   MethodName,
+			MasterObject: findMasterObjectClass(ctx),
+		}
+		//methodInfo.Params = append(methodInfo.Params, Params...)
+		resIndex := s.FindMethodCallIndex(methodInfo.StartLine, methodInfo.EndLine)
+		if resIndex != nil {
+			methodInfo.CallMethods = resIndex
+		}
 		s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
 	}
+}
+
+func (s *TreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) []string {
+	var resIndex []string
+	for index := range s.Infos.CallMethods {
+		if s.Infos.CallMethods[index].StartLine <= targetEnd && s.Infos.CallMethods[index].StartLine >= targetStart {
+			resIndex = append(resIndex, s.Infos.CallMethods[index].Id)
+		}
+	}
+	return resIndex
+}
+
+func (s *TreeShapeListener) ExitImportDeclaration(ctx *javaparser.ImportDeclarationContext) {
+	temp := ctx.GetChildren()
+	var importName string
+	for index := 1; index < ctx.GetChildCount()-1; index++ {
+		importName = utility.ConCatStrings(importName, temp[index].GetText())
+	}
+	s.Infos.AstInfoList.Imports = append(s.Infos.AstInfoList.Imports, importName)
+}
+
+func (s *TreeShapeListener) EnterImportDeclaration(ctx *javaparser.ImportDeclarationContext) {
+	// Do Nothing
 }
 
 /* EnterPackageDeclaration
@@ -98,10 +127,13 @@ func (s *TreeShapeListener) EnterPackageDeclaration(ctx *javaparser.PackageDecla
  * @function_mark PASS
  */
 func (s *TreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
-	lineNumber := ctx.GetStart().GetLine()
-	columnNumber := ctx.GetStart().GetColumn()
 	if ctx.GetParent() != nil {
-		s.Infos.CallMethods = append(s.Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetParent().(antlr.ParseTree).GetText()))
+		newMasterObject := findMasterObjectClass(ctx)
+		var insertTemp = CallMethodType{
+			StartLine: ctx.GetStart().GetLine(),
+			Id:        utility.ConCatStrings(newMasterObject.ObjectName, ".", ctx.GetParent().(antlr.ParseTree).GetText()),
+		}
+		s.Infos.CallMethods = append(s.Infos.CallMethods, insertTemp)
 	}
 }
 
@@ -114,10 +146,6 @@ func (s *TreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
  */
 func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarationContext) {
 	var classInfo classInfoType
-	classInfo.StartLine = ctx.GetStart().GetLine()
-	if ctx.ClassBody() != nil {
-		classInfo.EndLine = ctx.ClassBody().GetStop().GetLine()
-	}
 	childCount := ctx.GetChildCount()
 
 	if childCount == 6 {
@@ -130,9 +158,11 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
 				}
 			}
 		}
-		classInfo.ClassName = className
-		classInfo.Extends = extendsClassName
-		classInfo.Implements = findImplements(ctx.GetChild(4).(antlr.ParseTree))
+		classInfo = classInfoType{
+			ClassName:  className,
+			Extends:    extendsClassName,
+			Implements: findImplements(ctx.GetChild(4).(antlr.ParseTree)),
+		}
 	} else if childCount == 5 {
 		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		classInfo.ClassName = className
@@ -142,7 +172,7 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
 			classInfo.Implements = findImplements(ctx.GetChild(3).(antlr.ParseTree))
 		}
 	} else if childCount == 4 {
-		// Generic classes: class AnnoName<T>
+		// Generic classes: class AnnoyName<T>
 		// 此处没有解析尖括号内的内容，其内如有继承关系，将一起连接被打印
 		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		for index := 0; index < ctx.GetChild(2).GetChildCount(); index++ {
@@ -157,6 +187,11 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
 		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		classInfo.ClassName = className
 	}
+
+	classInfo.StartLine = ctx.GetStart().GetLine()
+	if ctx.ClassBody() != nil {
+		classInfo.EndLine = ctx.ClassBody().GetStop().GetLine()
+	}
 	classInfo.MasterObject = findMasterObjectClass(ctx)
 	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, classInfo)
 }
@@ -169,54 +204,56 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
  * @function_mark PASS
  */
 func (s *TreeShapeListener) EnterFieldDeclaration(ctx *javaparser.FieldDeclarationContext) {
-	var field fieldInfoType
-	field.FieldType = ctx.GetChild(0).(antlr.ParseTree).GetText()
-	field.FieldDefinition = ctx.GetChild(1).(antlr.ParseTree).GetText()
+	var field = fieldInfoType{
+		FieldType:       ctx.GetChild(0).(antlr.ParseTree).GetText(),
+		FieldDefinition: ctx.GetChild(1).(antlr.ParseTree).GetText(),
+	}
 	s.Infos.AstInfoList.Fields = append(s.Infos.AstInfoList.Fields, field)
 }
 
-// getParams
-/* @Description: 获取参数名&参数类型结构体的切片
- * @param ctx *MethodDeclarationContext
- * @return []paramInfoType 返回追加后的切片
- * @author KevinMatt 2021-07-25 16:56:35
- * @function_mark PASS
- */
-func getParams(ctx antlr.ParseTree) []paramInfoType {
-	var paramInfo paramInfoType
-	var result []paramInfoType
-	if ctx.GetChildCount() == 3 {
-		paramCount := ctx.GetChild(1).GetChildCount()
-		if paramCount == 1 {
-			treeListCount := ctx.GetChild(1).GetChild(0).GetChildCount()
-			if treeListCount == 3 {
-				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
-				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(2).(antlr.ParseTree).GetText()
-			} else if treeListCount == 2 {
-				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(0).(antlr.ParseTree).GetText()
-				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
-			}
-		} else if paramCount > 1 {
-			for index := 0; index < paramCount; index++ {
-				count := ctx.GetChild(1).GetChild(index).GetChildCount()
-				if count == 3 {
-					//paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(*TypeTypeContext).GetText() + ctx.GetChild(1).GetChild(index).GetChild(1).(*antlr.TerminalNodeImpl).GetText()
-					//paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(2).(*VariableDeclaratorIdContext).GetText()
-					//result = append(result, paramInfo)
-				} else if count == 2 {
-					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(antlr.ParseTree).GetText()
-					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(1).(antlr.ParseTree).GetText()
-					result = append(result, paramInfo)
-				}
-			}
-		}
-	} else if ctx.GetChildCount() == 2 {
-		paramInfo.ParamType = "void"
-		paramInfo.ParamName = "void"
-		result = append(result, paramInfo)
-	}
-	return result
-}
+//// getParams
+///* @Description: 获取参数名&参数类型结构体的切片
+// * @param ctx *MethodDeclarationContext
+// * @return []paramInfoType 返回追加后的切片
+// * @author KevinMatt 2021-07-25 16:56:35
+// * @function_mark PASS
+// */
+//func getParams(ctx antlr.ParseTree) []paramInfoType {
+//	// TODO 算法改进的需要，使得该函数实际已经弃用
+//	var paramInfo paramInfoType
+//	var result []paramInfoType
+//	if ctx.GetChildCount() == 3 {
+//		paramCount := ctx.GetChild(1).GetChildCount()
+//		if paramCount == 1 {
+//			treeListCount := ctx.GetChild(1).GetChild(0).GetChildCount()
+//			if treeListCount == 3 {
+//				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
+//				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(2).(antlr.ParseTree).GetText()
+//			} else if treeListCount == 2 {
+//				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(0).(antlr.ParseTree).GetText()
+//				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
+//			}
+//		} else if paramCount > 1 {
+//			for index := 0; index < paramCount; index++ {
+//				count := ctx.GetChild(1).GetChild(index).GetChildCount()
+//				if count == 3 {
+//					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(antlr.ParseTree).GetText() + ctx.GetChild(1).GetChild(index).GetChild(1).(antlr.ParseTree).GetText()
+//					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(2).(antlr.ParseTree).GetText()
+//					result = append(result, paramInfo)
+//				} else if count == 2 {
+//					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(antlr.ParseTree).GetText()
+//					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(1).(antlr.ParseTree).GetText()
+//					result = append(result, paramInfo)
+//				}
+//			}
+//		}
+//	} else if ctx.GetChildCount() == 2 {
+//		paramInfo.ParamType = "void"
+//		paramInfo.ParamName = "void"
+//		result = append(result, paramInfo)
+//	}
+//	return result
+//}
 
 // findImplements
 /* @Description: 获取接口实现implements字段

@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"regexp"
-	"runtime"
 	"strings"
 	"whosbugPack/global_type"
 	"whosbugPack/utility"
@@ -49,28 +48,18 @@ func MatchCommit(diffPath, commitPath string) {
 			if err == io.EOF {
 				break
 			}
-			var commitInfo global_type.CommitInfoType
-			infoList := strings.Split(string(commitLine), ",")
 
-			// 填充commitInfo结构体内的各项信息
-			for index := 2; index < len(infoList)-1; index++ {
-				commitInfo.CommitterName += infoList[index]
-				if index != len(infoList)-2 {
-					commitInfo.CommitterName = utility.ConCatStrings(commitInfo.CommitterName, ",")
-				}
-			}
-			commitInfo.CommitHash, commitInfo.CommitterEmail, commitInfo.CommitTime = infoList[0], infoList[1], utility.ToIso8601(strings.Split(infoList[len(infoList)-1][4:], " "))
+			var commitInfo global_type.CommitInfoType
+
+			commitInfo = GetCommitInfo(string(commitLine))
 			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
 			fullCommit, err := getFullCommit(patCommit, lineReaderDiff)
 			if err != nil {
 				fmt.Println(utility.ErrorStack(err))
 			}
 			// 获取单次commit中的每一次diff，并处理diff，送进协程
-			ParseDiffToFile(fullCommit, commitInfo)
-
+			ParseDiff(fullCommit, commitInfo)
 		}
-		// 强制触发GC,避免短解析作业在golang自动gc触发的两分钟阈值内大量堆积
-		runtime.GC()
 	}
 	err = commitFd.Close()
 	if err != nil {
@@ -105,4 +94,29 @@ func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) (stri
 		lines = append(lines, string(line))
 	}
 	return strings.Join(lines, "\n"), nil
+}
+
+/* GetCommitInfo
+/* @Description: 获取commit信息
+ * @param line commitInfo行
+ * @return global_type.CommitInfoType 返回结构体
+ * @author KevinMatt 2021-08-10 01:04:21
+ * @function_mark PASS
+*/
+func GetCommitInfo(line string) global_type.CommitInfoType {
+	infoList := strings.Split(line, ",")
+	var tempCommitInfo global_type.CommitInfoType
+	tempCommitInfo = global_type.CommitInfoType{
+		CommitHash:     infoList[0],
+		CommitterEmail: infoList[1],
+		CommitTime:     utility.ToIso8601(strings.Split(infoList[len(infoList)-1][4:], " ")),
+	}
+	// 赋值commitAuthor(考虑多个Author的可能)
+	for index := 2; index < len(infoList)-1; index++ {
+		tempCommitInfo.CommitAuthor += infoList[index]
+		if index != len(infoList)-2 {
+			tempCommitInfo.CommitAuthor = utility.ConCatStrings(tempCommitInfo.CommitAuthor, ",")
+		}
+	}
+	return tempCommitInfo
 }

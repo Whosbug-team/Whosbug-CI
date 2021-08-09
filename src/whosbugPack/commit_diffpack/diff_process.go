@@ -10,14 +10,14 @@ import (
 	"whosbugPack/utility"
 )
 
-/* ParseDiffToFile
+/* ParseDiff
 /* @Description: 将commit内的diff解析后存入SourceCode中
  * @param data 传入的fullCommit字符串
  * @param CommitHash 本次commit的Hash
  * @author KevinMatt 2021-07-29 22:54:33
  * @function_mark PASS
 */
-func ParseDiffToFile(data string, commitInfo global_type.CommitInfoType) {
+func ParseDiff(data string, commitInfo global_type.CommitInfoType) {
 	// 匹配所有diffs及子匹配->匹配去除a/ or b/的纯目录
 	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
 
@@ -52,8 +52,8 @@ func ParseDiffToFile(data string, commitInfo global_type.CommitInfoType) {
 				continue
 			}
 			temp := strings.Split(diffPartsContent[rightDiffHeadIndex[4]:rightDiffHeadIndex[5]], " ")
-			oldLineCount := QuatoToNum(temp[0][1:])
-			NewlineCount := QuatoToNum(temp[1][1:])
+			OldLineCount := QuatToNum(temp[0][1:])
+			NewlineCount := QuatToNum(temp[1][1:])
 
 			// 获取所有行，并按"\n"切分，略去第一行(@@行)
 			lines := (strings.Split(diffPartsContent[rightDiffHeadIndex[1]:][0:], "\n"))[1:]
@@ -65,18 +65,17 @@ func ParseDiffToFile(data string, commitInfo global_type.CommitInfoType) {
 			replaceLines(lines)
 
 			// 填入到结构体中，准备送入协程
-			var diffParsed global_type.DiffParsedType
-			diffParsed.DiffText = strings.Join(lines, "\n")
-			diffParsed.DiffFileName = rawDiff[2]
+			var diffParsed = global_type.DiffParsedType{
+				CommitterEmail: commitInfo.CommitterEmail,
+				CommitTime:     commitInfo.CommitTime,
+				CommitterName:  commitInfo.CommitAuthor,
+				DiffFileName:   rawDiff[2],
+				CommitHash:     commitInfo.CommitHash,
+				DiffText:       strings.Join(lines, "\n"),
+				OldLineCount:   OldLineCount,
+				NewLineCount:   NewlineCount,
+			}
 			diffParsed.ChangeLineNumbers = append(diffParsed.ChangeLineNumbers, changeLineNumbers...)
-			diffParsed.CommitHash = commitInfo.CommitHash
-			diffParsed.CommitterName = commitInfo.CommitterName
-			diffParsed.CommitTime = commitInfo.CommitTime
-			diffParsed.CommitterEmail = commitInfo.CommitterEmail
-			diffParsed.OldLineCount = oldLineCount
-			diffParsed.NewLineCount = NewlineCount
-			// 得到单个diff后直接送入analyze进行分析
-			//fmt.Println("pool running: ", pool.Running())
 			// 上传任务到协程池
 			go func() {
 				err := Pool.Invoke(diffParsed)
@@ -88,7 +87,7 @@ func ParseDiffToFile(data string, commitInfo global_type.CommitInfoType) {
 	}
 }
 
-func QuatoToNum(text string) (sum int) {
+func QuatToNum(text string) (sum int) {
 	for index := 0; index < len(text); index++ {
 		if text[index] == ',' {
 			continue
@@ -96,9 +95,6 @@ func QuatoToNum(text string) (sum int) {
 		temp, _ := strconv.Atoi(string(text[index]))
 		sum = sum*10 + temp
 	}
-	return
-}
-func fordebug(any ...interface{}) {
 	return
 }
 
@@ -138,8 +134,6 @@ func replaceLines(lines []string) {
 				lines[index] = utility.ConCatStrings("", lines[index][1:])
 			} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file" {
 				lines[index] = ""
-			} else {
-				lines[index] = utility.ConCatStrings("", lines[index][1:])
 			}
 		}
 	}

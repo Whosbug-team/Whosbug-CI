@@ -6,6 +6,7 @@ import (
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
@@ -128,7 +129,13 @@ func GenToken() (string, error) {
 		log.Printf("%s", ErrorMessage(errors.Wrapf(err, "Genarate Key Failure. Check the username&password or the status of the server.\n")))
 		os.Exit(1)
 	}
-	defer res.Body.Close()
+
+	defer func() {
+		err = res.Body.Close()
+		if err != nil {
+			log.Println(errors.WithMessage(err, "Res Body Close Fails!"))
+		}
+	}()
 	if res.StatusCode == 200 {
 		resBody, _ := ioutil.ReadAll(res.Body)
 		tokenGot := strings.Split(string(resBody), "\"")[3]
@@ -187,4 +194,25 @@ func ErrorStack(err error) string {
 */
 func CleanPath(s string) string {
 	return strings.ReplaceAll(s, strings.ReplaceAll(global_type.WorkPath, "\\", "/")+"/", "")
+}
+
+/* var Base64Encrypt = func
+/* @Description: 为原始的加密内容添加Base64编码
+ * @param text 要加密的文本
+ * @return string 加密的文本
+ * @author KevinMatt 2021-08-10 01:07:41
+ * @function_mark PASS
+*/
+var Base64Encrypt = func(text string) string {
+	return base64.StdEncoding.EncodeToString([]byte(Encrypt(global_type.Config.ProjectId, global_type.Config.CryptoKey, text)))
+}
+
+/* ForDebug
+/* @Description: 断点小帮手
+ * @param any
+ * @author KevinMatt 2021-08-10 01:32:22
+ * @function_mark PASS
+*/
+func ForDebug(any ...interface{}) {
+	return
 }

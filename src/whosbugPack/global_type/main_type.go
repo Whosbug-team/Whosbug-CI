@@ -23,20 +23,8 @@ type ChangeLineType struct {
 	ChangeType string
 }
 
-// ObjectInfoType
+// ObjectInfoType Ready For New Changes
 type ObjectInfoType struct {
-	CommitTime string `json:"commit_time"`
-	FilePath   string `json:"file_path"`
-	Hash       string `json:"hash"`
-	Name       string `json:"name"`
-	OldName    string `json:"old_name"`
-	Owner      string `json:"owner"`
-	ParentHash string `json:"parent_hash"`
-	ParentName string `json:"parent_name"`
-}
-
-// Ready For New Changes
-type NewObjectInfoType struct {
 	CommitHash          string   `json:"commit_hash"`
 	Id                  string   `json:"id"`
 	OldId               string   `json:"old_id"`
@@ -48,7 +36,18 @@ type NewObjectInfoType struct {
 	Calling             []string `json:"calling"`
 }
 
-// inputJson 存储从input.json读取到的配置信息
+func (s *ObjectInfoType) Equals(b ObjectInfoType) bool {
+	if s.CommitHash == b.CommitHash {
+		if s.Id == b.Id {
+			if s.OldId == b.OldId {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// InputJson 存储从input.json读取到的配置信息
 type InputJson struct {
 	ProjectId         string   `json:"__PROJECT_ID"`
 	ReleaseVersion    string   `json:"__RELEASE_VERSION"`
@@ -73,21 +72,18 @@ var LocalHashLatest string
 // 全局变量，object传输的通道
 var ObjectChan chan ObjectInfoType
 
-// 全局变量，大型object传输的通道
-var ObjectChanLarge chan ObjectInfoType
+//// 全局变量，大型object传输的通道
+//var ObjectChanLarge chan ObjectInfoType
 
 // SupportLans 语言的支持
 var SupportLans = []string{".java"}
-
-// Secret 加密密钥
-var Secret string
 
 var LatestCommitHash string
 
 // CommitInfoType 存储每一次commit的信息
 type CommitInfoType struct {
-	CommitHash     string
-	CommitterEmail string
-	CommitterName  string
-	CommitTime     string
+	CommitHash     string `json:"hash"`
+	CommitterEmail string `json:"email"`
+	CommitAuthor   string `json:"author"`
+	CommitTime     string `json:"time"`
 }

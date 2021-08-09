@@ -2,8 +2,6 @@ package antlrpack
 
 import (
 	javaparser "anrlr4_ast/java"
-	"encoding/base64"
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"whosbugPack/global_type"
 	"whosbugPack/utility"
@@ -19,21 +17,21 @@ func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 
 	// 获取antlr分析结果
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, "java")
-	var tempCompare global_type.ObjectInfoType
-	//var newTempCompare global_type.NewObjectInfoType
+	//var tempCompare global_type.ObjectInfoType
+	var newTempCompare global_type.ObjectInfoType
 	for index := range commitDiff.ChangeLineNumbers {
 		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
 		//newTemp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
-		if temp == tempCompare {
+		if temp.Equals(newTempCompare) {
 			continue
 		}
-		if temp != (global_type.ObjectInfoType{}) {
+		if !temp.Equals(global_type.ObjectInfoType{}) {
 			// 送入channel
 			global_type.ObjectChan <- temp
 			//global_type.ObjectChan <- newTemp
 		}
 		// 用于比较两次的结构体是否重复(匹配行范围导致的重复结果)
-		tempCompare = temp
+		newTempCompare = temp
 		//newTempCompare = newTemp
 	}
 }
@@ -61,6 +59,7 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 }
 
 func ExecutePython(diffText string) AnalysisInfoType {
+	utility.ForDebug(diffText)
 	return AnalysisInfoType{}
 }
 
@@ -114,30 +113,20 @@ func addObjectFromChangeLineNumber(commitDiff global_type.DiffParsedType, change
 		// 为空直接跳过执行
 		return global_type.ObjectInfoType{}
 	}
-	tempEncrypt := func(text string) string {
-		return base64.StdEncoding.EncodeToString([]byte(utility.Encrypt(global_type.Config.ProjectId, "", text)))
-	}
 	// TODO Ready for newMethod
-	//var newObject global_type.NewObjectInfoType
-	//newObject.Id = changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName
-	//newObject.OldId = ""
-	//newObject.NewLineCount = commitDiff.NewLineCount
-	//newObject.OldLineCount = commitDiff.OldLineCount
-	//newObject.CommitHash = tempEncrypt(commitDiff.CommitHash)
-	//newObject.FilePath = tempEncrypt(commitDiff.DiffFileName)
-	//newObject.ChangedNewLineCount = 0
-	//newObject.ChangedOldLineCount = 0
-	//newObject.Calling = make([]string, 0)
-	var object global_type.ObjectInfoType
-	object.Name = tempEncrypt(changeMethod.MethodName)
-	object.Hash = tempEncrypt(global_type.LatestCommitHash)
-	object.ParentName = tempEncrypt(changeMethod.MasterObject.ObjectName)
-	object.ParentHash = tempEncrypt(fmt.Sprintf("%x", hashCode64([]byte(global_type.Config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.DiffFileName))))
-	object.FilePath = tempEncrypt(commitDiff.DiffFileName)
-	object.Owner = tempEncrypt(utility.ConCatStrings(commitDiff.CommitterName, "-", commitDiff.CommitterEmail))
-	object.CommitTime = commitDiff.CommitTime
-	object.OldName = ""
-	return object
+	var newObject global_type.ObjectInfoType
+	newObject = global_type.ObjectInfoType{
+		CommitHash:          utility.Base64Encrypt(commitDiff.CommitHash),
+		Id:                  changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName,
+		OldId:               "",
+		FilePath:            utility.Base64Encrypt(commitDiff.CommitHash),
+		OldLineCount:        commitDiff.OldLineCount,
+		NewLineCount:        commitDiff.NewLineCount,
+		ChangedOldLineCount: 0,
+		ChangedNewLineCount: 0,
+		Calling:             changeMethod.CallMethods,
+	}
+	return newObject
 }
 
 /* findChangedMethod
@@ -155,7 +144,7 @@ func findChangedMethod(changeLineNumber global_type.ChangeLineType, antlrAnalyze
 		startLineNumbers = append(startLineNumbers, antlrAnalyzeRes.AstInfoList.Methods[index].StartLine)
 	}
 	// 寻找方法行所在的范围位置
-	resIndex := findIntervalIndex(startLineNumbers, changeLineNumber.LineNumber)
+	resIndex := FindIntervalIndex(startLineNumbers, changeLineNumber.LineNumber)
 	// 判断是否有位置插入
 	if resIndex > -1 {
 		changeMethodInfo = antlrAnalyzeRes.AstInfoList.Methods[resIndex]
@@ -163,7 +152,7 @@ func findChangedMethod(changeLineNumber global_type.ChangeLineType, antlrAnalyze
 	return
 }
 
-/* findIntervalIndex
+/* FindIntervalIndex
 /* @Description: 寻找可插入位置
  * @param nums 传入的行号切片
  * @param target 要插入的目标行号
@@ -171,7 +160,7 @@ func findChangedMethod(changeLineNumber global_type.ChangeLineType, antlrAnalyze
  * @author KevinMatt 2021-07-29 19:42:18
  * @function_mark PASS
 */
-func findIntervalIndex(nums []int, target int) int {
+func FindIntervalIndex(nums []int, target int) int {
 	if len(nums) == 0 {
 		return -1
 	}

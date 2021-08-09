@@ -16,10 +16,10 @@ func TestExecuteJava(t *testing.T) {
 		fmt.Println("Imports: ", item)
 	}
 	for _, item := range rest.AstInfoList.Classes {
-		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tExtends: ", item.Extends, "\tImplements: ", item.Implements, "\tMasterObject: ", item.MasterObject, "\tDepth: ", item.Depth)
+		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tExtends: ", item.Extends, "\tImplements: ", item.Implements, "\tMasterObject: ", item.MasterObject)
 	}
 	for _, item := range rest.AstInfoList.Methods {
-		fmt.Println("Methods: ", item)
+		fmt.Println("Methods: ", item.CallMethods)
 	}
 	for _, item := range rest.AstInfoList.Fields {
 		fmt.Println("Fields: ", item)
