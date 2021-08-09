@@ -24,9 +24,4 @@ func TestExecuteJava(t *testing.T) {
 	for _, item := range rest.AstInfoList.Fields {
 		fmt.Println("Fields: ", item)
 	}
-
-	//fmt.Println(rest.AstInfoList.Imports)
-	//fmt.Println(rest.AstInfoList.Classes)
-	//fmt.Println(rest.AstInfoList.Methods)
-	//fmt.Println(rest.AstInfoList.Fields)
 }

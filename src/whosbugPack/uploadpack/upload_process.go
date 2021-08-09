@@ -36,7 +36,7 @@ func ProcessLargeObjectUpload() {
 			objects = append(objects, object)
 		} else {
 			objects = append(objects, object)
-			_processUpload(objects)
+			processUpload(objects)
 			objects = nil
 		}
 	}
@@ -61,24 +61,24 @@ func ProcessObjectUpload() {
 			objects = append(objects, object)
 		} else {
 			objects = append(objects, object)
-			_processUpload(objects)
+			processUpload(objects)
 			objects = nil
 		}
 	}
 	//自然退出后，缓冲队列可能还有残留
-	_processUpload(objects)
+	processUpload(objects)
 	UploadWaitGroup.Done()
 	log.SetOutput(logpack.LogFile)
 	log.Println("Sending Finished")
 }
 
-/* _processUpload
+/* processUpload
 /* @Description:
  * @param objects
  * @author KevinMatt 2021-08-07 16:22:27
  * @function_mark
 */
-func _processUpload(objects []global_type.ObjectInfoType) {
+func processUpload(objects []global_type.ObjectInfoType) {
 	err := PostObjects(global_type.LocalHashLatest, objects)
 	sendCount++
 	if len(objects) > 0 {

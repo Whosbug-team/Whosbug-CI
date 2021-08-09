@@ -20,17 +20,21 @@ func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 	// 获取antlr分析结果
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, "java")
 	var tempCompare global_type.ObjectInfoType
-	for index, _ := range commitDiff.ChangeLineNumbers {
+	//var newTempCompare global_type.NewObjectInfoType
+	for index := range commitDiff.ChangeLineNumbers {
 		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
+		//newTemp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
 		if temp == tempCompare {
 			continue
 		}
 		if temp != (global_type.ObjectInfoType{}) {
 			// 送入channel
 			global_type.ObjectChan <- temp
+			//global_type.ObjectChan <- newTemp
 		}
 		// 用于比较两次的结构体是否重复(匹配行范围导致的重复结果)
 		tempCompare = temp
+		//newTempCompare = newTemp
 	}
 }
 
@@ -48,10 +52,16 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	case "java":
 		result = ExecuteJava(diffText)
 	// TODO 其他语言的适配支持
+	case "python":
+		result = ExecutePython(diffText)
 	default:
 		break
 	}
 	return result
+}
+
+func ExecutePython(diffText string) AnalysisInfoType {
+	return AnalysisInfoType{}
 }
 
 /* ExecuteJava
@@ -107,9 +117,20 @@ func addObjectFromChangeLineNumber(commitDiff global_type.DiffParsedType, change
 	tempEncrypt := func(text string) string {
 		return base64.StdEncoding.EncodeToString([]byte(utility.Encrypt(global_type.Config.ProjectId, "", text)))
 	}
+	// TODO Ready for newMethod
+	//var newObject global_type.NewObjectInfoType
+	//newObject.Id = changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName
+	//newObject.OldId = ""
+	//newObject.NewLineCount = commitDiff.NewLineCount
+	//newObject.OldLineCount = commitDiff.OldLineCount
+	//newObject.CommitHash = tempEncrypt(commitDiff.CommitHash)
+	//newObject.FilePath = tempEncrypt(commitDiff.DiffFileName)
+	//newObject.ChangedNewLineCount = 0
+	//newObject.ChangedOldLineCount = 0
+	//newObject.Calling = make([]string, 0)
 	var object global_type.ObjectInfoType
 	object.Name = tempEncrypt(changeMethod.MethodName)
-	object.Hash = tempEncrypt(commitDiff.CommitHash)
+	object.Hash = tempEncrypt(global_type.LatestCommitHash)
 	object.ParentName = tempEncrypt(changeMethod.MasterObject.ObjectName)
 	object.ParentHash = tempEncrypt(fmt.Sprintf("%x", hashCode64([]byte(global_type.Config.ProjectId), []byte(changeMethod.MasterObject.ObjectName), []byte(commitDiff.DiffFileName))))
 	object.FilePath = tempEncrypt(commitDiff.DiffFileName)

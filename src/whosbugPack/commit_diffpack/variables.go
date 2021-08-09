@@ -23,7 +23,7 @@ var patTree, _ = regexp.Compile(parTreePattern)
 const parDiffPattern = `(diff\ \-\-git\ a/(.*)\ b/.+)`
 
 // parDiffPartPattern 匹配diff段的末行@@行，用于获取diff代码内容的起始位置
-const parDiffPartPattern = `(@@\ .*?\ @@)`
+const parDiffPartPattern = `(@@\ (.*?)\ @@)`
 
 // markPattern 匹配+/-变动行
 const markPattern = `^[\+\-]`

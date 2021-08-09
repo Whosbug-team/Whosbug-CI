@@ -33,7 +33,7 @@ func TestEncryptAndDecrypt(t *testing.T) {
 
 	for _, testItem := range cryptTests {
 		actual := Encrypt(projectId, key, testItem.input)
-		actual = _decrypt(projectId, key, actual)
+		actual = Decrypt(projectId, key, actual)
 		if actual != testItem.expected {
 			t.Errorf("Crypt Wrong!")
 		}

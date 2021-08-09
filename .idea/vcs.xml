@@ -9,6 +9,7 @@
     <mapping directory="$PROJECT_DIR$/src/github.com/json-iterator/go" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/modern-go/concurrent" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/modern-go/reflect2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/github.com/pkg/errors" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/pmezard/go-difflib" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/stretchr/testify" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/github.com/swaggo/gin-swagger" vcs="Git" />

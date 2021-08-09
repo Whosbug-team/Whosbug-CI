@@ -87,7 +87,7 @@ func Encrypt(projectId, key, plainText string) string {
 	return string(dest)
 }
 
-// _decrypt
+// Decrypt
 /* @Description: 		AES-CFB解密
  * @param projectId 	项目ID
  * @param Dest 			解密完成的字符串
@@ -97,7 +97,7 @@ func Encrypt(projectId, key, plainText string) string {
  * @author KevinMatt 2021-07-25 13:35:15
  * @function_mark PASS
  */
-func _decrypt(projectId, key, plainText string) string {
+func Decrypt(projectId, key, plainText string) string {
 	K, IV := GenerateKIV([]byte(projectId), []byte(key))
 	aesBlockDescriptor, err := aes.NewCipher(K)
 	if err != nil {
@@ -113,7 +113,7 @@ func _decrypt(projectId, key, plainText string) string {
 /* @Description:
  * @return string
  * @return error
- * @author KevinMatt 2021-08-07 16:48:48
+ * @author KevinMatt 2021-08-08 21:35:26
  * @function_mark
 */
 func GenToken() (string, error) {

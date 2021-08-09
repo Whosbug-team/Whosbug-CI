@@ -58,7 +58,7 @@ func GetLatestRelease(projectId string) (string, error) {
 		}
 		commitHash := Json.Get(body, "commit_hash").ToString()
 		commitHashByte, err := base64.StdEncoding.DecodeString(commitHash)
-		return _decrypt(projectId, global_type.Config.CryptoKey, string(commitHashByte)), nil
+		return Decrypt(projectId, global_type.Config.CryptoKey, string(commitHashByte)), nil
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {

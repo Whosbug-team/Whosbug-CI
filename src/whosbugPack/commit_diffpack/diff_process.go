@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"log"
 	"path"
+	"strconv"
 	"strings"
 	"whosbugPack/global_type"
 	"whosbugPack/utility"
@@ -44,12 +45,15 @@ func ParseDiffToFile(data string, commitInfo global_type.CommitInfoType) {
 			}
 
 			// 匹配@@行
-			rightDiffHeadIndex := patDiffPart.FindStringIndex(diffPartsContent)
+			rightDiffHeadIndex := patDiffPart.FindStringSubmatchIndex(diffPartsContent)
 
 			// 无有效匹配直接跳过
 			if rightDiffHeadIndex == nil {
 				continue
 			}
+			temp := strings.Split(diffPartsContent[rightDiffHeadIndex[4]:rightDiffHeadIndex[5]], " ")
+			oldLineCount := QuatoToNum(temp[0][1:])
+			NewlineCount := QuatoToNum(temp[1][1:])
 
 			// 获取所有行，并按"\n"切分，略去第一行(@@行)
 			lines := (strings.Split(diffPartsContent[rightDiffHeadIndex[1]:][0:], "\n"))[1:]
@@ -69,6 +73,8 @@ func ParseDiffToFile(data string, commitInfo global_type.CommitInfoType) {
 			diffParsed.CommitterName = commitInfo.CommitterName
 			diffParsed.CommitTime = commitInfo.CommitTime
 			diffParsed.CommitterEmail = commitInfo.CommitterEmail
+			diffParsed.OldLineCount = oldLineCount
+			diffParsed.NewLineCount = NewlineCount
 			// 得到单个diff后直接送入analyze进行分析
 			//fmt.Println("pool running: ", pool.Running())
 			// 上传任务到协程池
@@ -80,6 +86,20 @@ func ParseDiffToFile(data string, commitInfo global_type.CommitInfoType) {
 			}()
 		}
 	}
+}
+
+func QuatoToNum(text string) (sum int) {
+	for index := 0; index < len(text); index++ {
+		if text[index] == ',' {
+			continue
+		}
+		temp, _ := strconv.Atoi(string(text[index]))
+		sum = sum*10 + temp
+	}
+	return
+}
+func fordebug(any ...interface{}) {
+	return
 }
 
 /* findAllChangedLineNumbers

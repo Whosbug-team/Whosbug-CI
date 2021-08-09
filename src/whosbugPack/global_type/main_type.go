@@ -13,6 +13,8 @@ type DiffParsedType struct {
 	ChangeLineNumbers []ChangeLineType
 	CommitHash        string
 	DiffText          string
+	OldLineCount      int
+	NewLineCount      int
 }
 
 // ChangeLineType 存储单个改变行的信息
@@ -33,6 +35,19 @@ type ObjectInfoType struct {
 	ParentName string `json:"parent_name"`
 }
 
+// Ready For New Changes
+type NewObjectInfoType struct {
+	CommitHash          string   `json:"commit_hash"`
+	Id                  string   `json:"id"`
+	OldId               string   `json:"old_id"`
+	FilePath            string   `json:"file_path"`
+	OldLineCount        int      `json:"old_line_count"`
+	NewLineCount        int      `json:"new_line_count"`
+	ChangedOldLineCount int      `json:"changed_old_line_count"`
+	ChangedNewLineCount int      `json:"changed_new_line_count"`
+	Calling             []string `json:"calling"`
+}
+
 // inputJson 存储从input.json读取到的配置信息
 type InputJson struct {
 	ProjectId         string   `json:"__PROJECT_ID"`
@@ -42,7 +57,7 @@ type InputJson struct {
 	LanguageSupport   []string `json:"__LAN_SUPPORT"`
 	WebServerHost     string   `json:"__WEB_SRV_HOST"`
 	WebServerUserName string   `json:"__WEB_SRV_USERNAME__"`
-	WebserverKey      string   `json:"__WEB_SRV_PASSWORD__"`
+	WebserverKey      string   `json:"__WEB_SRV_KEY__"`
 	CryptoKey         string   `json:"__ENCRYPT_SECRET__"`
 }
 
@@ -66,6 +81,8 @@ var SupportLans = []string{".java"}
 
 // Secret 加密密钥
 var Secret string
+
+var LatestCommitHash string
 
 // CommitInfoType 存储每一次commit的信息
 type CommitInfoType struct {
