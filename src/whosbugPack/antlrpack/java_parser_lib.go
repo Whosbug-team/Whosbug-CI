@@ -1,7 +1,7 @@
 package antlrpack
 
 import (
-	javaparser "anrlr4_ast/java"
+	javaparser "antlr4_ast/java"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"whosbugPack/utility"
 )

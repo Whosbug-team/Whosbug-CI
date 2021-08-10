@@ -1,7 +1,7 @@
 package antlrpack
 
 import (
-	javaparser "anrlr4_ast/java"
+	javaparser "antlr4_ast/java"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"whosbugPack/global_type"
 	"whosbugPack/utility"
@@ -13,25 +13,22 @@ import (
 //	@author KevinMatt 2021-08-03 21:41:08
 //	@function_mark PASS
 func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
-
 	//	获取antlr分析结果
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, "java")
 	//var tempCompare global_type.ObjectInfoType
-	var newTempCompare global_type.ObjectInfoType
+	var tempCompare global_type.ObjectInfoType
 	for index := range commitDiff.ChangeLineNumbers {
 		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
 		//newTemp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
-		if temp.Equals(newTempCompare) {
+		if temp.Equals(tempCompare) {
 			continue
 		}
 		if !temp.Equals(global_type.ObjectInfoType{}) {
 			//	送入channel
 			global_type.ObjectChan <- temp
-			//global_type.ObjectChan <- newTemp
 		}
 		//	用于比较两次的结构体是否重复(匹配行范围导致的重复结果)
-		newTempCompare = temp
-		//newTempCompare = newTemp
+		tempCompare = temp
 	}
 }
 
