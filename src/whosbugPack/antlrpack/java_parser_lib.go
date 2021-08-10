@@ -56,13 +56,12 @@ type AnalysisInfoType struct {
 	AstInfoList astInfoType
 }
 
-/** ExitMethodDeclaration
- * @Description: 匹配到方法结束时被调用
- * @receiver s
- * @param ctx
- * @author KevinMatt 2021-07-23 23:14:09
- * @function_mark PASS
- */
+// ExitMethodDeclaration
+//	@Description: 匹配到方法结束时被调用
+//	@receiver s
+//	@param ctx
+//	@author KevinMatt 2021-07-23 23:14:09
+//	@function_mark PASS
 func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarationContext) {
 	var methodInfo MethodInfoType
 	if ctx.GetChildCount() >= 2 {
@@ -108,24 +107,22 @@ func (s *TreeShapeListener) EnterImportDeclaration(ctx *javaparser.ImportDeclara
 	// Do Nothing
 }
 
-/* EnterPackageDeclaration
-/* @Description:
- * @receiver s
- * @param ctx
- * @author KevinMatt 2021-07-30 23:51:10
- * @function_mark PASS
-*/
+// EnterPackageDeclaration
+//	@Description:
+//	@receiver s
+//	@param ctx
+//	@author KevinMatt 2021-07-30 23:51:10
+//	@function_mark PASS
 func (s *TreeShapeListener) EnterPackageDeclaration(ctx *javaparser.PackageDeclarationContext) {
 	s.Infos.AstInfoList.PackageName = ctx.QualifiedName().GetText()
 }
 
-/** EnterMethodCall
- * @Description: 匹配调用方法行并获取起始行列号
- * @receiver s
- * @param ctx
- * @author KevinMatt 2021-07-23 23:22:56
- * @function_mark PASS
- */
+// EnterMethodCall
+//	@Description: 匹配调用方法行并获取起始行列号
+//	@receiver s
+//	@param ctx
+//	@author KevinMatt 2021-07-23 23:22:56
+//	@function_mark PASS
 func (s *TreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
 	if ctx.GetParent() != nil {
 		newMasterObject := findMasterObjectClass(ctx)
@@ -137,13 +134,12 @@ func (s *TreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
 	}
 }
 
-/** EnterClassDeclaration
- * @Description: 类对象匹配
- * @receiver s
- * @param ctx
- * @author KevinMatt 2021-07-24 11:44:50
- * @function_mark PASS
- */
+// EnterClassDeclaration
+//	@Description: 类对象匹配
+//	@receiver s
+//	@param ctx
+//	@author KevinMatt 2021-07-24 11:44:50
+//	@function_mark PASS
 func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarationContext) {
 	var classInfo classInfoType
 	childCount := ctx.GetChildCount()
@@ -196,13 +192,12 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
 	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, classInfo)
 }
 
-/** EnterFieldDeclaration
- * @Description: 获取Field声明信息
- * @receiver s
- * @param ctx
- * @author KevinMatt 2021-07-24 15:48:54
- * @function_mark PASS
- */
+// EnterFieldDeclaration
+//	@Description: 获取Field声明信息
+//	@receiver s
+//	@param ctx
+//	@author KevinMatt 2021-07-24 15:48:54
+//	@function_mark PASS
 func (s *TreeShapeListener) EnterFieldDeclaration(ctx *javaparser.FieldDeclarationContext) {
 	var field = fieldInfoType{
 		FieldType:       ctx.GetChild(0).(antlr.ParseTree).GetText(),
@@ -212,12 +207,11 @@ func (s *TreeShapeListener) EnterFieldDeclaration(ctx *javaparser.FieldDeclarati
 }
 
 //// getParams
-///* @Description: 获取参数名&参数类型结构体的切片
-// * @param ctx *MethodDeclarationContext
-// * @return []paramInfoType 返回追加后的切片
-// * @author KevinMatt 2021-07-25 16:56:35
-// * @function_mark PASS
-// */
+////	@Description: 获取参数名&参数类型结构体的切片
+////	 @param ctx *MethodDeclarationContext
+////	 @return []paramInfoType 返回追加后的切片
+////	 @author KevinMatt 2021-07-25 16:56:35
+////	 @function_mark PASS
 //func getParams(ctx antlr.ParseTree) []paramInfoType {
 //	// TODO 算法改进的需要，使得该函数实际已经弃用
 //	var paramInfo paramInfoType
@@ -256,12 +250,11 @@ func (s *TreeShapeListener) EnterFieldDeclaration(ctx *javaparser.FieldDeclarati
 //}
 
 // findImplements
-/* @Description: 获取接口实现implements字段
- * @param ctx
- * @return []string 实现的接口列表
- * @author KevinMatt 2021-07-24 11:43:46
- * @function_mark PASS
- */
+//	@Description: 获取接口实现implements字段
+//	@param ctx
+//	@return []string 实现的接口列表
+//	@author KevinMatt 2021-07-24 11:43:46
+//	@function_mark PASS
 func findImplements(ctx antlr.ParseTree) []string {
 	implementsCount := ctx.GetChildCount()
 	var implements []string
@@ -280,12 +273,11 @@ func findImplements(ctx antlr.ParseTree) []string {
 }
 
 // findMasterObjectClass
-/* @Description: 找到主类实体
- * @param ctx
- * @param classInfo
- * @author KevinMatt 2021-07-24 11:45:14
- * @function_mark PASS
- */
+//	@Description: 找到主类实体
+//	@param ctx
+//	@param classInfo
+//	@author KevinMatt 2021-07-24 11:45:14
+//	@function_mark PASS
 func findMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 	temp := ctx.GetParent()
 	if temp == nil {

@@ -14,13 +14,12 @@ import (
 	"whosbugPack/utility"
 )
 
-/* MatchCommit
-/* @Description: 主体过程，最后直接生成结果集，位置在SourceCode下(此部分可做商榷)
- * @param diffPath diff-commit文件目录
- * @param commitPath commit-info文件目录
- * @author KevinMatt 2021-07-29 17:37:10
- * @function_mark PASS
-*/
+// MatchCommit
+//	@Description: 主体过程，最后直接生成结果集，位置在SourceCode下(此部分可做商榷)
+//	@param diffPath diff-commit文件目录
+//	@param commitPath commit-info文件目录
+//	@author KevinMatt 2021-07-29 17:37:10
+//	@function_mark PASS
 func MatchCommit(diffPath, commitPath string) {
 
 	commitFd, err := os.Open(commitPath)
@@ -76,14 +75,14 @@ func MatchCommit(diffPath, commitPath string) {
 	}
 }
 
-/* getFullCommit
-/* @Description: 交错读取commit-diff文件
- * @param patCommit 预编译的正则表达式
- * @param lineReaderDiff 全局共享fd
- * @return string 返回完整的commit串
- * @author KevinMatt 2021-07-29 17:52:58
- * @function_mark PASS
-*/
+// getFullCommit
+//	@Description: 交错读取commit-diff文件
+//	@param patCommit 预编译的正则表达式
+//	@param lineReaderDiff 全局共享fd
+//	@return string 返回完整的commit串
+//	@return string 错误信息
+//	@author KevinMatt 2021-07-29 17:52:58
+//	@function_mark PASS
 func getFullCommit(patCommit *regexp.Regexp, lineReaderDiff *bufio.Reader) (string, error) {
 	var lines []string
 	for {

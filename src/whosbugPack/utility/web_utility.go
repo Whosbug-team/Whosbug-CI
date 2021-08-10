@@ -9,14 +9,13 @@ import (
 	"whosbugPack/global_type"
 )
 
-/* GetLatestRelease
-/* @Description:
- * @param projectId 项目ID
- * @return string Release信息
- * @return error
- * @author KevinMatt 2021-08-03 18:12:18
- * @function_mark PASS
-*/
+// GetLatestRelease
+//	@Description:
+//	@param projectId 项目ID
+//	@return string Release信息
+//	@return error
+//	@author KevinMatt 2021-08-10 13:02:27
+//	@function_mark PASS
 func GetLatestRelease(projectId string) (string, error) {
 	urlReq := ConCatStrings(global_type.Config.WebServerHost, "/whosbug/releases/last/")
 	method := "POST"

@@ -15,11 +15,11 @@ import (
 	"whosbugPack/utility"
 )
 
-/* init
-/* @Description: 自动初始化配置
- * @author KevinMatt 2021-07-29 20:18:18
- * @function_mark PASS
-*/
+// init
+//	@Description: 自动初始化
+//	@author KevinMatt 2021-07-29 20:18:18
+//	@function_mark PASS
+//
 func init() {
 	// 获得密钥
 	global_type.Config.CryptoKey = os.Getenv("WHOSBUG_SECRET")
@@ -65,10 +65,9 @@ func init() {
 }
 
 // Analysis
-/* @Description: 暴露给外部的函数，作为程序入口
- * @author KevinMatt 2021-07-29 17:51:28
- * @function_mark PASS
- */
+//	@Description: 暴露给外部的函数，作为程序入口
+//	@author KevinMatt 2021-07-29 17:51:28
+//	@function_mark PASS
 func Analysis() {
 	t := time.Now()
 
@@ -86,7 +85,7 @@ func Analysis() {
 
 	// 等待关闭pool和channel
 	for {
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second / 10)
 		if commit_diffpack.Pool.Running() == 0 {
 			fmt.Println("Analyse cost: ", time.Since(t))
 			fmt.Println("Routines pool closed.")

@@ -20,11 +20,10 @@ var json = jsoniter.ConfigCompatibleWithStandardLibrary
 //协程里缓存队列的长度
 const _objectBufferQueueLength = 10000
 
-/* ProcessObjectUpload
-/* @Description: 处理上传的协程
- * @author KevinMatt 2021-08-10 01:50:05
- * @function_mark PASS
-*/
+// ProcessObjectUpload
+//	@Description: 处理上传的协程
+//	@author KevinMatt 2021-08-10 01:50:05
+//	@function_mark PASS
 func ProcessObjectUpload() {
 	UploadWaitGroup.Add(1)
 	// object缓冲队列，满的时候再统一上传
@@ -52,12 +51,11 @@ func ProcessObjectUpload() {
 	log.Println("Sending Finished")
 }
 
-/* processUpload
-/* @Description:
- * @param objects
- * @author KevinMatt 2021-08-07 16:22:27
- * @function_mark
-*/
+// processUpload
+//	@Description:
+//	@param objects
+//	@author KevinMatt 2021-08-07 16:22:27
+//	@function_mark
 func processUpload(objects []global_type.ObjectInfoType) {
 	err := PostObjects(objects)
 	sendCount++
@@ -71,13 +69,12 @@ func processUpload(objects []global_type.ObjectInfoType) {
 	}
 }
 
-/* PostObjects
-/* @Description: 发送objects
- * @param objects objects切片
- * @return error 返回错误信息
- * @author KevinMatt 2021-08-10 01:07:02
- * @function_mark PASS
-*/
+// PostObjects
+//	@Description:
+//	@param objects objects切片
+//	@return error 返回错误信息
+//	@author KevinMatt 2021-08-10 13:02:37
+//	@function_mark PASS
 func PostObjects(objects []global_type.ObjectInfoType) error {
 	token, err := utility.GenToken()
 	if err != nil {
@@ -111,13 +108,12 @@ func PostObjects(objects []global_type.ObjectInfoType) error {
 	return err
 }
 
-/* PostCommitsInfo
-/* @Description: 发送结束信息
- * @param commitPath commit文件的目录
- * @return error 返回错误
- * @author KevinMatt 2021-08-10 01:06:05
- * @function_mark PASS
-*/
+// PostCommitsInfo
+//	@Description: 发送结束信息
+//	@param commitPath commit文件的目录
+//	@return error 返回错误
+//	@author KevinMatt 2021-08-10 01:06:05
+//	@function_mark PASS
 func PostCommitsInfo(commitPath string) error {
 	commitFd, err := os.Open(commitPath)
 	if err != nil {
@@ -146,16 +142,15 @@ func PostCommitsInfo(commitPath string) error {
 	return err
 }
 
-/* ReqWithToken
-/* @Description: 发起http请求
- * @param token 生成的token
- * @param url 请求的url
- * @param method 请求方法
- * @param data 请求带有的数据
- * @return error 返回错误信息
- * @author KevinMatt 2021-08-10 00:47:48
- * @function_mark PASS
-*/
+// ReqWithToken
+//	@Description: 发起http请求
+//	@param token 生成的token
+//	@param url 请求的url
+//	@param method 请求方法
+//	@param data 请求带有的数据
+//	@return error 返回错误信息
+//	@author KevinMatt 2021-08-10 00:47:48
+//	@function_mark PASS
 func ReqWithToken(token, url, method, data string) error {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, bytes.NewBuffer([]byte(data)))
@@ -188,12 +183,11 @@ func ReqWithToken(token, url, method, data string) error {
 	}
 }
 
-/* PostReleaseInfo
-/* @Description: 发送Release信息
- * @return error 错误信息
- * @author KevinMatt 2021-08-10 12:29:35
- * @function_mark PASS
-*/
+// PostReleaseInfo
+//	@Description: 发送Release信息
+//	@return error 错误信息
+//	@author KevinMatt 2021-08-10 12:29:35
+//	@function_mark PASS
 func PostReleaseInfo(address string) error {
 	url := global_type.Config.WebServerHost + address
 	if isInitial {
@@ -215,11 +209,10 @@ func PostReleaseInfo(address string) error {
 	return nil
 }
 
-/* InitTheProjectStruct
-/* @Description: 初始化globalType
- * @author KevinMatt 2021-08-10 12:40:28
- * @function_mark PASS
-*/
+// InitTheProjectStruct
+//	@Description: 初始化globalType
+//	@author KevinMatt 2021-08-10 12:40:28
+//	@function_mark PASS
 func InitTheProjectStruct() {
 	postProjectInfo.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
 	postProjectInfo.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)

@@ -11,13 +11,12 @@ import (
 	"whosbugPack/utility"
 )
 
-/* GetLogInfo
-/* @Description: 获取所有的git commit记录和所有的commit+diff，并返回存储的文件目录
- * @return string 所有diff信息的目录
- * @return string 所有commit信息的目录
- * @author KevinMatt 2021-07-29 17:25:39
- * @function_mark PASS
-*/
+//	GetLogInfo
+//	@Description: 获取所有的git commit记录和所有的commit+diff，并返回存储的文件目录
+//	@return string 所有diff信息的目录
+//	@return string 所有commit信息的目录
+//	@author KevinMatt 2021-07-29 17:25:39
+//	@function_mark PASS
 func GetLogInfo() (string, string) {
 	// 切换到仓库目录
 	err := os.Chdir(global_type.Config.RepoPath)
@@ -60,14 +59,13 @@ func GetLogInfo() (string, string) {
 	return utility.ConCatStrings(global_type.WorkPath, "\\allDiffs.out"), utility.ConCatStrings(global_type.WorkPath, "\\commitInfo.out")
 }
 
-/* execCommandOutput
-/* @Description: 执行命令并获取输出
- * @param command 命令
- * @param args 命令参数
- * @return string 命令输出
- * @author KevinMatt 2021-08-07 14:44:17
- * @function_mark PASS
-*/
+//	execCommandOutput
+//	@Description: 执行命令并获取输出
+//	@param command 命令
+//	@param args 命令参数
+//	@return string 命令输出
+//	@author KevinMatt 2021-08-07 14:44:17
+//	@function_mark PASS
 func execCommandOutput(command string, args ...string) string {
 	cmd := exec.Command(command, args...)
 	log.SetOutput(LogFile)
@@ -88,14 +86,13 @@ func execCommandOutput(command string, args ...string) string {
 	return out.String()
 }
 
-/* execRedirectToFile
-/* @Description: 执行命令并将输出流重定向到目标文件中
- * @param fileName 目标文件目录
- * @param command 执行的指令头
- * @param args 执行指令的参数
- * @author KevinMatt 2021-07-29 17:31:00
- * @function_mark PASS
-*/
+// execRedirectToFile
+//	@Description: 执行命令并将输出流重定向到目标文件中
+//	@param fileName 目标文件目录
+//	@param command 执行的指令头
+//	@param args 执行指令的参数
+//	@author KevinMatt 2021-07-29 17:31:00
+//	@function_mark PASS
 func execRedirectToFile(fileName string, command string, args ...string) error {
 	cmd := exec.Command(command, args...)
 	log.SetOutput(LogFile)

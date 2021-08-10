@@ -10,13 +10,12 @@ import (
 	"whosbugPack/utility"
 )
 
-/* ParseDiff
-/* @Description: 将commit内的diff解析后存入SourceCode中
- * @param data 传入的fullCommit字符串
- * @param CommitHash 本次commit的Hash
- * @author KevinMatt 2021-07-29 22:54:33
- * @function_mark PASS
-*/
+// ParseDiff
+//	@Description: 将commit内的diff解析后存入SourceCode中
+//	@param data 传入的fullCommit字符串
+//	@param CommitHash 本次commit的Hash
+//	@author KevinMatt 2021-07-29 22:54:33
+//	@function_mark PASS
 func ParseDiff(data string, commitInfo global_type.CommitInfoType) {
 	// 匹配所有diffs及子匹配->匹配去除a/ or b/的纯目录
 	rawDiffs := patDiff.FindAllStringSubmatch(data, -1)
@@ -98,13 +97,12 @@ func QuatToNum(text string) (sum int) {
 	return
 }
 
-/* findAllChangedLineNumbers
-/* @Description: 找到所有变动行号
- * @param lines 传入的行
- * @return []ChangeLineType 返回变动行信息结构体切片
- * @author KevinMatt 2021-07-29 19:48:01
- * @function_mark PASS
-*/
+// findAllChangedLineNumbers
+//	@Description: 找到所有变动行号
+//	@param lines 传入的行
+//	@return []ChangeLineType 返回变动行信息结构体切片
+//	@author KevinMatt 2021-07-29 19:48:01
+//	@function_mark PASS
 func findAllChangedLineNumbers(lines []string) []global_type.ChangeLineType {
 	var changeLineNumbers []global_type.ChangeLineType
 	lineNumber := 0
@@ -121,12 +119,11 @@ func findAllChangedLineNumbers(lines []string) []global_type.ChangeLineType {
 	return changeLineNumbers
 }
 
-/* replaceLines
-/* @Description: 替换处理传入的行
- * @param lines 传入的行切片
- * @author KevinMatt 2021-07-29 19:07:41
- * @function_mark PASS
-*/
+// replaceLines
+//	@Description: 替换处理传入的行
+//	@param lines 传入的行切片
+//	@author KevinMatt 2021-07-29 19:07:41
+//	@function_mark PASS
 func replaceLines(lines []string) {
 	for index := range lines {
 		if len(lines[index]) >= 1 {
@@ -139,13 +136,12 @@ func replaceLines(lines []string) {
 	}
 }
 
-/* lanFilter
-/* @Description: 语言过滤器，确定目标文件是否为支持的语言
- * @param fileName 文件名
- * @return bool 是否支持语言
- * @author KevinMatt 2021-07-26 20:48:57
- * @function_mark PASS
-*/
+// lanFilter
+//	@Description: 语言过滤器，确定目标文件是否为支持的语言
+//	@param fileName 文件名
+//	@return bool 是否支持语言
+//	@author KevinMatt 2021-07-26 20:48:57
+//	@function_mark PASS
 func lanFilter(fileName string) bool {
 	for index := range global_type.SupportLans {
 		if path.Ext(fileName) == global_type.SupportLans[index] {

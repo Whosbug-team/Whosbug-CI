@@ -38,26 +38,24 @@ var monthCorrespond = map[string]string{
 }
 
 // ToIso8601
-/* @Description: 时间戳转换
- * @param timeList
- * @return string
- * @author KevinMatt 2021-07-25 13:42:29
- * @function_mark PASS
- */
+//	@Description: 时间戳转换
+//	@param timeList
+//	@return string
+//	@author KevinMatt 2021-07-25 13:42:29
+//	@function_mark PASS
 func ToIso8601(timeList []string) string {
 	temp := fmt.Sprintf("%s-%s-%sT%s+%s:%s", timeList[3], monthCorrespond[timeList[0]], timeList[1], timeList[2], timeList[4][1:3], timeList[4][3:])
 	return temp
 }
 
 // GenerateKIV
-/* @Description: 		生成AES-CFB需要的Key和IV
- * @param projectId 	项目ID
- * @param key 			加密密钥
- * @return []byte 		K密钥
- * @return []byte 		IV偏移密钥
- * @author KevinMatt 2021-07-25 20:07:20
- * @function_mark PASS
- */
+//	@Description: 		生成AES-CFB需要的Key和IV
+//	@param projectId 	项目ID
+//	@param key 			加密密钥
+//	@return []byte 		K密钥
+//	@return []byte 		IV偏移密钥
+//	@author KevinMatt 2021-07-25 20:07:20
+//	@function_mark PASS
 func GenerateKIV(projectId, key []byte) ([]byte, []byte) {
 	hK := hmac.New(sha256.New, key)
 	hIV := hmac.New(md5.New, key)
@@ -67,15 +65,14 @@ func GenerateKIV(projectId, key []byte) ([]byte, []byte) {
 }
 
 // Encrypt
-/* @Description: 		AES-CFB加密
- * @param projectId 	项目ID
- * @param Dest 			输出的加密后字符串
- * @param key 			加密密钥
- * @param plainText 	需要加密的文本
- * @return error 		错误抛出
- * @author KevinMatt 2021-07-25 13:34:09
- * @function_mark PASS
- */
+//	@Description: 		AES-CFB加密
+//	@param projectId 	项目ID
+//	@param Dest 			输出的加密后字符串
+//	@param key 			加密密钥
+//	@param plainText 	需要加密的文本
+//	@return error 		错误抛出
+//	@author KevinMatt 2021-07-25 13:34:09
+//	@function_mark PASS
 func Encrypt(projectId, key, plainText string) string {
 	K, IV := GenerateKIV([]byte(projectId), []byte(key))
 	aesBlockEncryptor, err := aes.NewCipher(K)
@@ -89,15 +86,14 @@ func Encrypt(projectId, key, plainText string) string {
 }
 
 // Decrypt
-/* @Description: 		AES-CFB解密
- * @param projectId 	项目ID
- * @param Dest 			解密完成的字符串
- * @param key 			解密密钥
- * @param plainText 	需要解密的文本
- * @return error 		错误抛出
- * @author KevinMatt 2021-07-25 13:35:15
- * @function_mark PASS
- */
+//	@Description: 		AES-CFB解密
+//	@param projectId 	项目ID
+//	@param Dest 			解密完成的字符串
+//	@param key 			解密密钥
+//	@param plainText 	需要解密的文本
+//	@return error 		错误抛出
+//	@author KevinMatt 2021-07-25 13:35:15
+//	@function_mark PASS
 func Decrypt(projectId, key, plainText string) string {
 	K, IV := GenerateKIV([]byte(projectId), []byte(key))
 	aesBlockDescriptor, err := aes.NewCipher(K)
@@ -110,13 +106,12 @@ func Decrypt(projectId, key, plainText string) string {
 	return string(dest)
 }
 
-/* GenToken
-/* @Description:
- * @return string
- * @return error
- * @author KevinMatt 2021-08-08 21:35:26
- * @function_mark
-*/
+// GenToken
+//	@Description: 生成Token
+//	@return string Token字符串
+//	@return error 错误信息
+//	@author KevinMatt 2021-08-08 21:35:26
+//	@function_mark PASS
 func GenToken() (string, error) {
 	// 拼接字符串
 	var builder strings.Builder
@@ -147,13 +142,12 @@ func GenToken() (string, error) {
 	}
 }
 
-/* ConCatStrings
-/* @Description: 字符串高效拼接
- * @param stringList
- * @return string
- * @author KevinMatt 2021-08-05 20:03:50
- * @function_mark PASS
-*/
+// ConCatStrings
+//	@Description: 字符串高效拼接
+//	@param stringList
+//	@return string
+//	@author KevinMatt 2021-08-05 20:03:50
+//	@function_mark PASS
 func ConCatStrings(stringList ...string) string {
 	var builder strings.Builder
 	for index := range stringList {
@@ -162,68 +156,62 @@ func ConCatStrings(stringList ...string) string {
 	return builder.String()
 }
 
-/* ErrorMessage
-/* @Description: 只打印错误信息，不打印堆栈
- * @param err
- * @return string
- * @author KevinMatt 2021-08-08 16:14:42
- * @function_mark PASS
-*/
+// ErrorMessage
+//	@Description: 只打印错误信息，不打印堆栈
+//	@param err
+//	@return string
+//	@author KevinMatt 2021-08-08 16:14:42
+//	@function_mark PASS
 func ErrorMessage(err error) string {
 	return err.Error()
 }
 
-/* ErrorStack
-/* @Description: 打印含堆栈的错误信息
- * @param err 错误
- * @return string 字符串
- * @author KevinMatt 2021-08-08 16:13:58
- * @function_mark PASS
-*/
+// ErrorStack
+//	@Description: 打印含堆栈的错误信息
+//	@param err 错误
+//	@return string 字符串
+//	@author KevinMatt 2021-08-08 16:13:58
+//	@function_mark PASS
 func ErrorStack(err error) string {
 	errMsg := fmt.Sprintf("%+v", err)
 	return CleanPath(errMsg)
 }
 
-/* CleanPath
-/* @Description: 信息脱敏
- * @param s 传入信息
- * @return string 返回脱敏字符串
- * @author KevinMatt 2021-08-08 16:03:40
- * @function_mark PASS
-*/
+// CleanPath
+//	@Description: 信息脱敏
+//	@param s 传入信息
+//	@return string 返回脱敏字符串
+//	@author KevinMatt 2021-08-08 16:03:40
+//	@function_mark PASS
 func CleanPath(s string) string {
 	return strings.ReplaceAll(s, strings.ReplaceAll(global_type.WorkPath, "\\", "/")+"/", "")
 }
 
-/* var Base64Encrypt = func
-/* @Description: 为原始的加密内容添加Base64编码
- * @param text 要加密的文本
- * @return string 加密的文本
- * @author KevinMatt 2021-08-10 01:07:41
- * @function_mark PASS
-*/
+// var Base64Encrypt = func
+//	@Description: 为原始的加密内容添加Base64编码
+//	@param text 要加密的文本
+//	@return string 加密的文本
+//	@author KevinMatt 2021-08-10 01:07:41
+//	@function_mark PASS
 var Base64Encrypt = func(text string) string {
 	return base64.StdEncoding.EncodeToString([]byte(Encrypt(global_type.Config.ProjectId, global_type.Config.CryptoKey, text)))
 }
 
-/* ForDebug
-/* @Description: 断点小帮手
- * @param any
- * @author KevinMatt 2021-08-10 01:32:22
- * @function_mark PASS
-*/
+// ForDebug
+//	@Description: 断点小帮手
+//	@param any
+//	@author KevinMatt 2021-08-10 01:32:22
+//	@function_mark PASS
 func ForDebug(any ...interface{}) {
 	return
 }
 
-/* GetCommitInfo
-/* @Description: 获取commit信息
- * @param line commitInfo行
- * @return global_type.CommitInfoType 返回结构体
- * @author KevinMatt 2021-08-10 01:04:21
- * @function_mark PASS
-*/
+//	GetCommitInfo
+//	@Description: 获取commit信息
+//	@param line commitInfo行
+//	@return global_type.CommitInfoType 返回结构体
+//	@author KevinMatt 2021-08-10 01:04:21
+//	@function_mark PASS
 func GetCommitInfo(line string) global_type.CommitInfoType {
 	infoList := strings.Split(line, ",")
 	var tempCommitInfo global_type.CommitInfoType
