@@ -5,9 +5,7 @@ import (
 	"encoding/base64"
 	"github.com/pkg/errors"
 	"io/ioutil"
-	"log"
 	"net/http"
-	"os"
 	"whosbugPack/global_type"
 )
 
@@ -44,13 +42,8 @@ func GetLatestRelease(projectId string) (string, error) {
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-	defer func() {
-		err = res.Body.Close()
-		if err != nil {
-			log.Println(ErrorStack(errors.WithStack(err)))
-			os.Exit(1)
-		}
-	}()
+	defer res.Body.Close()
+
 	if res.StatusCode == 200 {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
@@ -64,7 +57,6 @@ func GetLatestRelease(projectId string) (string, error) {
 		if err != nil {
 			return "", errors.WithStack(err)
 		}
-		//fmt.Println(string(body))
 		if res.StatusCode == 404 {
 			return "", errors.New("The Project Not Found. Get all commit to Initialize.")
 		}

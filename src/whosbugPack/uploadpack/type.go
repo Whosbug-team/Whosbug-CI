@@ -6,30 +6,18 @@ import (
 
 // postData 存储要发送的json信息
 type postData struct {
+	PostCommitInfo
 	Objects []global_type.ObjectInfoType `json:"objects"`
-	Project struct {
-		Pid string `json:"pid"`
-	} `json:"project"`
-	Release struct {
-		Release    string `json:"release"`
-		CommitHash string `json:"commit_hash"`
-	} `json:"release"`
 }
 
 // postCommits 发送的commit信息
 type postCommits struct {
-	Project struct {
-		Pid string `json:"pid"`
-	} `json:"project"`
-	Release struct {
-		Release    string `json:"release"`
-		CommitHash string `json:"commit_hash"`
-	} `json:"release"`
+	PostCommitInfo
 	Commit []global_type.CommitInfoType `json:"commits"`
 }
 
-// postFin 发送完成的指示信息
-type postFin struct {
+// PostCommitInfo 发送完成的指示信息
+type PostCommitInfo struct {
 	Project struct {
 		Pid string `json:"pid"`
 	} `json:"project"`

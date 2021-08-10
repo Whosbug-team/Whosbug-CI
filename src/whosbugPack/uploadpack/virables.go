@@ -16,3 +16,7 @@ var sendCount int
 
 // UploadWaitGroup 上传协程池
 var UploadWaitGroup sync.WaitGroup
+
+var postProjectInfo PostCommitInfo
+
+var isInitial = true

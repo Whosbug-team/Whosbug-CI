@@ -20,30 +20,6 @@ var json = jsoniter.ConfigCompatibleWithStandardLibrary
 //协程里缓存队列的长度
 const _objectBufferQueueLength = 10000
 
-//func ProcessLargeObjectUpload() {
-//	fmt.Println("Sending Large start")
-//	UploadWaitGroup.Add(1)
-//	// object缓冲队列，满的时候再统一上传
-//	var objects []global_type.ObjectInfoType
-//	// 在objectChan关闭且objectChan为空后会自然退出
-//	for object := range global_type.ObjectChanLarge {
-//		if object.Equals(global_type.ObjectInfoType{}) {
-//			continue
-//		}
-//		if len(objects) > 0 && object.Equals(objects[len(objects)-1]) {
-//			continue
-//		}
-//		if len(objects) < 100000 {
-//			objects = append(objects, object)
-//		} else {
-//			objects = append(objects, object)
-//			processUpload(objects)
-//			objects = nil
-//		}
-//	}
-//	UploadWaitGroup.Done()
-//	fmt.Println("Sending Large Object Finished")
-//}
 /* ProcessObjectUpload
 /* @Description: 处理上传的协程
  * @author KevinMatt 2021-08-10 01:50:05
@@ -112,10 +88,10 @@ func PostObjects(objects []global_type.ObjectInfoType) error {
 	// 使用sync池并回收变量
 	dataForPost := postDataPool.Get().(*postData)
 	defer postDataPool.Put(dataForPost)
-
-	dataForPost.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
-	dataForPost.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)
-	dataForPost.Release.CommitHash = utility.Base64Encrypt(global_type.LatestCommitHash)
+	dataForPost.PostCommitInfo = postProjectInfo
+	//dataForPost.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
+	//dataForPost.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)
+	//dataForPost.Release.CommitHash = utility.Base64Encrypt(global_type.LatestCommitHash)
 	dataForPost.Objects = objects
 
 	data, err := json.MarshalToString(&dataForPost)
@@ -148,10 +124,9 @@ func PostCommitsInfo(commitPath string) error {
 		return errors.Wrap(err, "Open commitPath to Post FIN fails:")
 	}
 	lineReaderCommit := bufio.NewReader(commitFd)
-	var FinMessage postCommits
-	FinMessage.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
-	FinMessage.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)
-	FinMessage.Release.CommitHash = utility.Base64Encrypt(global_type.LocalHashLatest)
+	var FinMessage = postCommits{
+		PostCommitInfo: postProjectInfo,
+	}
 	for {
 		line, _, err := lineReaderCommit.ReadLine()
 		if err == io.EOF {
@@ -213,13 +188,19 @@ func ReqWithToken(token, url, method, data string) error {
 	}
 }
 
-func PostFin() error {
-	url := global_type.Config.WebServerHost + "/whosbug/commits/upload-done"
-	var FinMessage postFin
-	FinMessage.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
-	FinMessage.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)
-	FinMessage.Release.CommitHash = utility.Base64Encrypt(global_type.LocalHashLatest)
-	data, err := json.MarshalToString(FinMessage)
+/* PostReleaseInfo
+/* @Description: 发送Release信息
+ * @return error 错误信息
+ * @author KevinMatt 2021-08-10 12:29:35
+ * @function_mark PASS
+*/
+func PostReleaseInfo(address string) error {
+	url := global_type.Config.WebServerHost + address
+	if isInitial {
+		InitTheProjectStruct()
+	}
+
+	data, err := json.MarshalToString(postProjectInfo)
 	if err != nil {
 		return errors.Wrap(err, "json MarshalToString Fail")
 	}
@@ -232,4 +213,16 @@ func PostFin() error {
 		return err
 	}
 	return nil
+}
+
+/* InitTheProjectStruct
+/* @Description: 初始化globalType
+ * @author KevinMatt 2021-08-10 12:40:28
+ * @function_mark PASS
+*/
+func InitTheProjectStruct() {
+	postProjectInfo.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
+	postProjectInfo.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)
+	postProjectInfo.Release.CommitHash = utility.Base64Encrypt(global_type.LocalHashLatest)
+	isInitial = false
 }

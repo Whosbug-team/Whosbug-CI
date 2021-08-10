@@ -74,6 +74,13 @@ func Analysis() {
 
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
 	diffPath, commitPath := logpack.GetLogInfo()
+
+	// 指示Webservice创建新的release
+	err := uploadpack.PostReleaseInfo("/whosbug/create-project-release")
+	if err != nil {
+		log.Println(utility.ErrorStack(err))
+	}
+
 	fmt.Println("Get log cost: ", time.Since(t))
 	commit_diffpack.MatchCommit(diffPath, commitPath)
 
@@ -95,7 +102,7 @@ func Analysis() {
 	runtime.GC()
 
 	// 通知Webservice上传结束
-	err := uploadpack.PostFin()
+	err = uploadpack.PostReleaseInfo("/whosbug/commits/upload-done")
 	if err != nil {
 		log.Println(utility.ErrorStack(err))
 	}
