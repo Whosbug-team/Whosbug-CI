@@ -56,7 +56,7 @@ func GetLogInfo() (string, string) {
 			}
 		}
 	}
-	return utility.ConCatStrings(global_type.WorkPath, "\\allDiffs.out"), utility.ConCatStrings(global_type.WorkPath, "\\commitInfo.out")
+	return utility.ConCatStrings(global_type.WorkPath, "/allDiffs.out"), utility.ConCatStrings(global_type.WorkPath, "/commitInfo.out")
 }
 
 //	execCommandOutput
@@ -97,7 +97,7 @@ func execRedirectToFile(fileName string, command string, args ...string) error {
 	cmd := exec.Command(command, args...)
 	log.SetOutput(LogFile)
 	log.Println("Cmd", cmd.Args)
-	fd, _ := os.OpenFile(global_type.WorkPath+"\\"+fileName, os.O_WRONLY|os.O_CREATE|os.O_SYNC, 0755)
+	fd, _ := os.OpenFile(global_type.WorkPath+"/"+fileName, os.O_WRONLY|os.O_CREATE|os.O_SYNC, 0755)
 	cmd.Stdout = fd
 	cmd.Stderr = fd
 	err := cmd.Start()

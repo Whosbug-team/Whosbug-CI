@@ -142,7 +142,7 @@ func findJavaMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 	var masterObject masterObjectInfoType
 	for {
 		if _, ok := temp.(*javaparser.ClassDeclarationContext); ok {
-			masterObject.ObjectName = temp.GetChild(1).GetText()
+			masterObject.ObjectName = temp.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
 			masterObject.StartLine = temp.GetChild(temp.GetChildCount() - 1).(*javaparser.ClassBodyContext).GetStart().GetLine()
 			return masterObject
 		}
