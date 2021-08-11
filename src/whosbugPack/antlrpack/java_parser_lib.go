@@ -6,17 +6,11 @@ import (
 	"whosbugPack/utility"
 )
 
-//type paramInfoType struct {
-//	ParamType string
-//	ParamName string
-//}
-
 type MethodInfoType struct {
-	StartLine  int
-	EndLine    int
-	ReturnType string
-	MethodName string
-	//Params       []paramInfoType
+	StartLine    int
+	EndLine      int
+	ReturnType   string
+	MethodName   string
 	MasterObject masterObjectInfoType
 	CallMethods  []string
 }
@@ -67,7 +61,6 @@ func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarat
 	if ctx.GetChildCount() >= 2 {
 		MethodName := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		ReturnType := ctx.GetChild(0).(antlr.ParseTree).GetText()
-		//Params := getParams(ctx.GetChild(2).(antlr.ParseTree))
 		methodInfo = MethodInfoType{
 			StartLine:    ctx.GetStart().GetLine(),
 			EndLine:      ctx.GetStop().GetLine(),
@@ -75,7 +68,6 @@ func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarat
 			MethodName:   MethodName,
 			MasterObject: findMasterObjectClass(ctx),
 		}
-		//methodInfo.Params = append(methodInfo.Params, Params...)
 		resIndex := s.FindMethodCallIndex(methodInfo.StartLine, methodInfo.EndLine)
 		if resIndex != nil {
 			methodInfo.CallMethods = resIndex
@@ -205,49 +197,6 @@ func (s *TreeShapeListener) EnterFieldDeclaration(ctx *javaparser.FieldDeclarati
 	}
 	s.Infos.AstInfoList.Fields = append(s.Infos.AstInfoList.Fields, field)
 }
-
-//// getParams
-////	@Description: 获取参数名&参数类型结构体的切片
-////	 @param ctx *MethodDeclarationContext
-////	 @return []paramInfoType 返回追加后的切片
-////	 @author KevinMatt 2021-07-25 16:56:35
-////	 @function_mark PASS
-//func getParams(ctx antlr.ParseTree) []paramInfoType {
-//	// TODO 算法改进的需要，使得该函数实际已经弃用
-//	var paramInfo paramInfoType
-//	var result []paramInfoType
-//	if ctx.GetChildCount() == 3 {
-//		paramCount := ctx.GetChild(1).GetChildCount()
-//		if paramCount == 1 {
-//			treeListCount := ctx.GetChild(1).GetChild(0).GetChildCount()
-//			if treeListCount == 3 {
-//				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
-//				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(2).(antlr.ParseTree).GetText()
-//			} else if treeListCount == 2 {
-//				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(0).(antlr.ParseTree).GetText()
-//				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
-//			}
-//		} else if paramCount > 1 {
-//			for index := 0; index < paramCount; index++ {
-//				count := ctx.GetChild(1).GetChild(index).GetChildCount()
-//				if count == 3 {
-//					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(antlr.ParseTree).GetText() + ctx.GetChild(1).GetChild(index).GetChild(1).(antlr.ParseTree).GetText()
-//					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(2).(antlr.ParseTree).GetText()
-//					result = append(result, paramInfo)
-//				} else if count == 2 {
-//					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(antlr.ParseTree).GetText()
-//					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(1).(antlr.ParseTree).GetText()
-//					result = append(result, paramInfo)
-//				}
-//			}
-//		}
-//	} else if ctx.GetChildCount() == 2 {
-//		paramInfo.ParamType = "void"
-//		paramInfo.ParamName = "void"
-//		result = append(result, paramInfo)
-//	}
-//	return result
-//}
 
 // findImplements
 //	@Description: 获取接口实现implements字段
