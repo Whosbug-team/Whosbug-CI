@@ -25,7 +25,6 @@ type classInfoType struct {
 	EndLine      int
 	ClassName    string
 	Extends      string
-	Implements   []string
 	MasterObject masterObjectInfoType
 }
 
@@ -122,17 +121,14 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
 			}
 		}
 		classInfo = classInfoType{
-			ClassName:  className,
-			Extends:    extendsClassName,
-			Implements: findImplements(ctx.GetChild(4).(antlr.ParseTree)),
+			ClassName: className,
+			Extends:   extendsClassName,
 		}
 	} else if childCount == 5 {
 		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		classInfo.ClassName = className
 		if ctx.GetChild(2).(antlr.ParseTree).GetText() == "extends" {
 			classInfo.Extends = ctx.GetChild(3).(antlr.ParseTree).GetText()
-		} else {
-			classInfo.Implements = findImplements(ctx.GetChild(3).(antlr.ParseTree))
 		}
 	} else if childCount == 4 {
 		// Generic classes: class AnnoyName<T>
@@ -171,29 +167,6 @@ func (s *TreeShapeListener) EnterFieldDeclaration(ctx *javaparser.FieldDeclarati
 		FieldDefinition: ctx.GetChild(1).(antlr.ParseTree).GetText(),
 	}
 	s.Infos.AstInfoList.Fields = append(s.Infos.AstInfoList.Fields, field)
-}
-
-// findImplements
-//	@Description: 获取接口实现implements字段
-//	@param ctx
-//	@return []string 实现的接口列表
-//	@author KevinMatt 2021-07-24 11:43:46
-//	@function_mark PASS
-func findImplements(ctx antlr.ParseTree) []string {
-	implementsCount := ctx.GetChildCount()
-	var implements []string
-	if implementsCount == 1 {
-		implementClass := ctx.GetChild(0).(antlr.ParseTree).GetText()
-		implements = append(implements, implementClass)
-	} else if implementsCount > 1 {
-		for index := 0; index < implementsCount; index++ {
-			if index%2 == 0 {
-				implementClass := ctx.GetChild(index).(antlr.ParseTree).GetText()
-				implements = append(implements, implementClass)
-			}
-		}
-	}
-	return implements
 }
 
 // findMasterObjectClass
