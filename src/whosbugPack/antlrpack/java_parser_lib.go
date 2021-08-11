@@ -9,7 +9,6 @@ import (
 type MethodInfoType struct {
 	StartLine    int
 	EndLine      int
-	ReturnType   string
 	MethodName   string
 	MasterObject masterObjectInfoType
 	CallMethods  []string
@@ -24,7 +23,6 @@ type classInfoType struct {
 	StartLine    int
 	EndLine      int
 	ClassName    string
-	Extends      string
 	MasterObject masterObjectInfoType
 }
 
@@ -51,11 +49,9 @@ func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarat
 	var methodInfo MethodInfoType
 	if ctx.GetChildCount() >= 2 {
 		MethodName := ctx.GetChild(1).(antlr.ParseTree).GetText()
-		ReturnType := ctx.GetChild(0).(antlr.ParseTree).GetText()
 		methodInfo = MethodInfoType{
 			StartLine:    ctx.GetStart().GetLine(),
 			EndLine:      ctx.GetStop().GetLine(),
-			ReturnType:   ReturnType,
 			MethodName:   MethodName,
 			MasterObject: findMasterObjectClass(ctx),
 		}
