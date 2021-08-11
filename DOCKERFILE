@@ -1,0 +1,5 @@
+FROM golang:1.16-alpine
+WORKDIR /app
+ADD /app/whosbug_linux
+ADD /app/input.json
+ENTRYPOINT ["/app/whosbug_linux"]

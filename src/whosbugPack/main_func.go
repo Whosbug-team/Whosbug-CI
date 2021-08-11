@@ -25,7 +25,7 @@ func init() {
 	global_type.Config.CryptoKey = os.Getenv("WHOSBUG_SECRET")
 	// 工作目录存档
 	global_type.WorkPath, _ = os.Getwd()
-	file, err := os.Open("src/input.json")
+	file, err := os.Open("input.json")
 	if err != nil {
 		fmt.Println(utility.ErrorMessage(err))
 	}
@@ -40,7 +40,7 @@ func init() {
 	// 打印插件版本信息
 	fmt.Println("Version:\t", global_type.Config.ReleaseVersion, "\nProjectId:\t", global_type.Config.ProjectId, "\nBranchName:\t", global_type.Config.BranchName)
 
-	global_type.ObjectChan = make(chan global_type.ObjectInfoType, 100000)
+	global_type.ObjectChan = make(chan global_type.ObjectInfoType, 10000)
 
 	_, err = os.Stat("allDiffs.out")
 	if !os.IsNotExist(err) {

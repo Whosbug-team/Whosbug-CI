@@ -4,6 +4,7 @@ import (
 	"github.com/panjf2000/ants"
 	"log"
 	"regexp"
+	"runtime"
 	"whosbugPack/antlrpack"
 	"whosbugPack/global_type"
 	"whosbugPack/logpack"
@@ -29,12 +30,13 @@ const parDiffPartPattern = `(@@\ (.*?)\ @@)`
 const markPattern = `^[\+\-]`
 
 // 解析协程池
-var Pool, _ = ants.NewPoolWithFunc(6, func(commitDiff interface{}) {
+var Pool, _ = ants.NewPoolWithFunc(3, func(commitDiff interface{}) {
 	antlrpack.AnalyzeCommitDiff(commitDiff.(global_type.DiffParsedType))
 	// 指示已经处理的diff数量
 	processDiffs++
 	log.SetOutput(logpack.LogFile)
 	log.Println("Diff No.", processDiffs, " From", commitDiff.(global_type.DiffParsedType).CommitHash, " Sent Into Channel.")
+	runtime.GC()
 })
 
 // processDiffs 已处理的commit数
