@@ -28,14 +28,8 @@ type classInfoType struct {
 	MasterObject masterObjectInfoType
 }
 
-type fieldInfoType struct {
-	FieldType       string
-	FieldDefinition string
-}
-
 type astInfoType struct {
 	Classes []classInfoType
-	Fields  []fieldInfoType
 	Methods []MethodInfoType
 }
 type CallMethodType struct {
@@ -139,20 +133,6 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
 	}
 	classInfo.MasterObject = findMasterObjectClass(ctx)
 	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, classInfo)
-}
-
-// EnterFieldDeclaration
-//	@Description: 获取Field声明信息
-//	@receiver s
-//	@param ctx
-//	@author KevinMatt 2021-07-24 15:48:54
-//	@function_mark PASS
-func (s *TreeShapeListener) EnterFieldDeclaration(ctx *javaparser.FieldDeclarationContext) {
-	var field = fieldInfoType{
-		FieldType:       ctx.GetChild(0).(antlr.ParseTree).GetText(),
-		FieldDefinition: ctx.GetChild(1).(antlr.ParseTree).GetText(),
-	}
-	s.Infos.AstInfoList.Fields = append(s.Infos.AstInfoList.Fields, field)
 }
 
 // findMasterObjectClass
