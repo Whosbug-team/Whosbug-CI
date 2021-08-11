@@ -45,7 +45,7 @@ type AnalysisInfoType struct {
 //	@param ctx
 //	@author KevinMatt 2021-07-23 23:14:09
 //	@function_mark PASS
-func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarationContext) {
+func (s *JavaTreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarationContext) {
 	var methodInfo MethodInfoType
 	if ctx.GetChildCount() >= 2 {
 		MethodName := ctx.GetChild(1).(antlr.ParseTree).GetText()
@@ -53,7 +53,7 @@ func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarat
 			StartLine:    ctx.GetStart().GetLine(),
 			EndLine:      ctx.GetStop().GetLine(),
 			MethodName:   MethodName,
-			MasterObject: findMasterObjectClass(ctx),
+			MasterObject: findJavaMasterObjectClass(ctx),
 		}
 		resIndex := s.FindMethodCallIndex(methodInfo.StartLine, methodInfo.EndLine)
 		if resIndex != nil {
@@ -63,7 +63,7 @@ func (s *TreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDeclarat
 	}
 }
 
-func (s *TreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) []string {
+func (s *JavaTreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) []string {
 	var resIndex []string
 	for index := range s.Infos.CallMethods {
 		if s.Infos.CallMethods[index].StartLine <= targetEnd && s.Infos.CallMethods[index].StartLine >= targetStart {
@@ -79,9 +79,9 @@ func (s *TreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) []st
 //	@param ctx
 //	@author KevinMatt 2021-07-23 23:22:56
 //	@function_mark PASS
-func (s *TreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
+func (s *JavaTreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
 	if ctx.GetParent() != nil {
-		newMasterObject := findMasterObjectClass(ctx)
+		newMasterObject := findJavaMasterObjectClass(ctx)
 		var insertTemp = CallMethodType{
 			StartLine: ctx.GetStart().GetLine(),
 			Id:        utility.ConCatStrings(newMasterObject.ObjectName, ".", ctx.GetParent().(antlr.ParseTree).GetText()),
@@ -96,14 +96,11 @@ func (s *TreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
 //	@param ctx
 //	@author KevinMatt 2021-07-24 11:44:50
 //	@function_mark PASS
-func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarationContext) {
+func (s *JavaTreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarationContext) {
 	var classInfo classInfoType
 	childCount := ctx.GetChildCount()
 
 	if childCount == 6 {
-		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
-		classInfo.ClassName = className
-	} else if childCount == 5 {
 		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		classInfo.ClassName = className
 	} else if childCount == 4 {
@@ -127,17 +124,17 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
 	if ctx.ClassBody() != nil {
 		classInfo.EndLine = ctx.ClassBody().GetStop().GetLine()
 	}
-	classInfo.MasterObject = findMasterObjectClass(ctx)
+	classInfo.MasterObject = findJavaMasterObjectClass(ctx)
 	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, classInfo)
 }
 
-// findMasterObjectClass
+// findJavaMasterObjectClass
 //	@Description: 找到主类实体
 //	@param ctx
 //	@param classInfo
 //	@author KevinMatt 2021-07-24 11:45:14
 //	@function_mark PASS
-func findMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
+func findJavaMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 	temp := ctx.GetParent()
 	if temp == nil {
 		return masterObjectInfoType{}
@@ -157,13 +154,13 @@ func findMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 }
 
 // VisitTerminal is called when a terminal node is visited.
-func (s *TreeShapeListener) VisitTerminal(node antlr.TerminalNode) {}
+func (s *JavaTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {}
 
 // VisitErrorNode is called when an error node is visited.
-func (s *TreeShapeListener) VisitErrorNode(node antlr.ErrorNode) {}
+func (s *JavaTreeShapeListener) VisitErrorNode(node antlr.ErrorNode) {}
 
 // EnterEveryRule is called when any rule is entered.
-func (s *TreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
+func (s *JavaTreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
 
 // ExitEveryRule is called when any rule is exited.
-func (s *TreeShapeListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
+func (s *JavaTreeShapeListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}

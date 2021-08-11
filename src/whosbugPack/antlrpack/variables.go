@@ -3,16 +3,26 @@ package antlrpack
 import (
 	"sync"
 	javaparser "whosbugPack/antlrpack/java_lib"
+	kotlin "whosbugPack/antlrpack/kotlin_lib"
 )
 
 var (
-	lexerPool = &sync.Pool{New: func() interface{} {
+	javaLexerPool = &sync.Pool{New: func() interface{} {
 		return javaparser.NewJavaLexer(nil)
 	}}
-	parserPool = &sync.Pool{New: func() interface{} {
+	javaParserPool = &sync.Pool{New: func() interface{} {
 		return javaparser.NewJavaParser(nil)
 	}}
-	newTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
-		return new(TreeShapeListener)
+	kotlinLexerPool = &sync.Pool{New: func() interface{} {
+		return kotlin.NewKotlinLexer(nil)
+	}}
+	kotlinParserPool = &sync.Pool{New: func() interface{} {
+		return kotlin.NewKotlinParser(nil)
+	}}
+	newJavaTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
+		return new(JavaTreeShapeListener)
+	}}
+	newKotlinTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
+		return new(KotlinTreeShapeListener)
 	}}
 )

@@ -3,6 +3,7 @@ package antlrpack
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	javaparser "whosbugPack/antlrpack/java_lib"
+	kotlin "whosbugPack/antlrpack/kotlin_lib"
 	"whosbugPack/global_type"
 	"whosbugPack/utility"
 )
@@ -47,6 +48,8 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	//	TODO 其他语言的适配支持
 	case "python":
 		result = ExecutePython(diffText)
+	case "kotlin":
+		result = ExecuteKotlin(diffText)
 	default:
 		break
 	}
@@ -58,24 +61,18 @@ func ExecutePython(diffText string) AnalysisInfoType {
 	return AnalysisInfoType{}
 }
 
-// ExecuteJava
-//	@Description: 执行java分析
-//	@param targetFilePath 分析目标路径
-//	@return javaparser.AnalysisInfoType 返回分析结果结构体
-//	@author KevinMatt 2021-07-29 19:51:16
-//	@function_mark PASS
 func ExecuteJava(diffText string) AnalysisInfoType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
-	lexer := lexerPool.Get().(*javaparser.JavaLexer)
-	defer lexerPool.Put(lexer)
+	lexer := javaLexerPool.Get().(*javaparser.JavaLexer)
+	defer javaLexerPool.Put(lexer)
 	lexer.SetInputStream(input)
 	//	初始化Token流
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	//	初始化Parser
-	p := parserPool.Get().(*javaparser.JavaParser)
-	defer parserPool.Put(p)
+	p := javaParserPool.Get().(*javaparser.JavaParser)
+	defer javaParserPool.Put(p)
 	p.SetTokenStream(stream)
 	//	构建语法解析树
 	p.BuildParseTrees = true
@@ -84,8 +81,41 @@ func ExecuteJava(diffText string) AnalysisInfoType {
 	//	解析模式->每个编译单位
 	tree := p.CompilationUnit()
 	//	创建listener
-	listener := newTreeShapeListenerPool.Get().(*TreeShapeListener)
-	defer newTreeShapeListenerPool.Put(listener)
+	listener := newJavaTreeShapeListenerPool.Get().(*JavaTreeShapeListener)
+	defer newJavaTreeShapeListenerPool.Put(listener)
+	//	执行分析
+	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+	return listener.Infos
+}
+
+// ExecuteJava
+//	@Description: 执行java分析
+//	@param targetFilePath 分析目标路径
+//	@return javaparser.AnalysisInfoType 返回分析结果结构体
+//	@author KevinMatt 2021-07-29 19:51:16
+//	@function_mark PASS
+func ExecuteKotlin(diffText string) AnalysisInfoType {
+	//	截取目标文本的输入流
+	input := antlr.NewInputStream(diffText)
+	//	初始化lexer
+	lexer := kotlinLexerPool.Get().(*kotlin.KotlinLexer)
+	defer kotlinLexerPool.Put(lexer)
+	lexer.SetInputStream(input)
+	//	初始化Token流
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//	初始化Parser
+	p := kotlinParserPool.Get().(*kotlin.KotlinParser)
+	defer kotlinParserPool.Put(p)
+	p.SetTokenStream(stream)
+	//	构建语法解析树
+	p.BuildParseTrees = true
+	//	启用SLL两阶段加速解析模式
+	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+	//	解析模式->每个编译单位
+	tree := p.KotlinFile()
+	//	创建listener
+	listener := newKotlinTreeShapeListenerPool.Get().(*KotlinTreeShapeListener)
+	defer newKotlinTreeShapeListenerPool.Put(listener)
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.Infos
