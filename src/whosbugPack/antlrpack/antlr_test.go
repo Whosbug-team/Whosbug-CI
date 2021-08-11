@@ -27,12 +27,12 @@ func TestExecuteKotlin(t *testing.T) {
 	text, _ := ioutil.ReadAll(input)
 	rest := ExecuteKotlin(string(text))
 	utility.ForDebug(rest)
-	//for _, item := range rest.AstInfoList.Classes {
-	//	fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tMasterObject: ", item.MasterObject)
-	//}
-	//for _, item := range rest.AstInfoList.Methods {
-	//	if item.CallMethods != nil {
-	//		fmt.Println("Methods: ", item.CallMethods)
-	//	}
-	//}
+	for _, item := range rest.AstInfoList.Classes {
+		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tMasterObject: ", item.MasterObject)
+	}
+	for _, item := range rest.AstInfoList.Methods {
+		if item.CallMethods != nil {
+			fmt.Println("Methods: ", item.CallMethods)
+		}
+	}
 }
