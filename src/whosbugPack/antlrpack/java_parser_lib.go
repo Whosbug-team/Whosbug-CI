@@ -112,24 +112,10 @@ func (s *TreeShapeListener) EnterClassDeclaration(ctx *javaparser.ClassDeclarati
 
 	if childCount == 6 {
 		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
-		var extendsClassName string
-		if ctx.GetChild(2).GetChildCount() > 2 {
-			if ctx.GetChild(2).GetChild(1).GetChildCount() > 3 {
-				if ctx.GetChild(2).GetChild(1).GetChild(2) != nil {
-					extendsClassName = ctx.GetChild(2).GetChild(1).GetChild(2).(antlr.ParseTree).GetText()
-				}
-			}
-		}
-		classInfo = classInfoType{
-			ClassName: className,
-			Extends:   extendsClassName,
-		}
+		classInfo.ClassName = className
 	} else if childCount == 5 {
 		className := ctx.GetChild(1).(antlr.ParseTree).GetText()
 		classInfo.ClassName = className
-		if ctx.GetChild(2).(antlr.ParseTree).GetText() == "extends" {
-			classInfo.Extends = ctx.GetChild(3).(antlr.ParseTree).GetText()
-		}
 	} else if childCount == 4 {
 		// Generic classes: class AnnoyName<T>
 		// 此处没有解析尖括号内的内容，其内如有继承关系，将一起连接被打印

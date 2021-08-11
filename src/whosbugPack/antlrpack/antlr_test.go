@@ -12,7 +12,7 @@ func TestExecuteJava(t *testing.T) {
 	text, _ := ioutil.ReadAll(input)
 	rest := ExecuteJava(string(text))
 	for _, item := range rest.AstInfoList.Classes {
-		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tExtends: ", item.Extends, "\tImplements: ", item.MasterObject)
+		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tImplements: ", item.MasterObject)
 	}
 	for _, item := range rest.AstInfoList.Methods {
 		fmt.Println("Methods: ", item.CallMethods)
