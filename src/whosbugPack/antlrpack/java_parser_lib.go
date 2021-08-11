@@ -35,11 +35,9 @@ type fieldInfoType struct {
 }
 
 type astInfoType struct {
-	PackageName string
-	Classes     []classInfoType
-	Imports     []string
-	Fields      []fieldInfoType
-	Methods     []MethodInfoType
+	Classes []classInfoType
+	Fields  []fieldInfoType
+	Methods []MethodInfoType
 }
 type CallMethodType struct {
 	StartLine int
@@ -84,29 +82,6 @@ func (s *TreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) []st
 		}
 	}
 	return resIndex
-}
-
-func (s *TreeShapeListener) ExitImportDeclaration(ctx *javaparser.ImportDeclarationContext) {
-	temp := ctx.GetChildren()
-	var importName string
-	for index := 1; index < ctx.GetChildCount()-1; index++ {
-		importName = utility.ConCatStrings(importName, temp[index].GetText())
-	}
-	s.Infos.AstInfoList.Imports = append(s.Infos.AstInfoList.Imports, importName)
-}
-
-func (s *TreeShapeListener) EnterImportDeclaration(ctx *javaparser.ImportDeclarationContext) {
-	// Do Nothing
-}
-
-// EnterPackageDeclaration
-//	@Description:
-//	@receiver s
-//	@param ctx
-//	@author KevinMatt 2021-07-30 23:51:10
-//	@function_mark PASS
-func (s *TreeShapeListener) EnterPackageDeclaration(ctx *javaparser.PackageDeclarationContext) {
-	s.Infos.AstInfoList.PackageName = ctx.QualifiedName().GetText()
 }
 
 // EnterMethodCall

@@ -11,10 +11,6 @@ func TestExecuteJava(t *testing.T) {
 	input, _ := os.Open("C:\\Users\\KevinMatt\\Desktop\\whosbug-Golang\\AllInOne7.java")
 	text, _ := ioutil.ReadAll(input)
 	rest := ExecuteJava(string(text))
-	fmt.Println(rest.AstInfoList.PackageName)
-	for _, item := range rest.AstInfoList.Imports {
-		fmt.Println("Imports: ", item)
-	}
 	for _, item := range rest.AstInfoList.Classes {
 		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tExtends: ", item.Extends, "\tImplements: ", item.Implements, "\tMasterObject: ", item.MasterObject)
 	}
