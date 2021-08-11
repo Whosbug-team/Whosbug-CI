@@ -1,8 +1,8 @@
 package antlrpack
 
 import (
-	javaparser "antlr4_ast/java"
 	"sync"
+	javaparser "whosbugPack/antlrpack/java_lib"
 )
 
 var (
