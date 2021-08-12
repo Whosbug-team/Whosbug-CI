@@ -106,6 +106,7 @@ func ExecuteKotlin(diffText string) AnalysisInfoType {
 	//	初始化Parser
 	p := kotlinParserPool.Get().(*kotlin.KotlinParser)
 	defer kotlinParserPool.Put(p)
+	p.RemoveErrorListeners()
 	p.SetTokenStream(stream)
 	//	构建语法解析树
 	p.BuildParseTrees = true
