@@ -30,14 +30,14 @@ type astInfoType struct {
 	Classes []classInfoType
 	Methods []MethodInfoType
 }
-type CallMethodType struct {
-	StartLine int
-	Id        string
-}
-type AnalysisInfoType struct {
-	CallMethods []CallMethodType
-	AstInfoList astInfoType
-}
+//type CallMethodType struct {
+//	StartLine int
+//	Id        string
+//}
+//type AnalysisInfoType struct {
+//	CallMethods []CallMethodType
+//	AstInfoList astInfoType
+//}
 
 // ExitMethodDeclaration
 //	@Description: 匹配到方法结束时被调用
