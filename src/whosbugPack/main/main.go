@@ -6,4 +6,5 @@ import (
 
 func main() {
 	whosbugPack.Analysis()
+	select {}
 }
