@@ -24,8 +24,13 @@ type CallMethodType struct {
 	StartLine int
 	Id        string
 }
+
 type AnalysisInfoType struct {
 	CallMethods []CallMethodType
 	AstInfoList astInfoType
 }
 
+type astInfoType struct {
+	Classes []classInfoType
+	Methods []MethodInfoType
+}

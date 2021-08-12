@@ -26,10 +26,10 @@ type classInfoType struct {
 	MasterObject masterObjectInfoType
 }
 
-type astInfoType struct {
-	Classes []classInfoType
-	Methods []MethodInfoType
-}
+//type astInfoType struct {
+//	Classes []classInfoType
+//	Methods []MethodInfoType
+//}
 //type CallMethodType struct {
 //	StartLine int
 //	Id        string

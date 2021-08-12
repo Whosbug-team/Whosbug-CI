@@ -19,17 +19,17 @@ type typeInfoType struct {
 //	AstInfoList astInfoType
 //}
 
-type astInfoType struct {
-	Package   string
-	Import    []string
-	Funcs     []funcInfoType
-	Const     []memberInfoType
-	Var       []memberInfoType    //局部变量和全局变量还没去区分
-	Type      []memberInfoType    //类型定义
-	Struct    []structInfoType    //结构体定义
-	Interface []interfaceInfoType //接口定义
-	Classes   interface{}
-}
+//type astInfoType struct {
+//	Package   string
+//	Import    []string
+//	Funcs     []funcInfoType
+//	Const     []memberInfoType
+//	Var       []memberInfoType    //局部变量和全局变量还没去区分
+//	Type      []memberInfoType    //类型定义
+//	Struct    []structInfoType    //结构体定义
+//	Interface []interfaceInfoType //接口定义
+//	Classes   interface{}
+//}
 
 type interfaceInfoType struct{
 	typeInfoType
