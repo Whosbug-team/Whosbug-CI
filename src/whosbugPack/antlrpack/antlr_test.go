@@ -9,7 +9,7 @@ import (
 )
 
 func TestExecuteJava(t *testing.T) {
-	input, _ := os.Open("C:\\Users\\KevinMatt\\Desktop\\whosbug-Golang\\AllInOne7.java")
+	input, _ := os.Open("C:\\Users\\Sirius\\Desktop\\test.java")
 	text, _ := ioutil.ReadAll(input)
 	rest := ExecuteJava(string(text))
 	for _, item := range rest.AstInfoList.Classes {
