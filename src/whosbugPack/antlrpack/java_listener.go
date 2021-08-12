@@ -6,25 +6,14 @@ import (
 	"whosbugPack/utility"
 )
 
-type MethodInfoType struct {
-	StartLine    int
-	EndLine      int
-	MethodName   string
-	MasterObject masterObjectInfoType
-	CallMethods  []string
-}
 
-type masterObjectInfoType struct {
-	ObjectName string
-	StartLine  int
-}
 
-type classInfoType struct {
-	StartLine    int
-	EndLine      int
-	ClassName    string
-	MasterObject masterObjectInfoType
-}
+//type classInfoType struct {
+//	StartLine    int
+//	EndLine      int
+//	ClassName    string
+//	MasterObject masterObjectInfoType
+//}
 
 //type astInfoType struct {
 //	Classes []classInfoType
@@ -142,7 +131,7 @@ func findJavaMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 	var masterObject masterObjectInfoType
 	for {
 		if _, ok := temp.(*javaparser.ClassDeclarationContext); ok {
-			masterObject.ObjectName = temp.GetChild(1).GetText()
+			masterObject.ObjectName = temp.GetChild(1).(antlr.ParseTree).GetText()
 			masterObject.StartLine = temp.GetChild(temp.GetChildCount() - 1).(*javaparser.ClassBodyContext).GetStart().GetLine()
 			return masterObject
 		}
