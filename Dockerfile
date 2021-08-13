@@ -1,9 +1,13 @@
 FROM golang:1.16-alpine
-WORKDIR /app
-COPY input.json ./
-COPY whosbug_linux ./
+
+COPY input.json /root
+COPY whosbug_linux_linux /root
 RUN apk update && apk add git
-CMD ["./whosbug_linux"]
+WORKDIR /workspace
+CMD ["git","clone","git@github.com:Tencent/MMKV.git"]
+ENTRYPOINT ["/root/whosbug_linux_linux"]
+
+#CMD ["/bin/bash"]
 
 #COPY src/whosbugPack/go.mod ./
 #COPY src/whosbugPack/go.sum ./

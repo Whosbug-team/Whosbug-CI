@@ -21,13 +21,18 @@ import (
 //	@function_mark PASS
 //
 func init() {
-	//logTo, _ := os.OpenFile("log_all1.txt", os.O_TRUNC|os.O_CREATE|os.O_RDWR, os.ModePerm)
-	//os.Stdout = logTo
+	//logFile, err := os.OpenFile("log_all.txt", os.O_CREATE|os.O_RDWR|os.O_TRUNC, os.ModePerm)
+	//if err != nil {
+	//	os.Exit(0)
+	//}
+	//os.Stdout = logFile
+	//os.Stderr = logFile
+	log.SetOutput(os.Stdout)
 	// 获得密钥
 	global_type.Config.CryptoKey = os.Getenv("WHOSBUG_SECRET")
 	// 工作目录存档
 	global_type.WorkPath, _ = os.Getwd()
-	file, err := os.Open("input.json")
+	file, err := os.Open("//root//input.json")
 	if err != nil {
 		fmt.Println(utility.ErrorMessage(err))
 	}
@@ -75,7 +80,6 @@ func Analysis() {
 
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
 	diffPath, commitPath := logpack.GetLogInfo()
-
 	// 指示Webservice创建新的release
 	err := uploadpack.PostReleaseInfo("/whosbug/create-project-release")
 	if err != nil {
