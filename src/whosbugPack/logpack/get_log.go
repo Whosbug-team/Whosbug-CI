@@ -27,7 +27,8 @@ func GetLogInfo() (string, string) {
 
 	global_type.LocalHashLatest = execCommandOutput("git", "rev-parse", "HEAD")
 
-	cloudHashLatest, err := utility.GetLatestRelease(global_type.Config.ProjectId)
+	//cloudHashLatest, err := utility.GetLatestRelease(global_type.Config.ProjectId)
+	cloudHashLatest := ""
 	if err != nil {
 		fmt.Println(utility.ErrorMessage(errors.WithStack(err)))
 	}

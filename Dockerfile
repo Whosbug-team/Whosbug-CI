@@ -4,6 +4,7 @@ COPY input.json ./
 COPY whosbug_linux ./
 RUN apk update && apk add git
 CMD ["./whosbug_linux"]
+
 #COPY src/whosbugPack/go.mod ./
 #COPY src/whosbugPack/go.sum ./
 #COPY src/attemp.go ./

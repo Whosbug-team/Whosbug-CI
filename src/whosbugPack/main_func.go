@@ -21,6 +21,8 @@ import (
 //	@function_mark PASS
 //
 func init() {
+	//logTo, _ := os.OpenFile("log_all1.txt", os.O_TRUNC|os.O_CREATE|os.O_RDWR, os.ModePerm)
+	//os.Stdout = logTo
 	// 获得密钥
 	global_type.Config.CryptoKey = os.Getenv("WHOSBUG_SECRET")
 	// 工作目录存档
