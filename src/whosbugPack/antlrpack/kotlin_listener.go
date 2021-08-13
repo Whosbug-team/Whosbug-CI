@@ -11,16 +11,6 @@ import (
 
 var _ kotlin.KotlinParserListener = &KotlinTreeShapeListener{}
 
-// ExitPrefixUnaryExpression is called when production prefixUnaryExpression is exited.
-// 	@Description:
-// 	@receiver s
-// 	@param ctx
-// 	@author KevinMatt 2021-08-12 23:20:16
-// 	@function_mark
-func (s *KotlinTreeShapeListener) ExitPrefixUnaryExpression(ctx *kotlin.PrefixUnaryExpressionContext) {
-
-}
-
 // ExitInfixFunctionCall is called when production infixFunctionCall is exited.
 // 	@Description: 寻找方法调用
 // 	@receiver s
@@ -59,12 +49,7 @@ func (s *KotlinTreeShapeListener) ExitFunctionBody(ctx *kotlin.FunctionBodyConte
 	} else {
 		fmt.Println("Invaild Function")
 	}
-	utility.ForDebug()
-}
-
-// EnterFunctionBody is called when production functionBody is entered.
-func (s *KotlinTreeShapeListener) EnterFunctionBody(ctx *kotlin.FunctionBodyContext) {
-
+	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, s.MethodInfo)
 }
 
 // EnterFunctionDeclaration is called when production functionDeclaration is entered.
@@ -77,6 +62,7 @@ func (s *KotlinTreeShapeListener) EnterFunctionDeclaration(ctx *kotlin.FunctionD
 			s.MethodInfo.MethodName = item.(*kotlin.SimpleIdentifierContext).GetText()
 		}
 	}
+	s.MethodInfo.MasterObject = findKotlinMasterObject(ctx)
 	utility.ForDebug()
 }
 
@@ -370,6 +356,9 @@ func (s *KotlinTreeShapeListener) EnterSetterParameter(ctx *kotlin.SetterParamet
 // ExitSetterParameter is called when production setterParameter is exited.
 func (s *KotlinTreeShapeListener) ExitSetterParameter(ctx *kotlin.SetterParameterContext) {}
 
+// EnterFunctionBody is called when production functionBody is entered.
+func (s *KotlinTreeShapeListener) EnterFunctionBody(ctx *kotlin.FunctionBodyContext) {}
+
 // EnterObjectDeclaration is called when production objectDeclaration is entered.
 func (s *KotlinTreeShapeListener) EnterObjectDeclaration(ctx *kotlin.ObjectDeclarationContext) {}
 
@@ -606,8 +595,7 @@ func (s *KotlinTreeShapeListener) ExitComparison(ctx *kotlin.ComparisonContext) 
 func (s *KotlinTreeShapeListener) EnterInfixOperation(ctx *kotlin.InfixOperationContext) {}
 
 // ExitInfixOperation is called when production infixOperation is exited.
-func (s *KotlinTreeShapeListener) ExitInfixOperation(ctx *kotlin.InfixOperationContext) {
-}
+func (s *KotlinTreeShapeListener) ExitInfixOperation(ctx *kotlin.InfixOperationContext) {}
 
 // EnterElvisExpression is called when production elvisExpression is entered.
 func (s *KotlinTreeShapeListener) EnterElvisExpression(ctx *kotlin.ElvisExpressionContext) {}
@@ -616,8 +604,7 @@ func (s *KotlinTreeShapeListener) EnterElvisExpression(ctx *kotlin.ElvisExpressi
 func (s *KotlinTreeShapeListener) ExitElvisExpression(ctx *kotlin.ElvisExpressionContext) {}
 
 // EnterInfixFunctionCall is called when production infixFunctionCall is entered.
-func (s *KotlinTreeShapeListener) EnterInfixFunctionCall(ctx *kotlin.InfixFunctionCallContext) {
-}
+func (s *KotlinTreeShapeListener) EnterInfixFunctionCall(ctx *kotlin.InfixFunctionCallContext) {}
 
 // EnterRangeExpression is called when production rangeExpression is entered.
 func (s *KotlinTreeShapeListener) EnterRangeExpression(ctx *kotlin.RangeExpressionContext) {}
@@ -647,6 +634,10 @@ func (s *KotlinTreeShapeListener) ExitAsExpression(ctx *kotlin.AsExpressionConte
 
 // EnterPrefixUnaryExpression is called when production prefixUnaryExpression is entered.
 func (s *KotlinTreeShapeListener) EnterPrefixUnaryExpression(ctx *kotlin.PrefixUnaryExpressionContext) {
+}
+
+// ExitPrefixUnaryExpression is called when production prefixUnaryExpression is exited.
+func (s *KotlinTreeShapeListener) ExitPrefixUnaryExpression(ctx *kotlin.PrefixUnaryExpressionContext) {
 }
 
 // EnterUnaryPrefix is called when production unaryPrefix is entered.
@@ -969,9 +960,7 @@ func (s *KotlinTreeShapeListener) EnterJumpExpression(ctx *kotlin.JumpExpression
 func (s *KotlinTreeShapeListener) ExitJumpExpression(ctx *kotlin.JumpExpressionContext) {}
 
 // EnterCallableReference is called when production callableReference is entered.
-func (s *KotlinTreeShapeListener) EnterCallableReference(ctx *kotlin.CallableReferenceContext) {
-	//fmt.Println(ctx.GetText())
-}
+func (s *KotlinTreeShapeListener) EnterCallableReference(ctx *kotlin.CallableReferenceContext) {}
 
 // ExitCallableReference is called when production callableReference is exited.
 func (s *KotlinTreeShapeListener) ExitCallableReference(ctx *kotlin.CallableReferenceContext) {}
