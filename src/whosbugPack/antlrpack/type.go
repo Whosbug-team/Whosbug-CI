@@ -1,5 +1,9 @@
 package antlrpack
 
+import (
+	"github.com/antlr/antlr4/runtime/Go/antlr"
+)
+
 type JavaTreeShapeListener struct {
 	Infos AnalysisInfoType
 }
@@ -7,6 +11,22 @@ type JavaTreeShapeListener struct {
 type KotlinTreeShapeListener struct {
 	MethodInfo MethodInfoType
 	Infos      AnalysisInfoType
+}
+
+func (k KotlinTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {
+	panic("implement me")
+}
+
+func (k KotlinTreeShapeListener) VisitErrorNode(node antlr.ErrorNode) {
+	panic("implement me")
+}
+
+func (k KotlinTreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
+	panic("implement me")
+}
+
+func (k KotlinTreeShapeListener) ExitEveryRule(ctx antlr.ParserRuleContext) {
+	panic("implement me")
 }
 
 type GoTreeShapeListener struct{
