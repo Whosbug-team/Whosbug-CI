@@ -121,7 +121,7 @@ func GenToken() (string, error) {
 
 	res, err := http.PostForm(urls, url.Values{"username": []string{global_type.Config.WebServerUserName}, "password": []string{global_type.Config.WebserverKey}})
 	if err != nil {
-		log.Printf("%s", ErrorMessage(errors.Wrapf(err, "Genarate Key Failure. Check the username&password or the status of the server.\n")))
+		fmt.Printf("%s", ErrorMessage(errors.Wrapf(err, "Genarate Key Failure. Check the username&password or the status of the server.\n")))
 		os.Exit(1)
 	}
 

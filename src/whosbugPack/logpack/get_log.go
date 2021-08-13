@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"time"
 	"whosbugPack/global_type"
 	"whosbugPack/utility"
 )
@@ -58,7 +57,6 @@ func GetLogInfo() (string, string) {
 			}
 		}
 	}
-	time.Sleep(time.Second * 100)
 	return utility.ConCatStrings(global_type.WorkPath, "/allDiffs.out"), utility.ConCatStrings(global_type.WorkPath, "/commitInfo.out")
 }
 

@@ -176,6 +176,8 @@ func ReqWithToken(token, url, method, data string) error {
 		return nil
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
+		temp := string(body)
+		utility.ForDebug(temp)
 		if err != nil {
 			return errors.WithMessage(err, "Read Body Fail")
 		}
