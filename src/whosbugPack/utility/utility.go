@@ -216,8 +216,8 @@ func GetCommitInfo(line string) global_type.CommitInfoType {
 	infoList := strings.Split(line, ",")
 	var tempCommitInfo global_type.CommitInfoType
 	tempCommitInfo = global_type.CommitInfoType{
-		CommitHash:     infoList[0],
-		CommitterEmail: infoList[1],
+		CommitHash:     Base64Encrypt(infoList[0]),
+		CommitterEmail: Base64Encrypt(infoList[1]),
 		CommitTime:     ToIso8601(strings.Split(infoList[len(infoList)-1][4:], " ")),
 	}
 	// 赋值commitAuthor(考虑多个Author的可能)

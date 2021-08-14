@@ -140,7 +140,7 @@ func addObjectFromChangeLineNumber(commitDiff global_type.DiffParsedType, change
 	//	TODO Ready for newMethod
 	var newObject global_type.ObjectInfoType
 	newObject = global_type.ObjectInfoType{
-		CommitHash:          utility.Base64Encrypt(commitDiff.CommitHash),
+		CommitHash:          commitDiff.CommitHash, //utility.Base64Encrypt(commitDiff.CommitHash)
 		Id:                  changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName,
 		OldId:               "",
 		FilePath:            utility.Base64Encrypt(commitDiff.CommitHash),

@@ -1,11 +1,12 @@
 FROM golang:1.16-alpine
 
-COPY input.json /root
+#COPY input.json /root
 COPY whosbug_linux_linux /root
 RUN apk update && apk add git
-WORKDIR /workspace
-CMD ["git","clone","git@github.com:Tencent/MMKV.git"]
-ENTRYPOINT ["/root/whosbug_linux_linux"]
+WORKDIR /root/workspace
+#CMD ls -a
+#CMD ["git","clone","git@github.com:Tencent/MMKV.git"]
+#ENTRYPOINT ["/root/whosbug_linux_linux"]
 
 #CMD ["/bin/bash"]
 

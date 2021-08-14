@@ -3,7 +3,6 @@ package antlrpack
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	javaparser "whosbugPack/antlrpack/java_lib"
-	"whosbugPack/utility"
 )
 
 type MethodInfoType struct {
@@ -80,11 +79,14 @@ func (s *JavaTreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) 
 //	@author KevinMatt 2021-07-23 23:22:56
 //	@function_mark PASS
 func (s *JavaTreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
+	//temp := ctx.GetChildren()
+	//for index, item := range temp {
+	//	fmt.Println(index, " ", item.GetText())
+	//}
 	if ctx.GetParent() != nil {
-		newMasterObject := findJavaMasterObjectClass(ctx)
 		var insertTemp = CallMethodType{
 			StartLine: ctx.GetStart().GetLine(),
-			Id:        utility.ConCatStrings(newMasterObject.ObjectName, ".", ctx.GetParent().(antlr.ParseTree).GetText()),
+			Id:        "a" + "." + ctx.GetChild(0).GetText(),
 		}
 		s.Infos.CallMethods = append(s.Infos.CallMethods, insertTemp)
 	}
