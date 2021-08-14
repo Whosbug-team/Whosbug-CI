@@ -5,6 +5,7 @@ import (
 	golang "whosbugPack/antlrpack/go_lib"
 	javaparser "whosbugPack/antlrpack/java_lib"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
+	cpp "whosbugPack/antlrpack/cpp_lib"
 )
 
 var (
@@ -29,6 +30,13 @@ var (
 		return kotlin.NewKotlinParser(nil)
 	}}
 
+	cppLexerPool = &sync.Pool{New: func() interface{} {
+		return cpp.NewCPP14Lexer(nil)
+	}}
+	cppParserPool = &sync.Pool{New: func() interface{} {
+		return cpp.NewCPP14Parser(nil)
+	}}
+
 	newJavaTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(JavaTreeShapeListener)
 	}}
@@ -37,5 +45,8 @@ var (
 	}}
 	newGoTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(GoTreeShapeListener)
+	}}
+	newCppTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
+		return new(CppTreeShapeListener)
 	}}
 )

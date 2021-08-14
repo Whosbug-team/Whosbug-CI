@@ -13,6 +13,14 @@ type KotlinTreeShapeListener struct {
 	Infos      AnalysisInfoType
 }
 
+type CppTreeShapeListener struct{
+	Infos AnalysisInfoType
+}
+
+type GoTreeShapeListener struct{
+	Infos AnalysisInfoType
+}
+
 func (k KotlinTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {
 	panic("implement me")
 }
@@ -29,9 +37,6 @@ func (k KotlinTreeShapeListener) ExitEveryRule(ctx antlr.ParserRuleContext) {
 	panic("implement me")
 }
 
-type GoTreeShapeListener struct{
-	Infos AnalysisInfoType
-}
 
 type CallMethodType struct {
 	StartLine int

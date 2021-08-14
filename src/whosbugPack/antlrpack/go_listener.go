@@ -66,13 +66,13 @@ func (s *GoTreeShapeListener) EnterStructType(ctx *golang.StructTypeContext) {
 	var structInfo = classInfoType{
 		StartLine:    ctx.GetStart().GetLine(),
 		EndLine:      ctx.GetStop().GetLine(),
-		MasterObject: findMasterObjectClass(ctx),
+		MasterObject: findGoMasterObjectClass(ctx),
 	}
 	structInfo.ClassName = structInfo.MasterObject.ObjectName
 	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, structInfo)
 }
 
-func findMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
+func findGoMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 	temp := ctx.GetParent()
 	if temp == nil {
 		return masterObjectInfoType{}
