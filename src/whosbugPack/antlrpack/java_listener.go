@@ -3,40 +3,30 @@ package antlrpack
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	javaparser "whosbugPack/antlrpack/java_lib"
+	"whosbugPack/utility"
 )
 
-type MethodInfoType struct {
-	StartLine    int
-	EndLine      int
-	MethodName   string
-	MasterObject masterObjectInfoType
-	CallMethods  []string
-}
 
-type masterObjectInfoType struct {
-	ObjectName string
-	StartLine  int
-}
 
-type classInfoType struct {
-	StartLine    int
-	EndLine      int
-	ClassName    string
-	MasterObject masterObjectInfoType
-}
+//type classInfoType struct {
+//	StartLine    int
+//	EndLine      int
+//	ClassName    string
+//	MasterObject masterObjectInfoType
+//}
 
-type astInfoType struct {
-	Classes []classInfoType
-	Methods []MethodInfoType
-}
-type CallMethodType struct {
-	StartLine int
-	Id        string
-}
-type AnalysisInfoType struct {
-	CallMethods []CallMethodType
-	AstInfoList astInfoType
-}
+//type astInfoType struct {
+//	Classes []classInfoType
+//	Methods []MethodInfoType
+//}
+//type CallMethodType struct {
+//	StartLine int
+//	Id        string
+//}
+//type AnalysisInfoType struct {
+//	CallMethods []CallMethodType
+//	AstInfoList astInfoType
+//}
 
 // ExitMethodDeclaration
 //	@Description: 匹配到方法结束时被调用
@@ -79,14 +69,11 @@ func (s *JavaTreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) 
 //	@author KevinMatt 2021-07-23 23:22:56
 //	@function_mark PASS
 func (s *JavaTreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
-	//temp := ctx.GetChildren()
-	//for index, item := range temp {
-	//	fmt.Println(index, " ", item.GetText())
-	//}
 	if ctx.GetParent() != nil {
+		newMasterObject := findJavaMasterObjectClass(ctx)
 		var insertTemp = CallMethodType{
 			StartLine: ctx.GetStart().GetLine(),
-			Id:        "a" + "." + ctx.GetChild(0).GetText(),
+			Id:        utility.ConCatStrings(newMasterObject.ObjectName, ".", ctx.GetParent().(antlr.ParseTree).GetText()),
 		}
 		s.Infos.CallMethods = append(s.Infos.CallMethods, insertTemp)
 	}
@@ -144,7 +131,7 @@ func findJavaMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 	var masterObject masterObjectInfoType
 	for {
 		if _, ok := temp.(*javaparser.ClassDeclarationContext); ok {
-			masterObject.ObjectName = temp.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+			masterObject.ObjectName = temp.GetChild(1).(antlr.ParseTree).GetText()
 			masterObject.StartLine = temp.GetChild(temp.GetChildCount() - 1).(*javaparser.ClassBodyContext).GetStart().GetLine()
 			return masterObject
 		}
