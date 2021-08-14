@@ -29,7 +29,7 @@ func init() {
 		WebServerHost:     "http://127.0.0.1:8081",
 		WebServerUserName: "user",
 		WebserverKey:      "pwd",
-		CryptoKey:         os.Getenv("__WHOSBUG_SECRET__"),
+		CryptoKey:         "",
 	}
 	// 工作目录存档
 	global_type.WorkPath, _ = os.Getwd()
