@@ -56,7 +56,7 @@ func (s *JavaTreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDecl
 		}
 		resIndex := s.FindMethodCallIndex(methodInfo.StartLine, methodInfo.EndLine)
 		if resIndex != nil {
-			methodInfo.CallMethods = resIndex
+			methodInfo.CallMethods = RemoveRep(resIndex)
 		}
 		s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
 	}
@@ -86,10 +86,28 @@ func (s *JavaTreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContex
 	if ctx.GetParent() != nil {
 		var insertTemp = CallMethodType{
 			StartLine: ctx.GetStart().GetLine(),
-			Id:        findJavaMasterObjectClass(ctx).ObjectName + "." + ctx.GetChild(0).GetText(),
+			Id:        findJavaMasterObjectClass(ctx).ObjectName + "." + ctx.GetChild(0).(antlr.ParseTree).GetText(),
 		}
 		s.Infos.CallMethods = append(s.Infos.CallMethods, insertTemp)
 	}
+}
+
+// RemoveRep
+// 	@Description: 切片去重
+// 	@param s
+// 	@return []string
+// 	@author KevinMatt 2021-08-14 15:14:28
+// 	@function_mark
+func RemoveRep(s []string) []string {
+	var result []string
+	m := make(map[string]bool)
+	for _, v := range s {
+		if _, ok := m[v]; !ok {
+			result = append(result, v)
+			m[v] = true
+		}
+	}
+	return result
 }
 
 // EnterClassDeclaration

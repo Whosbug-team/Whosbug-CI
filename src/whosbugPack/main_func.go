@@ -22,7 +22,7 @@ import (
 func init() {
 	log.SetOutput(os.Stdout)
 	global_type.Config = global_type.InputJson{
-		ProjectId:         "testsss",
+		ProjectId:         "tesastsss",
 		ReleaseVersion:    "1.0.0",
 		RepoPath:          "C:\\Users\\KevinMatt\\Desktop\\test\\Java",
 		BranchName:        "master",
