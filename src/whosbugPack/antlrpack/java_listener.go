@@ -86,7 +86,7 @@ func (s *JavaTreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContex
 	if ctx.GetParent() != nil {
 		var insertTemp = CallMethodType{
 			StartLine: ctx.GetStart().GetLine(),
-			Id:        "a" + "." + ctx.GetChild(0).GetText(),
+			Id:        findJavaMasterObjectClass(ctx).ObjectName + "." + ctx.GetChild(0).GetText(),
 		}
 		s.Infos.CallMethods = append(s.Infos.CallMethods, insertTemp)
 	}

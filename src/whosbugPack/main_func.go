@@ -22,17 +22,17 @@ import (
 func init() {
 	log.SetOutput(os.Stdout)
 	global_type.Config = global_type.InputJson{
-		ProjectId:         os.Getenv("__PROJECT_ID"),
-		ReleaseVersion:    os.Getenv("__RELEASE_VERSION"),
-		RepoPath:          "/root/workspace",
+		ProjectId:         "testss",
+		ReleaseVersion:    "1.0.0",
+		RepoPath:          "C:\\Users\\KevinMatt\\Desktop\\test\\Java",
 		BranchName:        os.Getenv("__BRANCH_NAME"),
-		WebServerHost:     os.Getenv("__WEB_SRV_HOST"),
-		WebServerUserName: os.Getenv("__WEB_SRV_USERNAME__"),
-		WebserverKey:      os.Getenv("__WEB_SRV_KEY__"),
+		WebServerHost:     "http://127.0.0.1:8081",
+		WebServerUserName: "user",
+		WebserverKey:      "pwd",
 		CryptoKey:         os.Getenv("__WHOSBUG_SECRET__"),
 	}
 	// 工作目录存档
-	global_type.WorkPath = "/root/workspace"
+	global_type.WorkPath, _ = os.Getwd()
 	//file, err := os.Open("input.json")
 	//if err != nil {
 	//	fmt.Println(utility.ErrorMessage(err))
