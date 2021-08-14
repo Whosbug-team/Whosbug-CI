@@ -6,11 +6,12 @@ import (
 )
 
 type MethodInfoType struct {
-	StartLine    int
-	EndLine      int
-	MethodName   string
-	MasterObject masterObjectInfoType
-	CallMethods  []string
+	StartLine       int
+	EndLine         int
+	MethodName      string
+	MasterObject    masterObjectInfoType
+	CallMethods     []string
+	ChangeLineCount int
 }
 
 type masterObjectInfoType struct {

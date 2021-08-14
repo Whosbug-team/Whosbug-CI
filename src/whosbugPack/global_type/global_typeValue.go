@@ -39,9 +39,7 @@ type ObjectInfoType struct {
 func (s *ObjectInfoType) Equals(b ObjectInfoType) bool {
 	if s.CommitHash == b.CommitHash {
 		if s.Id == b.Id {
-			if s.OldId == b.OldId {
-				return true
-			}
+			return true
 		}
 	}
 	return false
