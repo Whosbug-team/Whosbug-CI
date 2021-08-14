@@ -2,10 +2,11 @@ package antlrpack
 
 import (
 	"sync"
+	cpp "whosbugPack/antlrpack/cpp_lib"
 	golang "whosbugPack/antlrpack/go_lib"
 	javaparser "whosbugPack/antlrpack/java_lib"
+	javascript "whosbugPack/antlrpack/js_lib"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
-	cpp "whosbugPack/antlrpack/cpp_lib"
 )
 
 var (
@@ -37,6 +38,13 @@ var (
 		return cpp.NewCPP14Parser(nil)
 	}}
 
+	javascriptLexerPool = &sync.Pool{New: func() interface{} {
+		return javascript.NewJavaScriptLexer(nil)
+	}}
+	javascriptParserPool = &sync.Pool{New: func() interface{} {
+		return javascript.NewJavaScriptParser(nil)
+	}}
+
 	newJavaTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(JavaTreeShapeListener)
 	}}
@@ -48,5 +56,8 @@ var (
 	}}
 	newCppTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(CppTreeShapeListener)
+	}}
+	newJavaScriptTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
+		return new(JSTreeShapeListener)
 	}}
 )

@@ -21,6 +21,12 @@ type GoTreeShapeListener struct{
 	Infos AnalysisInfoType
 }
 
+type JSTreeShapeListener struct {
+	ObjectInfo ObjectInfoType
+	ClassInfo  classInfoType
+	Infos      AnalysisInfoType
+}
+
 func (k KotlinTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {
 	panic("implement me")
 }
@@ -51,13 +57,15 @@ type AnalysisInfoType struct {
 type astInfoType struct {
 	Classes []classInfoType
 	Methods []MethodInfoType
+	Objects []ObjectInfoType
 }
 
 type classInfoType struct {
-	StartLine    int
-	EndLine      int
-	ClassName    string
+	StartLine int
+	EndLine   int
+	ClassName string
 	MasterObject masterObjectInfoType
+	Extends      string
 }
 
 type MethodInfoType struct {
@@ -66,9 +74,17 @@ type MethodInfoType struct {
 	MethodName   string
 	MasterObject masterObjectInfoType
 	CallMethods  []string
+	Params       []string
 }
 
 type masterObjectInfoType struct {
 	ObjectName string
 	StartLine  int
+}
+
+type ObjectInfoType struct {
+	StartLine   int
+	EndLine     int
+	ObjectName  string
+	ObjFuncName []string
 }

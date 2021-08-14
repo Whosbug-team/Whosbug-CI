@@ -2,10 +2,11 @@ package antlrpack
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	cpp "whosbugPack/antlrpack/cpp_lib"
 	golang "whosbugPack/antlrpack/go_lib"
 	javaparser "whosbugPack/antlrpack/java_lib"
+	javascript "whosbugPack/antlrpack/js_lib"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
-	cpp "whosbugPack/antlrpack/cpp_lib"
 	"whosbugPack/global_type"
 	"whosbugPack/utility"
 )
@@ -54,6 +55,8 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 		result = ExecuteKotlin(diffText)
 	case "golang":
 		result = ExecuteGolang(diffText)
+	case "javascript":
+		result = ExecuteJavaScript(diffText)
 	default:
 		break
 	}
@@ -112,6 +115,33 @@ func ExecuteCpp(diffText string) AnalysisInfoType{
 	return listener.Infos
 }
 
+func ExecuteJavaScript(diffText string) AnalysisInfoType{
+	//	截取目标文本的输入流
+	input := antlr.NewInputStream(diffText)
+	//	初始化lexer
+	lexer := javascriptLexerPool.Get().(*javascript.JavaScriptLexer)
+	defer javaLexerPool.Put(lexer)
+	lexer.SetInputStream(input)
+	//	初始化Token流
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//	初始化Parser
+	p := javascriptParserPool.Get().(*javascript.JavaScriptParser)
+	defer javascriptParserPool.Put(p)
+	p.SetTokenStream(stream)
+	//	构建语法解析树
+	p.BuildParseTrees = true
+	//	启用SLL两阶段加速解析模式
+	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+	//	解析模式->每个编译单位
+	tree := p.Program()
+	//	创建listener
+	listener := newJavaScriptTreeShapeListenerPool.Get().(*JSTreeShapeListener)
+	defer newJavaScriptTreeShapeListenerPool.Put(listener)
+	//	执行分析
+	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+	return listener.Infos
+}
+
 func ExecutePython(diffText string) AnalysisInfoType {
 	utility.ForDebug(diffText)
 	return AnalysisInfoType{}
@@ -143,6 +173,8 @@ func ExecuteJava(diffText string) AnalysisInfoType {
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.Infos
 }
+
+
 
 // ExecuteJava
 //	@Description: 执行java分析
