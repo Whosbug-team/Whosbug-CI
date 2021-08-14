@@ -46,9 +46,10 @@ func (s *GoTreeShapeListener) ExitMethodDecl(ctx *golang.MethodDeclContext) {
 }
 
 func (s *GoTreeShapeListener) EnterExpressionStmt(ctx *golang.ExpressionStmtContext) {
+	index := strings.Index(ctx.GetText(),"(")
 	var callMethod = CallMethodType{
 		StartLine: ctx.GetStart().GetLine(),
-		Id:        ctx.GetText(),
+		Id:        ctx.GetText()[0:index],
 	}
 	s.Infos.CallMethods = append(s.Infos.CallMethods, callMethod)
 }

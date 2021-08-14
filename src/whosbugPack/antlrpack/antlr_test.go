@@ -63,3 +63,11 @@ func TestExecuteKotlin(t *testing.T) {
 		}
 	}
 }
+
+func TestRemoveRep(t *testing.T) {
+	input := []string{"a", "b", "a", "b"}
+	res := RemoveRep(input)
+	for _, item := range res {
+		fmt.Println(item)
+	}
+}

@@ -76,12 +76,12 @@ func ParseDiff(data string, commitInfo global_type.CommitInfoType) {
 			}
 			diffParsed.ChangeLineNumbers = append(diffParsed.ChangeLineNumbers, changeLineNumbers...)
 			// 上传任务到协程池
-			go func() {
-				err := Pool.Invoke(diffParsed)
-				if err != nil {
-					log.Println(utility.ErrorStack(errors.WithStack(err)))
-				}
-			}()
+			//go func() {
+			err := Pool.Invoke(diffParsed)
+			if err != nil {
+				log.Println(utility.ErrorStack(errors.WithStack(err)))
+			}
+			//}()
 		}
 	}
 }

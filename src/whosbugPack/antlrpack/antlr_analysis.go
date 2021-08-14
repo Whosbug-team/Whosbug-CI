@@ -162,6 +162,7 @@ func ExecuteKotlin(diffText string) AnalysisInfoType {
 	//	初始化Parser
 	p := kotlinParserPool.Get().(*kotlin.KotlinParser)
 	defer kotlinParserPool.Put(p)
+	p.RemoveErrorListeners()
 	p.SetTokenStream(stream)
 	//	构建语法解析树
 	p.BuildParseTrees = true
@@ -195,7 +196,7 @@ func addObjectFromChangeLineNumber(commitDiff global_type.DiffParsedType, change
 	//	TODO Ready for newMethod
 	var newObject global_type.ObjectInfoType
 	newObject = global_type.ObjectInfoType{
-		CommitHash:          utility.Base64Encrypt(commitDiff.CommitHash),
+		CommitHash:          commitDiff.CommitHash, //utility.Base64Encrypt(commitDiff.CommitHash)
 		Id:                  changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName,
 		OldId:               "",
 		FilePath:            utility.Base64Encrypt(commitDiff.CommitHash),

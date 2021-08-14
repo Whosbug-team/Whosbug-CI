@@ -115,6 +115,7 @@ func PostObjects(objects []global_type.ObjectInfoType) error {
 //	@author KevinMatt 2021-08-10 01:06:05
 //	@function_mark PASS
 func PostCommitsInfo(commitPath string) error {
+	InitTheProjectStruct()
 	commitFd, err := os.Open(commitPath)
 	if err != nil {
 		return errors.Wrap(err, "Open commitPath to Post FIN fails:")
@@ -176,6 +177,8 @@ func ReqWithToken(token, url, method, data string) error {
 		return nil
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
+		temp := string(body)
+		utility.ForDebug(temp)
 		if err != nil {
 			return errors.WithMessage(err, "Read Body Fail")
 		}

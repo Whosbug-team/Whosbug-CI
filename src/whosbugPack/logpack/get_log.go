@@ -23,50 +23,53 @@ func GetLogInfo() (string, string) {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println("Work Path Change to: ", global_type.Config.RepoPath)
+	fmt.Println("Work Path In ", global_type.WorkPath)
 
-	global_type.LocalHashLatest = execCommandOutput("git", "rev-parse", "HEAD")
+	global_type.LocalHashLatest = ExecCommandOutput("git", "rev-parse", "HEAD")
 
-	cloudHashLatest, err := utility.GetLatestRelease(global_type.Config.ProjectId)
-	if err != nil {
-		fmt.Println(utility.ErrorMessage(errors.WithStack(err)))
-	}
+	//cloudHashLatest, err := utility.GetLatestRelease(global_type.Config.ProjectId)
+	//if err != nil {
+	//	fmt.Println(utility.ErrorMessage(errors.WithStack(err)))
+	//}
+	cloudHashLatest := ""
+	fmt.Println("Head Got!")
 	global_type.LatestCommitHash = cloudHashLatest
 	if cloudHashLatest == global_type.LocalHashLatest {
 		fmt.Println("The server commit list is up-to-date.")
 		os.Exit(0)
 	} else {
 		if cloudHashLatest == "" {
-			err = execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
+			fmt.Println("Start Get log")
+			err := ExecRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
 			if err != nil {
 				fmt.Println(utility.ErrorStack(err))
 			}
-			err = execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
+			err = ExecRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
 			if err != nil {
 				fmt.Println(utility.ErrorStack(err))
 			}
 		} else {
-			err = execRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
+			err := ExecRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
 			if err != nil {
 				fmt.Println(utility.ErrorStack(err))
 			}
-			err = execRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
+			err = ExecRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
 			if err != nil {
 				fmt.Println(utility.ErrorStack(err))
 			}
 		}
 	}
-	return utility.ConCatStrings(global_type.WorkPath, "\\allDiffs.out"), utility.ConCatStrings(global_type.WorkPath, "\\commitInfo.out")
+	return utility.ConCatStrings(global_type.WorkPath, "/allDiffs.out"), utility.ConCatStrings(global_type.WorkPath, "/commitInfo.out")
 }
 
-//	execCommandOutput
+//	ExecCommandOutput
 //	@Description: 执行命令并获取输出
 //	@param command 命令
 //	@param args 命令参数
 //	@return string 命令输出
 //	@author KevinMatt 2021-08-07 14:44:17
 //	@function_mark PASS
-func execCommandOutput(command string, args ...string) string {
+func ExecCommandOutput(command string, args ...string) string {
 	cmd := exec.Command(command, args...)
 	log.SetOutput(LogFile)
 	log.Println("Cmd", cmd.Args)
@@ -86,18 +89,18 @@ func execCommandOutput(command string, args ...string) string {
 	return out.String()
 }
 
-// execRedirectToFile
+// ExecRedirectToFile
 //	@Description: 执行命令并将输出流重定向到目标文件中
 //	@param fileName 目标文件目录
 //	@param command 执行的指令头
 //	@param args 执行指令的参数
 //	@author KevinMatt 2021-07-29 17:31:00
 //	@function_mark PASS
-func execRedirectToFile(fileName string, command string, args ...string) error {
+func ExecRedirectToFile(fileName string, command string, args ...string) error {
 	cmd := exec.Command(command, args...)
 	log.SetOutput(LogFile)
 	log.Println("Cmd", cmd.Args)
-	fd, _ := os.OpenFile(global_type.WorkPath+"\\"+fileName, os.O_WRONLY|os.O_CREATE|os.O_SYNC, 0755)
+	fd, _ := os.OpenFile(global_type.WorkPath+"/"+fileName, os.O_WRONLY|os.O_CREATE|os.O_SYNC, 0755)
 	cmd.Stdout = fd
 	cmd.Stderr = fd
 	err := cmd.Start()

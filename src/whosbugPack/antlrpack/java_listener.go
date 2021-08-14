@@ -3,30 +3,8 @@ package antlrpack
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	javaparser "whosbugPack/antlrpack/java_lib"
-	"whosbugPack/utility"
 )
 
-
-
-//type classInfoType struct {
-//	StartLine    int
-//	EndLine      int
-//	ClassName    string
-//	MasterObject masterObjectInfoType
-//}
-
-//type astInfoType struct {
-//	Classes []classInfoType
-//	Methods []MethodInfoType
-//}
-//type CallMethodType struct {
-//	StartLine int
-//	Id        string
-//}
-//type AnalysisInfoType struct {
-//	CallMethods []CallMethodType
-//	AstInfoList astInfoType
-//}
 
 // ExitMethodDeclaration
 //	@Description: 匹配到方法结束时被调用
@@ -46,7 +24,7 @@ func (s *JavaTreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDecl
 		}
 		resIndex := s.FindMethodCallIndex(methodInfo.StartLine, methodInfo.EndLine)
 		if resIndex != nil {
-			methodInfo.CallMethods = resIndex
+			methodInfo.CallMethods = RemoveRep(resIndex)
 		}
 		s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
 	}
@@ -69,14 +47,35 @@ func (s *JavaTreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) 
 //	@author KevinMatt 2021-07-23 23:22:56
 //	@function_mark PASS
 func (s *JavaTreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
+	//temp := ctx.GetChildren()
+	//for index, item := range temp {
+	//	fmt.Println(index, " ", item.GetText())
+	//}
 	if ctx.GetParent() != nil {
-		newMasterObject := findJavaMasterObjectClass(ctx)
 		var insertTemp = CallMethodType{
 			StartLine: ctx.GetStart().GetLine(),
-			Id:        utility.ConCatStrings(newMasterObject.ObjectName, ".", ctx.GetParent().(antlr.ParseTree).GetText()),
+			Id:        findJavaMasterObjectClass(ctx).ObjectName + "." + ctx.GetChild(0).(antlr.ParseTree).GetText(),
 		}
 		s.Infos.CallMethods = append(s.Infos.CallMethods, insertTemp)
 	}
+}
+
+// RemoveRep
+// 	@Description: 切片去重
+// 	@param s
+// 	@return []string
+// 	@author KevinMatt 2021-08-14 15:14:28
+// 	@function_mark
+func RemoveRep(s []string) []string {
+	var result []string
+	m := make(map[string]bool)
+	for _, v := range s {
+		if _, ok := m[v]; !ok {
+			result = append(result, v)
+			m[v] = true
+		}
+	}
+	return result
 }
 
 // EnterClassDeclaration
@@ -131,7 +130,7 @@ func findJavaMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 	var masterObject masterObjectInfoType
 	for {
 		if _, ok := temp.(*javaparser.ClassDeclarationContext); ok {
-			masterObject.ObjectName = temp.GetChild(1).(antlr.ParseTree).GetText()
+			masterObject.ObjectName = temp.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
 			masterObject.StartLine = temp.GetChild(temp.GetChildCount() - 1).(*javaparser.ClassBodyContext).GetStart().GetLine()
 			return masterObject
 		}
