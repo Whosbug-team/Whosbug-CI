@@ -2,10 +2,10 @@ package antlrpack
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	cpp "whosbugPack/antlrpack/cpp_lib"
 	golang "whosbugPack/antlrpack/go_lib"
 	javaparser "whosbugPack/antlrpack/java_lib"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
-	cpp "whosbugPack/antlrpack/cpp_lib"
 	"whosbugPack/global_type"
 	"whosbugPack/utility"
 )
@@ -95,8 +95,8 @@ func ExecuteCpp(diffText string) AnalysisInfoType{
 	//	初始化Token流
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	//	初始化Parser
-	p := goParserPool.Get().(*cpp.CPP14Parser)
-	defer goParserPool.Put(p)
+	p := cppParserPool.Get().(*cpp.CPP14Parser)
+	defer cppParserPool.Put(p)
 	p.SetTokenStream(stream)
 	//	构建语法解析树
 	p.BuildParseTrees = true
@@ -105,8 +105,8 @@ func ExecuteCpp(diffText string) AnalysisInfoType{
 	//	解析模式->每个编译单位
 	tree := p.TranslationUnit()
 	//	创建listener
-	listener := newGoTreeShapeListenerPool.Get().(*CppTreeShapeListener)
-	defer newGoTreeShapeListenerPool.Put(listener)
+	listener := newCppTreeShapeListenerPool.Get().(*CppTreeShapeListener)
+	defer newCppTreeShapeListenerPool.Put(listener)
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.Infos

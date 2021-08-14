@@ -21,6 +21,19 @@ func TestExecuteJava(t *testing.T) {
 		}
 	}
 }
+func TestExecuteCpp(t *testing.T) {
+	input, _ := os.Open("C:\\Users\\Sirius\\Desktop\\test.cpp")
+	text, _ := ioutil.ReadAll(input)
+	rest := ExecuteCpp(string(text))
+	for _, item := range rest.AstInfoList.Classes {
+		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tMasterObject: ", item.MasterObject)
+	}
+	for _, item := range rest.AstInfoList.Methods {
+		if item.CallMethods != nil {
+			fmt.Println("Methods: ", item.CallMethods)
+		}
+	}
+}
 
 func TestExecuteGolang(t *testing.T) {
 	input, _ := os.Open("C:\\Users\\Sirius\\Desktop\\test1.go")
