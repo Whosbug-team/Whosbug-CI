@@ -22,10 +22,10 @@ import (
 func init() {
 	log.SetOutput(os.Stdout)
 	global_type.Config = global_type.InputJson{
-		ProjectId:         "testss",
+		ProjectId:         "testsss",
 		ReleaseVersion:    "1.0.0",
 		RepoPath:          "C:\\Users\\KevinMatt\\Desktop\\test\\Java",
-		BranchName:        os.Getenv("__BRANCH_NAME"),
+		BranchName:        "master",
 		WebServerHost:     "http://127.0.0.1:8081",
 		WebServerUserName: "user",
 		WebserverKey:      "pwd",
@@ -82,11 +82,11 @@ func Analysis() {
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
 	diffPath, commitPath := logpack.GetLogInfo()
 	fmt.Println(diffPath, commitPath)
-	//// 指示Webservice创建新的release
-	//err := uploadpack.PostReleaseInfo("/whosbug/create-project-release/")
-	//if err != nil {
-	//	log.Println(utility.ErrorStack(err))
-	//}
+	// 指示Webservice创建新的release
+	err := uploadpack.PostReleaseInfo("/whosbug/create-project-release/")
+	if err != nil {
+		log.Println(utility.ErrorStack(err))
+	}
 
 	fmt.Println("Get log cost: ", time.Since(t))
 	commit_diffpack.MatchCommit(diffPath, commitPath)
@@ -109,7 +109,7 @@ func Analysis() {
 	runtime.GC()
 
 	// 通知Webservice上传结束
-	err := uploadpack.PostReleaseInfo("/whosbug/commits/upload-done/")
+	err = uploadpack.PostReleaseInfo("/whosbug/commits/upload-done/")
 	if err != nil {
 		log.Println(utility.ErrorStack(err))
 	}
