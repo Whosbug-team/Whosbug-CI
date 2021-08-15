@@ -5,7 +5,7 @@ package antlrpack // KotlinParser
 import (
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	kotlin "whosbug-Golang/src/whosbugPack/antlrpack/kotlin_lib"
+	kotlin "whosbugPack/antlrpack/kotlin_lib"
 	"whosbugPack/utility"
 )
 
@@ -150,17 +150,17 @@ func (s *KotlinTreeShapeListener) ExitClassDeclaration(ctx *kotlin.ClassDeclarat
 	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, classInfo)
 }
 
-//// VisitTerminal is called when a terminal node is visited.
-//func (s *KotlinTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {}
-//
-//// VisitErrorNode is called when an error node is visited.
-//func (s *KotlinTreeShapeListener) VisitErrorNode(node antlr.ErrorNode) {}
-//
-//// EnterEveryRule is called when any rule is entered.
-//func (s *KotlinTreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
-//
-//// ExitEveryRule is called when any rule is exited.
-//func (s *KotlinTreeShapeListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
+// VisitTerminal is called when a terminal node is visited.
+func (s *KotlinTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {}
+
+// VisitErrorNode is called when an error node is visited.
+func (s *KotlinTreeShapeListener) VisitErrorNode(node antlr.ErrorNode) {}
+
+// EnterEveryRule is called when any rule is entered.
+func (s *KotlinTreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
+
+// ExitEveryRule is called when any rule is exited.
+func (s *KotlinTreeShapeListener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
 
 // EnterKotlinFile is called when production kotlinFile is entered.
 func (s *KotlinTreeShapeListener) EnterKotlinFile(ctx *kotlin.KotlinFileContext) {}

@@ -9,7 +9,7 @@ import (
 )
 
 func TestExecuteJava(t *testing.T) {
-	input, _ := os.Open("C:\\Users\\KevinMatt\\Desktop\\whosbug-Golang\\AllInOne7.java")
+	input, _ := os.Open("D:\\Desktop\\Whosbug_antlr_go\\antlr4_java\\testfiles\\test.java")
 	text, _ := ioutil.ReadAll(input)
 	rest := ExecuteJava(string(text))
 	for _, item := range rest.AstInfoList.Classes {
@@ -18,6 +18,19 @@ func TestExecuteJava(t *testing.T) {
 	for _, item := range rest.AstInfoList.Methods {
 		if item.CallMethods != nil {
 			fmt.Println("Methods: ", item.CallMethods)
+		}
+	}
+}
+func TestExecuteCpp(t *testing.T) {
+	input, _ := os.Open("C:\\Users\\Sirius\\Desktop\\test.cpp")
+	text, _ := ioutil.ReadAll(input)
+	rest := ExecuteCpp(string(text))
+	for _, item := range rest.AstInfoList.Classes {
+		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tMasterObject: ", item.MasterObject)
+	}
+	for _, item := range rest.AstInfoList.Methods {
+		if item.CallMethods != nil {
+			fmt.Printf("Methods:%s,Calling:%s\n ", item.MethodName, item.CallMethods)
 		}
 	}
 }
@@ -31,7 +44,7 @@ func TestExecuteGolang(t *testing.T) {
 	}
 	for _, item := range rest.AstInfoList.Methods {
 		if item.CallMethods != nil {
-			fmt.Println("Methods: ", item.CallMethods)
+			fmt.Printf("Methods:%s,Calling:%s\n ", item.MethodName, item.CallMethods)
 		}
 	}
 }
@@ -63,5 +76,13 @@ func TestExecuteJavaScript(t *testing.T) {
 		if item.CallMethods != nil {
 			fmt.Println("Methods: ", item.CallMethods)
 		}
+	}
+}
+
+func TestRemoveRep(t *testing.T) {
+	input := []string{"a", "b", "a", "b"}
+	res := RemoveRep(input)
+	for _, item := range res {
+		fmt.Println(item)
 	}
 }

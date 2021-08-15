@@ -1,11 +1,127 @@
 package antlrpack
 
 import (
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/wxnacy/wgo/arrays"
 	"strings"
 	cpp "whosbugPack/antlrpack/cpp_lib"
 )
+
+// EnterClassSpecifier is called when production classSpecifier is entered.
+func (s *CppTreeShapeListener) EnterClassSpecifier(ctx *cpp.ClassSpecifierContext) {
+	var classInfo  = classInfoType{
+		StartLine: ctx.GetStart().GetLine(),
+		EndLine: ctx.GetStop().GetLine(),
+		MasterObject: masterObjectInfoType{},
+	}
+	name := ctx.GetChild(0).(*cpp.ClassHeadContext)
+	if name.ClassHeadName() != nil{
+		classInfo.ClassName = name.ClassHeadName().GetText()
+	}
+	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, classInfo)
+}
+// EnterNoPointerDeclarator is called when production noPointerDeclarator is entered.
+func (s *CppTreeShapeListener) EnterNoPointerDeclarator(ctx *cpp.NoPointerDeclaratorContext) {}
+
+// ExitNoPointerDeclarator is called when production noPointerDeclarator is exited.
+func (s *CppTreeShapeListener) ExitNoPointerDeclarator(ctx *cpp.NoPointerDeclaratorContext) {}
+
+// EnterFunctionDefinition is called when production functionDefinition is entered.
+func (s *CppTreeShapeListener) EnterFunctionDefinition(ctx *cpp.FunctionDefinitionContext) {
+	s.Type = "function"
+}
+// ExitFunctionDefinition is called when production functionDefinition is exited.
+func (s *CppTreeShapeListener) ExitFunctionDefinition(ctx *cpp.FunctionDefinitionContext) {
+	var methodInfo = MethodInfoType{
+		StartLine:    ctx.GetStart().GetLine(),
+		EndLine:      ctx.GetStop().GetLine(),
+	}
+
+	name := strings.Split(ctx.Declarator().GetText(), "(")
+	methodInfo.MethodName = strings.Replace(name[0],"::",".",-1)
+	//FuncAndMaster := strings.Split(name[0],"::")
+	//len := len(FuncAndMaster)
+	//methodInfo.MethodName = FuncAndMaster[len - 1]
+	//if len == 1{	//该方法不是成员方法
+	//	methodInfo.MasterObject = masterObjectInfoType{}
+	//}else{
+	//	methodInfo.MasterObject = masterObjectInfoType{
+	//		ObjectName: strings.Join(FuncAndMaster[:len],"."),
+	//		StartLine:  0,
+	//	}
+	//}
+
+	resCallMethods := s.findMethodCall()
+	if resCallMethods != nil{
+		methodInfo.CallMethods = RemoveRep(resCallMethods)
+	}
+
+	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
+	s.Infos.CallMethods = []CallMethodType{}
+	s.Type = ""
+}
+
+func (s *CppTreeShapeListener) findMethodCall() []string{
+	var structMethods []string
+	for index := range s.Infos.CallMethods {
+		structMethods = append(structMethods,s.Infos.CallMethods[index].Id)
+	}
+	return structMethods
+}
+
+// EnterExpressionStatement is called when production expressionStatement is entered.
+func (s *CppTreeShapeListener) EnterExpressionStatement(ctx *cpp.ExpressionStatementContext) {}
+
+// EnterPostfixExpression is called when production postfixExpression is entered.
+func (s *CppTreeShapeListener) EnterPostfixExpression(ctx *cpp.PostfixExpressionContext) {
+	children := ctx.GetChildren()
+	_, parentOk :=ctx.GetParent().(*cpp.PostfixExpressionContext)
+	if len(children) == 3 && parentOk && children[1].(antlr.ParseTree).GetText() == "."{
+		if _, ok := ctx.GetChild(2).(*cpp.IdExpressionContext); ok {
+			methodCalled := children[2].(antlr.ParseTree).GetText()
+			classBelong := children[0].(antlr.ParseTree).GetText()
+			var flag bool = false
+			for _, member := range s.Declaration {
+				if member.Type == classBelong{
+					classBelong = member.Name
+					flag = true
+					break
+				}
+			}
+			if flag == true{
+				var callMethod = CallMethodType{
+					StartLine: ctx.GetStart().GetLine(),
+					Id:        classBelong+"."+methodCalled,
+				}
+				s.Infos.CallMethods = append(s.Infos.CallMethods, callMethod)
+			}
+		}
+	}
+}
+
+func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclarationContext) {
+	if s.Type == "function"{
+		if ctx.DeclSpecifierSeq() != nil{
+			def := arrays.ContainsString([]string{"int","double","bool","byte","float64","float32","auto"},ctx.DeclSpecifierSeq().GetText())
+			if def < 0{
+				var member MemberType
+				member.Name = ctx.DeclSpecifierSeq().GetText()
+				list := strings.Split(ctx.InitDeclaratorList().GetText(),",")
+				for i := 0; i < len(list); i++ {
+					member.Type = list[i]
+					s.Declaration = append(s.Declaration, member)
+				}
+			}
+		}
+		//fmt.Printf("---Declaration:%+v\n",s.Declaration)
+	}
+
+}
+
+// ExitExpressionStatement is called when production expressionStatement is exited.
+func (s *CppTreeShapeListener) ExitExpressionStatement(ctx *cpp.ExpressionStatementContext) {}
+
+
 
 // VisitTerminal is called when a terminal node is visited.
 func (s *CppTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {}
@@ -109,8 +225,7 @@ func (s *CppTreeShapeListener) EnterLambdaDeclarator(ctx *cpp.LambdaDeclaratorCo
 // ExitLambdaDeclarator is called when production lambdaDeclarator is exited.
 func (s *CppTreeShapeListener) ExitLambdaDeclarator(ctx *cpp.LambdaDeclaratorContext) {}
 
-// EnterPostfixExpression is called when production postfixExpression is entered.
-func (s *CppTreeShapeListener) EnterPostfixExpression(ctx *cpp.PostfixExpressionContext) {}
+
 
 // ExitPostfixExpression is called when production postfixExpression is exited.
 func (s *CppTreeShapeListener) ExitPostfixExpression(ctx *cpp.PostfixExpressionContext) {
@@ -201,8 +316,7 @@ func (s *CppTreeShapeListener) EnterCastExpression(ctx *cpp.CastExpressionContex
 func (s *CppTreeShapeListener) ExitCastExpression(ctx *cpp.CastExpressionContext) {}
 
 // EnterPointerMemberExpression is called when production pointerMemberExpression is entered.
-func (s *CppTreeShapeListener) EnterPointerMemberExpression(ctx *cpp.PointerMemberExpressionContext) {
-}
+func (s *CppTreeShapeListener) EnterPointerMemberExpression(ctx *cpp.PointerMemberExpressionContext) {}
 
 // ExitPointerMemberExpression is called when production pointerMemberExpression is exited.
 func (s *CppTreeShapeListener) ExitPointerMemberExpression(ctx *cpp.PointerMemberExpressionContext) {}
@@ -317,12 +431,6 @@ func (s *CppTreeShapeListener) EnterLabeledStatement(ctx *cpp.LabeledStatementCo
 // ExitLabeledStatement is called when production labeledStatement is exited.
 func (s *CppTreeShapeListener) ExitLabeledStatement(ctx *cpp.LabeledStatementContext) {}
 
-// EnterExpressionStatement is called when production expressionStatement is entered.
-func (s *CppTreeShapeListener) EnterExpressionStatement(ctx *cpp.ExpressionStatementContext) {}
-
-// ExitExpressionStatement is called when production expressionStatement is exited.
-func (s *CppTreeShapeListener) ExitExpressionStatement(ctx *cpp.ExpressionStatementContext) {}
-
 // EnterCompoundStatement is called when production compoundStatement is entered.
 func (s *CppTreeShapeListener) EnterCompoundStatement(ctx *cpp.CompoundStatementContext) {}
 
@@ -407,15 +515,14 @@ func (s *CppTreeShapeListener) EnterAliasDeclaration(ctx *cpp.AliasDeclarationCo
 // ExitAliasDeclaration is called when production aliasDeclaration is exited.
 func (s *CppTreeShapeListener) ExitAliasDeclaration(ctx *cpp.AliasDeclarationContext) {}
 
-// EnterSimpleDeclaration is called when production simpleDeclaration is entered.
-func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclarationContext) {}
+//// EnterSimpleDeclaration is called when production simpleDeclaration is entered.
+//func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclarationContext) {}
 
 // ExitSimpleDeclaration is called when production simpleDeclaration is exited.
 func (s *CppTreeShapeListener) ExitSimpleDeclaration(ctx *cpp.SimpleDeclarationContext) {}
 
 // EnterStaticAssertDeclaration is called when production staticAssertDeclaration is entered.
-func (s *CppTreeShapeListener) EnterStaticAssertDeclaration(ctx *cpp.StaticAssertDeclarationContext) {
-}
+func (s *CppTreeShapeListener) EnterStaticAssertDeclaration(ctx *cpp.StaticAssertDeclarationContext) {}
 
 // ExitStaticAssertDeclaration is called when production staticAssertDeclaration is exited.
 func (s *CppTreeShapeListener) ExitStaticAssertDeclaration(ctx *cpp.StaticAssertDeclarationContext) {}
@@ -525,8 +632,7 @@ func (s *CppTreeShapeListener) EnterDecltypeSpecifier(ctx *cpp.DecltypeSpecifier
 func (s *CppTreeShapeListener) ExitDecltypeSpecifier(ctx *cpp.DecltypeSpecifierContext) {}
 
 // EnterElaboratedTypeSpecifier is called when production elaboratedTypeSpecifier is entered.
-func (s *CppTreeShapeListener) EnterElaboratedTypeSpecifier(ctx *cpp.ElaboratedTypeSpecifierContext) {
-}
+func (s *CppTreeShapeListener) EnterElaboratedTypeSpecifier(ctx *cpp.ElaboratedTypeSpecifierContext) {}
 
 // ExitElaboratedTypeSpecifier is called when production elaboratedTypeSpecifier is exited.
 func (s *CppTreeShapeListener) ExitElaboratedTypeSpecifier(ctx *cpp.ElaboratedTypeSpecifierContext) {}
@@ -686,8 +792,7 @@ func (s *CppTreeShapeListener) EnterAttributeNamespace(ctx *cpp.AttributeNamespa
 func (s *CppTreeShapeListener) ExitAttributeNamespace(ctx *cpp.AttributeNamespaceContext) {}
 
 // EnterAttributeArgumentClause is called when production attributeArgumentClause is entered.
-func (s *CppTreeShapeListener) EnterAttributeArgumentClause(ctx *cpp.AttributeArgumentClauseContext) {
-}
+func (s *CppTreeShapeListener) EnterAttributeArgumentClause(ctx *cpp.AttributeArgumentClauseContext) {}
 
 // ExitAttributeArgumentClause is called when production attributeArgumentClause is exited.
 func (s *CppTreeShapeListener) ExitAttributeArgumentClause(ctx *cpp.AttributeArgumentClauseContext) {}
@@ -728,15 +833,8 @@ func (s *CppTreeShapeListener) EnterPointerDeclarator(ctx *cpp.PointerDeclarator
 // ExitPointerDeclarator is called when production pointerDeclarator is exited.
 func (s *CppTreeShapeListener) ExitPointerDeclarator(ctx *cpp.PointerDeclaratorContext) {}
 
-// EnterNoPointerDeclarator is called when production noPointerDeclarator is entered.
-func (s *CppTreeShapeListener) EnterNoPointerDeclarator(ctx *cpp.NoPointerDeclaratorContext) {}
-
-// ExitNoPointerDeclarator is called when production noPointerDeclarator is exited.
-func (s *CppTreeShapeListener) ExitNoPointerDeclarator(ctx *cpp.NoPointerDeclaratorContext) {}
-
 // EnterParametersAndQualifiers is called when production parametersAndQualifiers is entered.
-func (s *CppTreeShapeListener) EnterParametersAndQualifiers(ctx *cpp.ParametersAndQualifiersContext) {
-}
+func (s *CppTreeShapeListener) EnterParametersAndQualifiers(ctx *cpp.ParametersAndQualifiersContext) {}
 
 // ExitParametersAndQualifiers is called when production parametersAndQualifiers is exited.
 func (s *CppTreeShapeListener) ExitParametersAndQualifiers(ctx *cpp.ParametersAndQualifiersContext) {}
@@ -832,39 +930,13 @@ func (s *CppTreeShapeListener) EnterParameterDeclarationList(ctx *cpp.ParameterD
 }
 
 // ExitParameterDeclarationList is called when production parameterDeclarationList is exited.
-func (s *CppTreeShapeListener) ExitParameterDeclarationList(ctx *cpp.ParameterDeclarationListContext) {
-}
+func (s *CppTreeShapeListener) ExitParameterDeclarationList(ctx *cpp.ParameterDeclarationListContext) {}
 
 // EnterParameterDeclaration is called when production parameterDeclaration is entered.
 func (s *CppTreeShapeListener) EnterParameterDeclaration(ctx *cpp.ParameterDeclarationContext) {}
 
 // ExitParameterDeclaration is called when production parameterDeclaration is exited.
 func (s *CppTreeShapeListener) ExitParameterDeclaration(ctx *cpp.ParameterDeclarationContext) {}
-
-// EnterFunctionDefinition is called when production functionDefinition is entered.
-func (s *CppTreeShapeListener) EnterFunctionDefinition(ctx *cpp.FunctionDefinitionContext) {
-	var temp funcInfoType
-	s.TempInfo.FuncInfo = temp
-	s.TempInfo.FuncInfo.StartLine = ctx.GetStart().GetLine()
-	s.TempInfo.FuncInfo.EndLine = ctx.GetStop().GetLine()
-}
-
-// ExitFunctionDefinition is called when production functionDefinition is exited.
-func (s *CppTreeShapeListener) ExitFunctionDefinition(ctx *cpp.FunctionDefinitionContext) {
-	//var funcInfo funcInfoType
-	//s.Infos.FuncInfo.StartLine = ctx.GetStart().GetLine()
-	//s.Infos.FuncInfo.EndLine = ctx.GetStop().GetLine()
-
-	if ctx.DeclSpecifierSeq() != nil {
-		s.TempInfo.FuncInfo.RetType = ctx.DeclSpecifierSeq().GetText()
-	}
-
-	name := strings.Split(ctx.Declarator().GetText(), "(")
-	//fmt.Println(ctx.Declarator().GetText())
-	s.TempInfo.FuncInfo.FuncName = name[0]
-	s.Infos.AstInfoList.Funcs = append(s.Infos.AstInfoList.Funcs, s.TempInfo.FuncInfo)
-	fmt.Println(s.Infos.AstInfoList.Funcs)
-}
 
 // EnterFunctionBody is called when production functionBody is entered.
 func (s *CppTreeShapeListener) EnterFunctionBody(ctx *cpp.FunctionBodyContext) {}
@@ -879,8 +951,7 @@ func (s *CppTreeShapeListener) EnterInitializer(ctx *cpp.InitializerContext) {}
 func (s *CppTreeShapeListener) ExitInitializer(ctx *cpp.InitializerContext) {}
 
 // EnterBraceOrEqualInitializer is called when production braceOrEqualInitializer is entered.
-func (s *CppTreeShapeListener) EnterBraceOrEqualInitializer(ctx *cpp.BraceOrEqualInitializerContext) {
-}
+func (s *CppTreeShapeListener) EnterBraceOrEqualInitializer(ctx *cpp.BraceOrEqualInitializerContext) {}
 
 // ExitBraceOrEqualInitializer is called when production braceOrEqualInitializer is exited.
 func (s *CppTreeShapeListener) ExitBraceOrEqualInitializer(ctx *cpp.BraceOrEqualInitializerContext) {}
@@ -909,34 +980,6 @@ func (s *CppTreeShapeListener) EnterClassName(ctx *cpp.ClassNameContext) {}
 // ExitClassName is called when production className is exited.
 func (s *CppTreeShapeListener) ExitClassName(ctx *cpp.ClassNameContext) {}
 
-// EnterClassSpecifier is called when production classSpecifier is entered.
-func (s *CppTreeShapeListener) EnterClassSpecifier(ctx *cpp.ClassSpecifierContext) {
-	var classInfo = classInfoType{
-		ClassName:    ctx.GetChild(0).GetChild(1).(antlr.ParseTree).GetText(),
-		StartLine:    ctx.GetStart().GetLine(),
-		EndLine:      ctx.GetStop().GetLine(),
-		MasterObject: findCppMasterObjectClass(ctx),
-	}
-}
-
-func findCppMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
-	classHead := ctx.GetChild(0)
-	if classHead.GetChildCount() == 2 {
-		return masterObjectInfoType{}
-	} else {
-		baseSpecifierList := classHead.GetChild(2).GetChild(1).GetChildren()
-		for _, tree := range baseSpecifierList {
-			if _, ok := tree.(*cpp.BaseSpecifierContext); ok {
-				var masterInfo = masterObjectInfoType{
-					ObjectName: tree.GetChild(tree.GetChildCount() - 1).(antlr.ParseTree).GetText(),
-					StartLine:  0,
-				}
-			}
-		}
-
-	}
-}
-
 // ExitClassSpecifier is called when production classSpecifier is exited.
 func (s *CppTreeShapeListener) ExitClassSpecifier(ctx *cpp.ClassSpecifierContext) {}
 
@@ -945,23 +988,7 @@ func (s *CppTreeShapeListener) EnterClassHead(ctx *cpp.ClassHeadContext) {
 }
 
 // ExitClassHead is called when production classHead is exited.
-func (s *CppTreeShapeListener) ExitClassHead(ctx *cpp.ClassHeadContext) {
-	s.TempInfo.ClassInfo.StartLine = ctx.GetStart().GetLine()
-
-	if ctx.ClassHeadName() != nil {
-		s.TempInfo.ClassInfo.ClassName = ctx.ClassHeadName().GetText()
-	}
-
-	if ctx.BaseClause() != nil {
-		i := 0
-		for i < ctx.BaseClause().GetChild(1).GetChildCount() {
-			s.TempInfo.ClassInfo.Extends = append(s.TempInfo.ClassInfo.Extends, ctx.BaseClause().GetChild(1).GetChild(i).GetChild(1).(antlr.ParseTree).GetText())
-			i += 2
-		}
-	} else {
-		s.TempInfo.ClassInfo.Extends = append(s.TempInfo.ClassInfo.Extends, "None")
-	}
-}
+func (s *CppTreeShapeListener) ExitClassHead(ctx *cpp.ClassHeadContext) {}
 
 // EnterClassHeadName is called when production classHeadName is entered.
 func (s *CppTreeShapeListener) EnterClassHeadName(ctx *cpp.ClassHeadNameContext) {}
@@ -1258,3 +1285,4 @@ func (s *CppTreeShapeListener) EnterLiteral(ctx *cpp.LiteralContext) {}
 
 // ExitLiteral is called when production literal is exited.
 func (s *CppTreeShapeListener) ExitLiteral(ctx *cpp.LiteralContext) {}
+

@@ -13,3 +13,21 @@ package antlrpack
 //	text = sha256.Sum256(append(append(projectId, objectName...), filePath...))
 //	return
 //}
+
+// RemoveRep
+// 	@Description: 切片去重
+// 	@param s
+// 	@return []string
+// 	@author KevinMatt 2021-08-14 15:14:28
+// 	@function_mark
+func RemoveRep(s []string) []string {
+	var result []string
+	m := make(map[string]bool)
+	for _, v := range s {
+		if _, ok := m[v]; !ok {
+			result = append(result, v)
+			m[v] = true
+		}
+	}
+	return result
+}

@@ -21,13 +21,25 @@ func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, "java")
 	//var tempCompare global_type.ObjectInfoType
 	var tempCompare global_type.ObjectInfoType
+	var countMinus int = 0
+	var countPlus int = 0
 	for index := range commitDiff.ChangeLineNumbers {
 		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
 		//newTemp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
 		if temp.Equals(tempCompare) {
+			if commitDiff.ChangeLineNumbers[index].ChangeType == "-" {
+				countMinus++
+			} else {
+				countPlus++
+			}
 			continue
 		}
 		if !temp.Equals(global_type.ObjectInfoType{}) {
+			temp.ChangedOldLineCount = countMinus
+			countMinus = 0
+			temp.ChangedNewLineCount = countPlus
+			countPlus = 0
+			temp.NewLineCount = temp.OldLineCount + temp.ChangedNewLineCount - temp.ChangedOldLineCount
 			//	送入channel
 			global_type.ObjectChan <- temp
 		}
@@ -98,8 +110,8 @@ func ExecuteCpp(diffText string) AnalysisInfoType{
 	//	初始化Token流
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	//	初始化Parser
-	p := goParserPool.Get().(*cpp.CPP14Parser)
-	defer goParserPool.Put(p)
+	p := cppParserPool.Get().(*cpp.CPP14Parser)
+	defer cppParserPool.Put(p)
 	p.SetTokenStream(stream)
 	//	构建语法解析树
 	p.BuildParseTrees = true
@@ -108,8 +120,8 @@ func ExecuteCpp(diffText string) AnalysisInfoType{
 	//	解析模式->每个编译单位
 	tree := p.TranslationUnit()
 	//	创建listener
-	listener := newGoTreeShapeListenerPool.Get().(*CppTreeShapeListener)
-	defer newGoTreeShapeListenerPool.Put(listener)
+	listener := newCppTreeShapeListenerPool.Get().(*CppTreeShapeListener)
+	defer newCppTreeShapeListenerPool.Put(listener)
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.Infos
@@ -225,18 +237,17 @@ func addObjectFromChangeLineNumber(commitDiff global_type.DiffParsedType, change
 		//	为空直接跳过执行
 		return global_type.ObjectInfoType{}
 	}
+
 	//	TODO Ready for newMethod
 	var newObject global_type.ObjectInfoType
 	newObject = global_type.ObjectInfoType{
-		CommitHash:          commitDiff.CommitHash, //utility.Base64Encrypt(commitDiff.CommitHash)
-		Id:                  changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName,
-		OldId:               "",
-		FilePath:            utility.Base64Encrypt(commitDiff.CommitHash),
-		OldLineCount:        commitDiff.OldLineCount,
-		NewLineCount:        commitDiff.NewLineCount,
-		ChangedOldLineCount: 0,
-		ChangedNewLineCount: 0,
-		Calling:             changeMethod.CallMethods,
+		CommitHash:   commitDiff.CommitHash, //utility.Base64Encrypt(commitDiff.CommitHash)
+		Id:           changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName,
+		OldId:        "",
+		FilePath:     utility.Base64Encrypt(commitDiff.CommitHash),
+		OldLineCount: changeMethod.EndLine - changeMethod.StartLine,
+		NewLineCount: commitDiff.NewLineCount,
+		Calling:      changeMethod.CallMethods,
 	}
 	return newObject
 }

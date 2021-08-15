@@ -18,20 +18,20 @@ import (
 //	@author KevinMatt 2021-07-29 17:25:39
 //	@function_mark PASS
 func GetLogInfo() (string, string) {
-	//// 切换到仓库目录
-	//err := os.Chdir(global_type.Config.RepoPath)
-	//if err != nil {
-	//	log.Println(err)
-	//}
+	// 切换到仓库目录
+	err := os.Chdir(global_type.Config.RepoPath)
+	if err != nil {
+		log.Println(err)
+	}
 	fmt.Println("Work Path In ", global_type.WorkPath)
 
 	global_type.LocalHashLatest = ExecCommandOutput("git", "rev-parse", "HEAD")
 
-	//cloudHashLatest, err := utility.GetLatestRelease(global_type.Config.ProjectId)
-	//if err != nil {
-	//	fmt.Println(utility.ErrorMessage(errors.WithStack(err)))
-	//}
-	cloudHashLatest := ""
+	cloudHashLatest, err := utility.GetLatestRelease(global_type.Config.ProjectId)
+	if err != nil {
+		fmt.Println(utility.ErrorMessage(errors.WithStack(err)))
+	}
+	//cloudHashLatest := ""
 	fmt.Println("Head Got!")
 	global_type.LatestCommitHash = cloudHashLatest
 	if cloudHashLatest == global_type.LocalHashLatest {
