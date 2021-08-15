@@ -22,9 +22,9 @@ import (
 func init() {
 	log.SetOutput(os.Stdout)
 	global_type.Config = global_type.InputJson{
-		ProjectId:         "tesadassssstsss",
+		ProjectId:         "asssssssssssssssssd",
 		ReleaseVersion:    "1.0.0",
-		RepoPath:          "C:\\Users\\KevinMatt\\Desktop\\test\\Java",
+		RepoPath:          "C:\\Users\\KevinMatt\\Desktop\\test\\java-design-patterns",
 		BranchName:        "master",
 		WebServerHost:     "http://127.0.0.1:8081",
 		WebServerUserName: "user",
@@ -67,7 +67,7 @@ func init() {
 	}
 
 	//开启处理object上传的协程
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 1; i++ {
 		go uploadpack.ProcessObjectUpload()
 	}
 }

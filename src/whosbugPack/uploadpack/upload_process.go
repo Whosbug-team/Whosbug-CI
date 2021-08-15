@@ -132,7 +132,7 @@ func PostCommitsInfo(commitPath string) error {
 		CommitInfo := utility.GetCommitInfo(string(line))
 		FinMessage.Commit = append(FinMessage.Commit, CommitInfo)
 	}
-
+	commitFd.Close()
 	data, err := json.MarshalToString(&FinMessage)
 	token, err := utility.GenToken()
 	url := global_type.Config.WebServerHost + "/whosbug/commits/commits-info/"

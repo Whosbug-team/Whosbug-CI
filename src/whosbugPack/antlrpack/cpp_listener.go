@@ -1,7 +1,6 @@
 package antlrpack
 
 import (
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/wxnacy/wgo/arrays"
 	"strings"
@@ -52,7 +51,10 @@ func (s *CppTreeShapeListener) ExitFunctionDefinition(ctx *cpp.FunctionDefinitio
 	//	}
 	//}
 
-	methodInfo.CallMethods = s.findMethodCall()
+	resCallMethods := s.findMethodCall()
+	if resCallMethods != nil{
+		methodInfo.CallMethods = RemoveRep(resCallMethods)
+	}
 
 	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
 	s.Infos.CallMethods = []CallMethodType{}
@@ -111,7 +113,7 @@ func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclaration
 				}
 			}
 		}
-		fmt.Printf("---Declaration:%+v\n",s.Declaration)
+		//fmt.Printf("---Declaration:%+v\n",s.Declaration)
 	}
 
 }
