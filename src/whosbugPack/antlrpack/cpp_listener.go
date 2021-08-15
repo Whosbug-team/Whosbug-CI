@@ -41,18 +41,6 @@ func (s *CppTreeShapeListener) ExitFunctionDefinition(ctx *cpp.FunctionDefinitio
 
 	name := strings.Split(ctx.Declarator().GetText(), "(")
 	methodInfo.MethodName = strings.Replace(name[0], "::", ".", -1)
-	//FuncAndMaster := strings.Split(name[0],"::")
-	//len := len(FuncAndMaster)
-	//methodInfo.MethodName = FuncAndMaster[len - 1]
-	//if len == 1{	//该方法不是成员方法
-	//	methodInfo.MasterObject = masterObjectInfoType{}
-	//}else{
-	//	methodInfo.MasterObject = masterObjectInfoType{
-	//		ObjectName: strings.Join(FuncAndMaster[:len],"."),
-	//		StartLine:  0,
-	//	}
-	//}
-
 	resCallMethods := s.findMethodCall()
 	if resCallMethods != nil {
 		methodInfo.CallMethods = RemoveRep(resCallMethods)
@@ -115,7 +103,6 @@ func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclaration
 				}
 			}
 		}
-		//fmt.Printf("---Declaration:%+v\n",s.Declaration)
 	}
 
 }
