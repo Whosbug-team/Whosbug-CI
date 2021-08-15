@@ -2,6 +2,7 @@ package antlrpack
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"path"
 	javaparser "whosbugPack/antlrpack/java_lib"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
 	"whosbugPack/global_type"
@@ -15,7 +16,7 @@ import (
 //	@function_mark PASS
 func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 	//	获取antlr分析结果
-	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, "java")
+	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, path.Ext(commitDiff.DiffFileName))
 	//var tempCompare global_type.ObjectInfoType
 	var tempCompare global_type.ObjectInfoType
 	var countMinus int = 0
@@ -55,12 +56,14 @@ func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	var result AnalysisInfoType
 	switch langMode {
-	case "java":
+	case ".java":
 		result = ExecuteJava(diffText)
 	//	TODO 其他语言的适配支持
-	case "python":
+	case ".py":
 		result = ExecutePython(diffText)
-	case "kotlin":
+	case ".kt":
+		result = ExecuteKotlin(diffText)
+	case ".kts":
 		result = ExecuteKotlin(diffText)
 	default:
 		break
