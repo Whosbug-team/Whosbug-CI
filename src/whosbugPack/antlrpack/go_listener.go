@@ -4,7 +4,7 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"strings"
 	golang "whosbugPack/antlrpack/go_lib"
-	"whosbugPack/utility"
+	//"whosbugPack/utility"
 )
 
 //只能解析非struct方法
@@ -14,7 +14,7 @@ func (s *GoTreeShapeListener) ExitFunctionDecl(ctx *golang.FunctionDeclContext) 
 	funcInfo.StartLine = ctx.GetStart().GetLine()
 	funcInfo.EndLine = ctx.GetStop().GetLine()
 	funcInfo.MasterObject = masterObjectInfoType{}
-	funcInfo.CallMethods = s.findMethodCall("")
+	funcInfo.CallMethods = s.findMethodCall(s.Declaration,s.Infos.CallMethods)
 
 	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, funcInfo)
 	s.Infos.CallMethods = []CallMethodType{}
@@ -23,7 +23,7 @@ func (s *GoTreeShapeListener) ExitFunctionDecl(ctx *golang.FunctionDeclContext) 
 func (s *GoTreeShapeListener) ExitMethodDecl(ctx *golang.MethodDeclContext) {
 	var funcInfo MethodInfoType
 
-	funcInfo.MethodName = ctx.GetChild(2).(antlr.ParseTree).GetText()
+	//funcInfo.MethodName = ctx.GetChild(2).(antlr.ParseTree).GetText()
 	funcInfo.StartLine = ctx.GetStart().GetLine()
 	funcInfo.EndLine = ctx.GetStop().GetLine()
 
@@ -38,13 +38,103 @@ func (s *GoTreeShapeListener) ExitMethodDecl(ctx *golang.MethodDeclContext) {
 		StartLine: 0,
 		ObjectName: struct_belong,
 	}
+	funcInfo.MethodName = struct_belong+"."+ctx.GetChild(2).(antlr.ParseTree).GetText()
 	funcInfo.MasterObject = masterObject
-	funcInfo.CallMethods = s.findMethodCall(struct_belong)
+	funcInfo.CallMethods = s.findMethodCall(s.Declaration,s.Infos.CallMethods)
 
 	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, funcInfo)
 	s.Infos.CallMethods = []CallMethodType{}
 }
 
+//将s.Declaration和s.Infos.CallMethods匹配成完整的callMethods
+func (s *GoTreeShapeListener) findMethodCall(declaration []MemberType,callMethods []CallMethodType) []string{
+	//fmt.Printf("+++declaration:%+v++callMethods:%+v\n",declaration,callMethods)
+	var methods []string
+	for _,callMethod := range callMethods { //cube1.Area
+		TypeAndVale := strings.Split(callMethod.Id,".")
+		if len(TypeAndVale) == 2{
+			MethodCalled := strings.Split(callMethod.Id,".")[1]
+			classBelong := strings.Split(callMethod.Id,".")[0]
+			var flag bool = false
+			for _, member := range declaration {
+				if member.Name == classBelong{
+					classBelong = member.Type
+					flag = true
+					break
+				}
+			}
+			if flag == true{
+				methods = append(methods, classBelong+"."+MethodCalled)
+			}
+		}
+
+	}
+	if methods != nil{
+		methods = RemoveRep(methods)
+	}
+	return methods
+}
+
+// EnterVarSpec is called when production varSpec is entered.
+func (s *GoTreeShapeListener) EnterVarSpec(ctx *golang.VarSpecContext) {
+}
+// EnterImportDecl is called when production importDecl is entered.
+func (s *GoTreeShapeListener) EnterImportDecl(ctx *golang.ImportDeclContext) {
+	var member MemberType
+	imports := ctx.AllImportSpec()
+	for i := 0; i < len(imports); i++ {
+		Import := imports[i].(*golang.ImportSpecContext)
+		pathName := strings.Trim(Import.ImportPath().GetText(),"\"")
+		member.Type = strings.Replace(pathName,"/",".",-1)
+		if Import.IDENTIFIER() != nil{	//antlr4 "github.com/antlr/antlr4/runtime/Go/antlr"
+			member.Name = Import.IDENTIFIER().GetText()
+		}else {	//"github.com/antlr/antlr4/runtime/Go/antlr" 没有别名就取path的最后一个单词antlr
+			temp := strings.Split(member.Type,".")
+			member.Name = temp[len(temp)-1]
+		}
+		s.Declaration = append(s.Declaration, member)
+		//fmt.Printf("---Decl:%+v\n",s.Declaration)
+	}
+}
+// EnterCompositeLit is called when production compositeLit is entered.
+//	cube1 := Cube{}
+//	var cube2 = Cube{}
+func (s *GoTreeShapeListener) EnterCompositeLit(ctx *golang.CompositeLitContext) {
+	temp := ctx.GetParent()
+	if temp == nil {
+		return
+	}
+	for {
+		if _, ok := temp.(*golang.VarSpecContext); ok {
+			VarNames := temp.(*golang.VarSpecContext).IdentifierList().GetChildren()
+			VarType := ctx.LiteralType().GetText()
+			for _, varName := range VarNames {
+				var member = MemberType{
+					Name: varName.(antlr.ParseTree).GetText(),
+					Type: VarType,
+				}
+				s.Declaration = append(s.Declaration, member)
+			}
+			break
+		}else if _, ok := temp.(*golang.ShortVarDeclContext); ok{
+			VarNames := temp.(*golang.ShortVarDeclContext).IdentifierList().GetChildren()
+			VarType := ctx.LiteralType().GetText()
+			for _, varName := range VarNames {
+				var member = MemberType{
+					Name: varName.(antlr.ParseTree).GetText(),
+					Type: VarType,
+				}
+				s.Declaration = append(s.Declaration, member)
+			}
+			break
+		}
+		temp = temp.GetParent()
+		if temp == nil {
+			return
+		}
+	}
+	//fmt.Printf("---Decl:%+v\n",s.Declaration)
+}
 func (s *GoTreeShapeListener) EnterExpressionStmt(ctx *golang.ExpressionStmtContext) {
 	index := strings.Index(ctx.GetText(),"(")
 	var callMethod = CallMethodType{
@@ -54,13 +144,7 @@ func (s *GoTreeShapeListener) EnterExpressionStmt(ctx *golang.ExpressionStmtCont
 	s.Infos.CallMethods = append(s.Infos.CallMethods, callMethod)
 }
 
-func (s *GoTreeShapeListener) findMethodCall(struct_belong string) []string{
-	var struct_methods []string
-	for index := range s.Infos.CallMethods {
-		struct_methods = append(struct_methods,utility.ConCatStrings(struct_belong, ".", s.Infos.CallMethods[index].Id))
-	}
-	return struct_methods
-}
+
 
 func (s *GoTreeShapeListener) EnterStructType(ctx *golang.StructTypeContext) {
 
@@ -118,8 +202,6 @@ func (s *GoTreeShapeListener) EnterPackageClause(ctx *golang.PackageClauseContex
 // ExitPackageClause is called when production packageClause is exited.
 func (s *GoTreeShapeListener) ExitPackageClause(ctx *golang.PackageClauseContext) {}
 
-// EnterImportDecl is called when production importDecl is entered.
-func (s *GoTreeShapeListener) EnterImportDecl(ctx *golang.ImportDeclContext) {}
 
 // ExitImportDecl is called when production importDecl is exited.
 func (s *GoTreeShapeListener) ExitImportDecl(ctx *golang.ImportDeclContext) {}
@@ -196,8 +278,6 @@ func (s *GoTreeShapeListener) EnterVarDecl(ctx *golang.VarDeclContext) {}
 // ExitVarDecl is called when production varDecl is exited.
 func (s *GoTreeShapeListener) ExitVarDecl(ctx *golang.VarDeclContext) {}
 
-// EnterVarSpec is called when production varSpec is entered.
-func (s *GoTreeShapeListener) EnterVarSpec(ctx *golang.VarSpecContext) {}
 
 // ExitVarSpec is called when production varSpec is exited.
 func (s *GoTreeShapeListener) ExitVarSpec(ctx *golang.VarSpecContext) {}
@@ -589,8 +669,7 @@ func (s *GoTreeShapeListener) EnterQualifiedIdent(ctx *golang.QualifiedIdentCont
 // ExitQualifiedIdent is called when production qualifiedIdent is exited.
 func (s *GoTreeShapeListener) ExitQualifiedIdent(ctx *golang.QualifiedIdentContext) {}
 
-// EnterCompositeLit is called when production compositeLit is entered.
-func (s *GoTreeShapeListener) EnterCompositeLit(ctx *golang.CompositeLitContext) {}
+
 
 // ExitCompositeLit is called when production compositeLit is exited.
 func (s *GoTreeShapeListener) ExitCompositeLit(ctx *golang.CompositeLitContext) {}

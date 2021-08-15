@@ -82,7 +82,7 @@ func (s *CppTreeShapeListener) EnterPostfixExpression(ctx *cpp.PostfixExpression
 			classBelong := children[0].(antlr.ParseTree).GetText()
 			var flag bool = false
 			for _, member := range s.Declaration {
-				if member.Value == classBelong{
+				if member.Type == classBelong{
 					classBelong = member.Name
 					flag = true
 					break
@@ -108,7 +108,7 @@ func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclaration
 				member.Name = ctx.DeclSpecifierSeq().GetText()
 				list := strings.Split(ctx.InitDeclaratorList().GetText(),",")
 				for i := 0; i < len(list); i++ {
-					member.Value = list[i]
+					member.Type = list[i]
 					s.Declaration = append(s.Declaration, member)
 				}
 			}

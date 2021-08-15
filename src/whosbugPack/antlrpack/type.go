@@ -16,12 +16,13 @@ type CppTreeShapeListener struct{
 }
 
 type GoTreeShapeListener struct{
+	Declaration []MemberType
 	Infos AnalysisInfoType
 }
 
 type MemberType struct {
 	Name string
-	Value string
+	Type string
 }
 type CallMethodType struct {
 	StartLine int
