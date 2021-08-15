@@ -719,7 +719,7 @@ func (s *StatementContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 //		listenerT.EnterStatement(s)
 //	}
 //}
-//
+
 //func (s *StatementContext) ExitRule(listener antlr.ParseTreeListener) {
 //	if listenerT, ok := listener.(JavaScriptParserListener); ok {
 //		listenerT.ExitStatement(s)

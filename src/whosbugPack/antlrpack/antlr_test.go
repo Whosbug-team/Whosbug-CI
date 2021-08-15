@@ -75,6 +75,7 @@ func TestExecuteJavaScript(t *testing.T) {
 	for _, item := range rest.AstInfoList.Objects {
 		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ObjectName)
 	}
+
 	var temp CallMethodType
 	for _, item := range rest.CallMethods {
 		if item != temp {
