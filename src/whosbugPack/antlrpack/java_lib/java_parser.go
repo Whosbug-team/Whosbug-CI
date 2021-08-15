@@ -6755,11 +6755,12 @@ func (s *VariableDeclaratorContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-//func (s *VariableDeclaratorContext) EnterRule(listener antlr.ParseTreeListener) {
-//	if listenerT, ok := listener.(JavaParserListener); ok {
-//		listenerT.EnterVariableDeclarator(s)
-//	}
-//}
+func (s *VariableDeclaratorContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(JavaParserListener); ok {
+		listenerT.EnterVariableDeclarator(s)
+	}
+}
+
 //
 //func (s *VariableDeclaratorContext) ExitRule(listener antlr.ParseTreeListener) {
 //	if listenerT, ok := listener.(JavaParserListener); ok {

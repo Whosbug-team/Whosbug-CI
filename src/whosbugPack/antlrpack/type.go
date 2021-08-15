@@ -1,7 +1,8 @@
 package antlrpack
 
 type JavaTreeShapeListener struct {
-	Infos AnalysisInfoType
+	Declaration []MemberType
+	Infos       AnalysisInfoType
 }
 
 type KotlinTreeShapeListener struct {
