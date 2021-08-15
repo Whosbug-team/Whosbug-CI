@@ -1,7 +1,8 @@
 package antlrpack
 
 type JavaTreeShapeListener struct {
-	Infos AnalysisInfoType
+	Declaration []MemberType
+	Infos       AnalysisInfoType
 }
 
 type KotlinTreeShapeListener struct {
@@ -9,15 +10,15 @@ type KotlinTreeShapeListener struct {
 	Infos      AnalysisInfoType
 }
 
-type CppTreeShapeListener struct{
-	Type string
+type CppTreeShapeListener struct {
+	Type        string
 	Declaration []MemberType
-	Infos AnalysisInfoType
+	Infos       AnalysisInfoType
 }
 
-type GoTreeShapeListener struct{
+type GoTreeShapeListener struct {
 	Declaration []MemberType
-	Infos AnalysisInfoType
+	Infos       AnalysisInfoType
 }
 
 type MemberType struct {

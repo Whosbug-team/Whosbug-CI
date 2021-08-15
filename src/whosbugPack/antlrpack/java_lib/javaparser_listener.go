@@ -13,4 +13,6 @@ type JavaParserListener interface {
 	EnterMethodCall(c *MethodCallContext)
 
 	EnterClassDeclaration(c *ClassDeclarationContext)
+
+	EnterVariableDeclarator(c *VariableDeclaratorContext)
 }
