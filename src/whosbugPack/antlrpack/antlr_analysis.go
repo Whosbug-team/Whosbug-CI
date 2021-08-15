@@ -2,6 +2,7 @@ package antlrpack
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"path"
 	cpp "whosbugPack/antlrpack/cpp_lib"
 	golang "whosbugPack/antlrpack/go_lib"
 	javaparser "whosbugPack/antlrpack/java_lib"
@@ -17,7 +18,7 @@ import (
 //	@function_mark PASS
 func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 	//	获取antlr分析结果
-	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, "java")
+	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, path.Ext(commitDiff.DiffFileName))
 	//var tempCompare global_type.ObjectInfoType
 	var tempCompare global_type.ObjectInfoType
 	var countMinus int = 0
@@ -57,21 +58,21 @@ func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	var result AnalysisInfoType
 	switch langMode {
-	case "java":
+	case ".java":
 		result = ExecuteJava(diffText)
 	//	TODO 其他语言的适配支持
-	case "python":
+	case ".py":
 		result = ExecutePython(diffText)
-	case "kotlin":
+	case ".kt", ".kts":
 		result = ExecuteKotlin(diffText)
-	case "golang":
+	case ".go":
 		result = ExecuteGolang(diffText)
 	default:
 		break
 	}
 	return result
 }
-func ExecuteGolang(diffText string) AnalysisInfoType{
+func ExecuteGolang(diffText string) AnalysisInfoType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
@@ -97,7 +98,7 @@ func ExecuteGolang(diffText string) AnalysisInfoType{
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.Infos
 }
-func ExecuteCpp(diffText string) AnalysisInfoType{
+func ExecuteCpp(diffText string) AnalysisInfoType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
