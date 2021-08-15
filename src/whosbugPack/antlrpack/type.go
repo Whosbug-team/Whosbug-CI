@@ -9,20 +9,25 @@ type KotlinTreeShapeListener struct {
 	Infos      AnalysisInfoType
 }
 
-type CppTreeShapeListener struct{
-	Type string
+type CppTreeShapeListener struct {
+	Type        string
 	Declaration []MemberType
-	Infos AnalysisInfoType
+	Infos       AnalysisInfoType
 }
 
-type GoTreeShapeListener struct{
+type GoTreeShapeListener struct {
 	Declaration []MemberType
-	Infos AnalysisInfoType
+	Infos       AnalysisInfoType
 }
 
 type MemberType struct {
 	Name string
 	Type string
+}
+type JSTreeShapeListener struct {
+	ObjectInfo ObjectInfoType
+	ClassInfo  classInfoType
+	Infos      AnalysisInfoType
 }
 type CallMethodType struct {
 	StartLine int
@@ -37,6 +42,7 @@ type AnalysisInfoType struct {
 type astInfoType struct {
 	Classes []classInfoType
 	Methods []MethodInfoType
+	Objects []ObjectInfoType
 }
 
 type classInfoType struct {
@@ -44,6 +50,7 @@ type classInfoType struct {
 	EndLine      int
 	ClassName    string
 	MasterObject masterObjectInfoType
+	Extends      string
 }
 
 type MethodInfoType struct {
@@ -52,9 +59,17 @@ type MethodInfoType struct {
 	MethodName   string
 	MasterObject masterObjectInfoType
 	CallMethods  []string
+	Params       []string
 }
 
 type masterObjectInfoType struct {
 	ObjectName string
 	StartLine  int
+}
+
+type ObjectInfoType struct {
+	StartLine   int
+	EndLine     int
+	ObjectName  string
+	ObjFuncName []string
 }

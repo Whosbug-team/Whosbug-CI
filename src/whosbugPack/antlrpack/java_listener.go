@@ -3,6 +3,7 @@ package antlrpack
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	javaparser "whosbugPack/antlrpack/java_lib"
+	"whosbugPack/utility"
 )
 
 // ExitMethodDeclaration
@@ -23,7 +24,7 @@ func (s *JavaTreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDecl
 		}
 		resIndex := s.FindMethodCallIndex(methodInfo.StartLine, methodInfo.EndLine)
 		if resIndex != nil {
-			methodInfo.CallMethods = RemoveRep(resIndex)
+			methodInfo.CallMethods = resIndex
 		}
 		s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
 	}
@@ -46,19 +47,15 @@ func (s *JavaTreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) 
 //	@author KevinMatt 2021-07-23 23:22:56
 //	@function_mark PASS
 func (s *JavaTreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
-	//temp := ctx.GetChildren()
-	//for index, item := range temp {
-	//	fmt.Println(index, " ", item.GetText())
-	//}
 	if ctx.GetParent() != nil {
+		newMasterObject := findJavaMasterObjectClass(ctx)
 		var insertTemp = CallMethodType{
 			StartLine: ctx.GetStart().GetLine(),
-			Id:        findJavaMasterObjectClass(ctx).ObjectName + "." + ctx.GetChild(0).(antlr.ParseTree).GetText(),
+			Id:        utility.ConCatStrings(newMasterObject.ObjectName, ".", ctx.GetParent().(antlr.ParseTree).GetText()),
 		}
 		s.Infos.CallMethods = append(s.Infos.CallMethods, insertTemp)
 	}
 }
-
 
 // EnterClassDeclaration
 //	@Description: 类对象匹配
@@ -112,7 +109,7 @@ func findJavaMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 	var masterObject masterObjectInfoType
 	for {
 		if _, ok := temp.(*javaparser.ClassDeclarationContext); ok {
-			masterObject.ObjectName = temp.GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+			masterObject.ObjectName = temp.GetChild(1).(antlr.ParseTree).GetText()
 			masterObject.StartLine = temp.GetChild(temp.GetChildCount() - 1).(*javaparser.ClassBodyContext).GetStart().GetLine()
 			return masterObject
 		}

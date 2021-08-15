@@ -2,21 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Java" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/pay-java-parent" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/Jeffail/tunny" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/KyleBanks/depth" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/alecthomas/template" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/ghodss/yaml" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/json-iterator/go" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/modern-go/concurrent" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/modern-go/reflect2" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/pkg/errors" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/pmezard/go-difflib" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/swaggo/gin-swagger" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/swaggo/swag" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/github.com/urfave/cli" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/gopkg.in/yaml.v2" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/gopkg.in/yaml.v3" vcs="Git" />
   </component>
 </project>
