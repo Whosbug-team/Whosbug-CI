@@ -2,6 +2,7 @@ package antlrpack
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"path"
 	javaparser "whosbugPack/antlrpack/java_lib"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
 	"whosbugPack/global_type"
@@ -15,16 +16,28 @@ import (
 //	@function_mark PASS
 func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 	//	获取antlr分析结果
-	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, "java")
+	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, path.Ext(commitDiff.DiffFileName))
 	//var tempCompare global_type.ObjectInfoType
 	var tempCompare global_type.ObjectInfoType
+	var countMinus int = 0
+	var countPlus int = 0
 	for index := range commitDiff.ChangeLineNumbers {
 		temp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
 		//newTemp := addObjectFromChangeLineNumber(commitDiff, commitDiff.ChangeLineNumbers[index], antlrAnalyzeRes)
 		if temp.Equals(tempCompare) {
+			if commitDiff.ChangeLineNumbers[index].ChangeType == "-" {
+				countMinus++
+			} else {
+				countPlus++
+			}
 			continue
 		}
 		if !temp.Equals(global_type.ObjectInfoType{}) {
+			temp.ChangedOldLineCount = countMinus
+			countMinus = 0
+			temp.ChangedNewLineCount = countPlus
+			countPlus = 0
+			temp.NewLineCount = temp.OldLineCount + temp.ChangedNewLineCount - temp.ChangedOldLineCount
 			//	送入channel
 			global_type.ObjectChan <- temp
 		}
@@ -43,12 +56,14 @@ func AnalyzeCommitDiff(commitDiff global_type.DiffParsedType) {
 func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	var result AnalysisInfoType
 	switch langMode {
-	case "java":
+	case ".java":
 		result = ExecuteJava(diffText)
 	//	TODO 其他语言的适配支持
-	case "python":
+	case ".py":
 		result = ExecutePython(diffText)
-	case "kotlin":
+	case ".kt":
+		result = ExecuteKotlin(diffText)
+	case ".kts":
 		result = ExecuteKotlin(diffText)
 	default:
 		break
@@ -137,18 +152,17 @@ func addObjectFromChangeLineNumber(commitDiff global_type.DiffParsedType, change
 		//	为空直接跳过执行
 		return global_type.ObjectInfoType{}
 	}
+
 	//	TODO Ready for newMethod
 	var newObject global_type.ObjectInfoType
 	newObject = global_type.ObjectInfoType{
-		CommitHash:          utility.Base64Encrypt(commitDiff.CommitHash),
-		Id:                  changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName,
-		OldId:               "",
-		FilePath:            utility.Base64Encrypt(commitDiff.CommitHash),
-		OldLineCount:        commitDiff.OldLineCount,
-		NewLineCount:        commitDiff.NewLineCount,
-		ChangedOldLineCount: 0,
-		ChangedNewLineCount: 0,
-		Calling:             changeMethod.CallMethods,
+		CommitHash:   commitDiff.CommitHash, //utility.Base64Encrypt(commitDiff.CommitHash)
+		Id:           changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName,
+		OldId:        "",
+		FilePath:     utility.Base64Encrypt(commitDiff.CommitHash),
+		OldLineCount: changeMethod.EndLine - changeMethod.StartLine,
+		NewLineCount: commitDiff.NewLineCount,
+		Calling:      changeMethod.CallMethods,
 	}
 	return newObject
 }

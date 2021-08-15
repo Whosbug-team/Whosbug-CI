@@ -3,15 +3,15 @@ package antlrpack
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	javaparser "whosbugPack/antlrpack/java_lib"
-	"whosbugPack/utility"
 )
 
 type MethodInfoType struct {
-	StartLine    int
-	EndLine      int
-	MethodName   string
-	MasterObject masterObjectInfoType
-	CallMethods  []string
+	StartLine       int
+	EndLine         int
+	MethodName      string
+	MasterObject    masterObjectInfoType
+	CallMethods     []string
+	ChangeLineCount int
 }
 
 type masterObjectInfoType struct {
@@ -57,7 +57,7 @@ func (s *JavaTreeShapeListener) ExitMethodDeclaration(ctx *javaparser.MethodDecl
 		}
 		resIndex := s.FindMethodCallIndex(methodInfo.StartLine, methodInfo.EndLine)
 		if resIndex != nil {
-			methodInfo.CallMethods = resIndex
+			methodInfo.CallMethods = RemoveRep(resIndex)
 		}
 		s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
 	}
@@ -80,14 +80,35 @@ func (s *JavaTreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) 
 //	@author KevinMatt 2021-07-23 23:22:56
 //	@function_mark PASS
 func (s *JavaTreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContext) {
+	//temp := ctx.GetChildren()
+	//for index, item := range temp {
+	//	fmt.Println(index, " ", item.GetText())
+	//}
 	if ctx.GetParent() != nil {
-		newMasterObject := findJavaMasterObjectClass(ctx)
 		var insertTemp = CallMethodType{
 			StartLine: ctx.GetStart().GetLine(),
-			Id:        utility.ConCatStrings(newMasterObject.ObjectName, ".", ctx.GetParent().(antlr.ParseTree).GetText()),
+			Id:        findJavaMasterObjectClass(ctx).ObjectName + "." + ctx.GetChild(0).(antlr.ParseTree).GetText(),
 		}
 		s.Infos.CallMethods = append(s.Infos.CallMethods, insertTemp)
 	}
+}
+
+// RemoveRep
+// 	@Description: 切片去重
+// 	@param s
+// 	@return []string
+// 	@author KevinMatt 2021-08-14 15:14:28
+// 	@function_mark
+func RemoveRep(s []string) []string {
+	var result []string
+	m := make(map[string]bool)
+	for _, v := range s {
+		if _, ok := m[v]; !ok {
+			result = append(result, v)
+			m[v] = true
+		}
+	}
+	return result
 }
 
 // EnterClassDeclaration

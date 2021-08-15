@@ -22,6 +22,11 @@ import (
 //	@function_mark PASS
 func MatchCommit(diffPath, commitPath string) {
 
+	err := uploadpack.PostCommitsInfo(commitPath)
+	if err != nil {
+		log.Println(utility.ErrorStack(err))
+	}
+
 	commitFd, err := os.Open(commitPath)
 	if err != nil {
 		log.Println("OpenFile Error: ", err)
@@ -57,6 +62,7 @@ func MatchCommit(diffPath, commitPath string) {
 			if err != nil {
 				fmt.Println(utility.ErrorStack(err))
 			}
+
 			// 获取单次commit中的每一次diff，并处理diff，送进协程
 			ParseDiff(fullCommit, commitInfo)
 		}
@@ -68,10 +74,6 @@ func MatchCommit(diffPath, commitPath string) {
 	err = diffFd.Close()
 	if err != nil {
 		log.Println(errors.WithStack(err))
-	}
-	err = uploadpack.PostCommitsInfo(commitPath)
-	if err != nil {
-		log.Println(utility.ErrorStack(err))
 	}
 }
 

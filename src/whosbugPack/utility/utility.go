@@ -121,7 +121,7 @@ func GenToken() (string, error) {
 
 	res, err := http.PostForm(urls, url.Values{"username": []string{global_type.Config.WebServerUserName}, "password": []string{global_type.Config.WebserverKey}})
 	if err != nil {
-		log.Printf("%s", ErrorMessage(errors.Wrapf(err, "Genarate Key Failure. Check the username&password or the status of the server.\n")))
+		fmt.Printf("%s", ErrorMessage(errors.Wrapf(err, "Genarate Key Failure. Check the username&password or the status of the server.\n")))
 		os.Exit(1)
 	}
 
@@ -216,8 +216,8 @@ func GetCommitInfo(line string) global_type.CommitInfoType {
 	infoList := strings.Split(line, ",")
 	var tempCommitInfo global_type.CommitInfoType
 	tempCommitInfo = global_type.CommitInfoType{
-		CommitHash:     infoList[0],
-		CommitterEmail: infoList[1],
+		CommitHash:     Base64Encrypt(infoList[0]),
+		CommitterEmail: Base64Encrypt(infoList[1]),
 		CommitTime:     ToIso8601(strings.Split(infoList[len(infoList)-1][4:], " ")),
 	}
 	// 赋值commitAuthor(考虑多个Author的可能)

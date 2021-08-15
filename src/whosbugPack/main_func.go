@@ -1,7 +1,6 @@
 package whosbugPack
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
 	"log"
@@ -21,47 +20,54 @@ import (
 //	@function_mark PASS
 //
 func init() {
-	//logTo, _ := os.OpenFile("log_all1.txt", os.O_TRUNC|os.O_CREATE|os.O_RDWR, os.ModePerm)
-	//os.Stdout = logTo
-	// 获得密钥
-	global_type.Config.CryptoKey = os.Getenv("WHOSBUG_SECRET")
+	log.SetOutput(os.Stdout)
+	global_type.Config = global_type.InputJson{
+		ProjectId:         "asssssssssssssssssssd",
+		ReleaseVersion:    "1.0.0",
+		RepoPath:          "C:\\Users\\KevinMatt\\Desktop\\test\\java-design-patterns",
+		BranchName:        "master",
+		WebServerHost:     "http://127.0.0.1:8081",
+		WebServerUserName: "user",
+		WebserverKey:      "pwd",
+		CryptoKey:         "",
+	}
 	// 工作目录存档
 	global_type.WorkPath, _ = os.Getwd()
-	file, err := os.Open("input.json")
-	if err != nil {
-		fmt.Println(utility.ErrorMessage(err))
-	}
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&global_type.Config)
-	if err != nil {
-		log.Println(utility.ErrorMessage(err))
-	} else {
-		fmt.Println("Get input-config succeed!")
-	}
+	//file, err := os.Open("input.json")
+	//if err != nil {
+	//	fmt.Println(utility.ErrorMessage(err))
+	//}
+	//decoder := json.NewDecoder(file)
+	//err = decoder.Decode(&global_type.Config)
+	//if err != nil {
+	//	log.Println(utility.ErrorMessage(err))
+	//} else {
+	//	fmt.Println("Get input-config succeed!")
+	//}
 
 	// 打印插件版本信息
 	fmt.Println("Version:\t", global_type.Config.ReleaseVersion, "\nProjectId:\t", global_type.Config.ProjectId, "\nBranchName:\t", global_type.Config.BranchName)
 
 	global_type.ObjectChan = make(chan global_type.ObjectInfoType, 10000)
 
-	_, err = os.Stat("allDiffs.out")
+	_, err := os.Stat(global_type.WorkPath + "allDiffs.out")
 	if !os.IsNotExist(err) {
-		err = os.Remove("allDiffs.out")
+		err = os.Remove(global_type.WorkPath + "allDiffs.out")
 		if err != nil {
 			log.Println(utility.ErrorMessage(errors.WithStack(err)))
 		}
 	}
 
-	_, err = os.Stat("commitInfo.out")
+	_, err = os.Stat(global_type.WorkPath + "commitInfo.out")
 	if !os.IsNotExist(err) {
-		err = os.Remove("commitInfo.out")
+		err = os.Remove(global_type.WorkPath + "commitInfo.out")
 		if err != nil {
 			log.Println(utility.ErrorMessage(errors.WithStack(err)))
 		}
 	}
 
 	//开启处理object上传的协程
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 1; i++ {
 		go uploadpack.ProcessObjectUpload()
 	}
 }
@@ -75,9 +81,9 @@ func Analysis() {
 
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
 	diffPath, commitPath := logpack.GetLogInfo()
-
+	fmt.Println(diffPath, commitPath)
 	// 指示Webservice创建新的release
-	err := uploadpack.PostReleaseInfo("/whosbug/create-project-release")
+	err := uploadpack.PostReleaseInfo("/whosbug/create-project-release/")
 	if err != nil {
 		log.Println(utility.ErrorStack(err))
 	}
@@ -103,7 +109,7 @@ func Analysis() {
 	runtime.GC()
 
 	// 通知Webservice上传结束
-	err = uploadpack.PostReleaseInfo("/whosbug/commits/upload-done")
+	err = uploadpack.PostReleaseInfo("/whosbug/commits/upload-done/")
 	if err != nil {
 		log.Println(utility.ErrorStack(err))
 	}
