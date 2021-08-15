@@ -67,6 +67,8 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 		result = ExecuteKotlin(diffText)
 	case ".go":
 		result = ExecuteGolang(diffText)
+	case ".cpp":
+		result = ExecuteCpp(diffText)
 	default:
 		break
 	}
