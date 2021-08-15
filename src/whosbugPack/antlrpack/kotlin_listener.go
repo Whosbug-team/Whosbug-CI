@@ -5,7 +5,7 @@ package antlrpack // KotlinParser
 import (
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"whosbugPack/antlrpack/kotlin_lib"
+	kotlin "whosbugPack/antlrpack/kotlin_lib"
 	"whosbugPack/utility"
 )
 

@@ -1,6 +1,6 @@
 // Generated from KotlinLexer.g4 by ANTLR 4.7.
 
-package kotlin
+package parser
 
 import (
 	"fmt"
