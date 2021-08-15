@@ -7,4 +7,5 @@ require (
 	github.com/json-iterator/go v1.1.11
 	github.com/panjf2000/ants v1.3.0
 	github.com/pkg/errors v0.9.1
+	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d
 )

@@ -3,7 +3,6 @@ package antlrpack
 import (
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"strconv"
 	"strings"
 	cpp "whosbugPack/antlrpack/cpp_lib"
 )
@@ -202,7 +201,8 @@ func (s *CppTreeShapeListener) EnterCastExpression(ctx *cpp.CastExpressionContex
 func (s *CppTreeShapeListener) ExitCastExpression(ctx *cpp.CastExpressionContext) {}
 
 // EnterPointerMemberExpression is called when production pointerMemberExpression is entered.
-func (s *CppTreeShapeListener) EnterPointerMemberExpression(ctx *cpp.PointerMemberExpressionContext) {}
+func (s *CppTreeShapeListener) EnterPointerMemberExpression(ctx *cpp.PointerMemberExpressionContext) {
+}
 
 // ExitPointerMemberExpression is called when production pointerMemberExpression is exited.
 func (s *CppTreeShapeListener) ExitPointerMemberExpression(ctx *cpp.PointerMemberExpressionContext) {}
@@ -414,7 +414,8 @@ func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclaration
 func (s *CppTreeShapeListener) ExitSimpleDeclaration(ctx *cpp.SimpleDeclarationContext) {}
 
 // EnterStaticAssertDeclaration is called when production staticAssertDeclaration is entered.
-func (s *CppTreeShapeListener) EnterStaticAssertDeclaration(ctx *cpp.StaticAssertDeclarationContext) {}
+func (s *CppTreeShapeListener) EnterStaticAssertDeclaration(ctx *cpp.StaticAssertDeclarationContext) {
+}
 
 // ExitStaticAssertDeclaration is called when production staticAssertDeclaration is exited.
 func (s *CppTreeShapeListener) ExitStaticAssertDeclaration(ctx *cpp.StaticAssertDeclarationContext) {}
@@ -524,7 +525,8 @@ func (s *CppTreeShapeListener) EnterDecltypeSpecifier(ctx *cpp.DecltypeSpecifier
 func (s *CppTreeShapeListener) ExitDecltypeSpecifier(ctx *cpp.DecltypeSpecifierContext) {}
 
 // EnterElaboratedTypeSpecifier is called when production elaboratedTypeSpecifier is entered.
-func (s *CppTreeShapeListener) EnterElaboratedTypeSpecifier(ctx *cpp.ElaboratedTypeSpecifierContext) {}
+func (s *CppTreeShapeListener) EnterElaboratedTypeSpecifier(ctx *cpp.ElaboratedTypeSpecifierContext) {
+}
 
 // ExitElaboratedTypeSpecifier is called when production elaboratedTypeSpecifier is exited.
 func (s *CppTreeShapeListener) ExitElaboratedTypeSpecifier(ctx *cpp.ElaboratedTypeSpecifierContext) {}
@@ -684,7 +686,8 @@ func (s *CppTreeShapeListener) EnterAttributeNamespace(ctx *cpp.AttributeNamespa
 func (s *CppTreeShapeListener) ExitAttributeNamespace(ctx *cpp.AttributeNamespaceContext) {}
 
 // EnterAttributeArgumentClause is called when production attributeArgumentClause is entered.
-func (s *CppTreeShapeListener) EnterAttributeArgumentClause(ctx *cpp.AttributeArgumentClauseContext) {}
+func (s *CppTreeShapeListener) EnterAttributeArgumentClause(ctx *cpp.AttributeArgumentClauseContext) {
+}
 
 // ExitAttributeArgumentClause is called when production attributeArgumentClause is exited.
 func (s *CppTreeShapeListener) ExitAttributeArgumentClause(ctx *cpp.AttributeArgumentClauseContext) {}
@@ -732,7 +735,8 @@ func (s *CppTreeShapeListener) EnterNoPointerDeclarator(ctx *cpp.NoPointerDeclar
 func (s *CppTreeShapeListener) ExitNoPointerDeclarator(ctx *cpp.NoPointerDeclaratorContext) {}
 
 // EnterParametersAndQualifiers is called when production parametersAndQualifiers is entered.
-func (s *CppTreeShapeListener) EnterParametersAndQualifiers(ctx *cpp.ParametersAndQualifiersContext) {}
+func (s *CppTreeShapeListener) EnterParametersAndQualifiers(ctx *cpp.ParametersAndQualifiersContext) {
+}
 
 // ExitParametersAndQualifiers is called when production parametersAndQualifiers is exited.
 func (s *CppTreeShapeListener) ExitParametersAndQualifiers(ctx *cpp.ParametersAndQualifiersContext) {}
@@ -828,7 +832,8 @@ func (s *CppTreeShapeListener) EnterParameterDeclarationList(ctx *cpp.ParameterD
 }
 
 // ExitParameterDeclarationList is called when production parameterDeclarationList is exited.
-func (s *CppTreeShapeListener) ExitParameterDeclarationList(ctx *cpp.ParameterDeclarationListContext) {}
+func (s *CppTreeShapeListener) ExitParameterDeclarationList(ctx *cpp.ParameterDeclarationListContext) {
+}
 
 // EnterParameterDeclaration is called when production parameterDeclaration is entered.
 func (s *CppTreeShapeListener) EnterParameterDeclaration(ctx *cpp.ParameterDeclarationContext) {}
@@ -874,7 +879,8 @@ func (s *CppTreeShapeListener) EnterInitializer(ctx *cpp.InitializerContext) {}
 func (s *CppTreeShapeListener) ExitInitializer(ctx *cpp.InitializerContext) {}
 
 // EnterBraceOrEqualInitializer is called when production braceOrEqualInitializer is entered.
-func (s *CppTreeShapeListener) EnterBraceOrEqualInitializer(ctx *cpp.BraceOrEqualInitializerContext) {}
+func (s *CppTreeShapeListener) EnterBraceOrEqualInitializer(ctx *cpp.BraceOrEqualInitializerContext) {
+}
 
 // ExitBraceOrEqualInitializer is called when production braceOrEqualInitializer is exited.
 func (s *CppTreeShapeListener) ExitBraceOrEqualInitializer(ctx *cpp.BraceOrEqualInitializerContext) {}
@@ -905,22 +911,22 @@ func (s *CppTreeShapeListener) ExitClassName(ctx *cpp.ClassNameContext) {}
 
 // EnterClassSpecifier is called when production classSpecifier is entered.
 func (s *CppTreeShapeListener) EnterClassSpecifier(ctx *cpp.ClassSpecifierContext) {
-	var classInfo  = classInfoType{
-		ClassName: ctx.GetChild(0).GetChild(1).(antlr.ParseTree).GetText(),
-		StartLine: ctx.GetStart().GetLine(),
-		EndLine: ctx.GetStop().GetLine(),
+	var classInfo = classInfoType{
+		ClassName:    ctx.GetChild(0).GetChild(1).(antlr.ParseTree).GetText(),
+		StartLine:    ctx.GetStart().GetLine(),
+		EndLine:      ctx.GetStop().GetLine(),
 		MasterObject: findCppMasterObjectClass(ctx),
 	}
 }
 
-func findCppMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType{
+func findCppMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType {
 	classHead := ctx.GetChild(0)
-	if classHead.GetChildCount() == 2{
+	if classHead.GetChildCount() == 2 {
 		return masterObjectInfoType{}
-	}else {
+	} else {
 		baseSpecifierList := classHead.GetChild(2).GetChild(1).GetChildren()
 		for _, tree := range baseSpecifierList {
-			if _,ok := tree.(*cpp.BaseSpecifierContext);ok{
+			if _, ok := tree.(*cpp.BaseSpecifierContext); ok {
 				var masterInfo = masterObjectInfoType{
 					ObjectName: tree.GetChild(tree.GetChildCount() - 1).(antlr.ParseTree).GetText(),
 					StartLine:  0,
@@ -930,6 +936,7 @@ func findCppMasterObjectClass(ctx antlr.ParseTree) masterObjectInfoType{
 
 	}
 }
+
 // ExitClassSpecifier is called when production classSpecifier is exited.
 func (s *CppTreeShapeListener) ExitClassSpecifier(ctx *cpp.ClassSpecifierContext) {}
 
@@ -1251,4 +1258,3 @@ func (s *CppTreeShapeListener) EnterLiteral(ctx *cpp.LiteralContext) {}
 
 // ExitLiteral is called when production literal is exited.
 func (s *CppTreeShapeListener) ExitLiteral(ctx *cpp.LiteralContext) {}
-

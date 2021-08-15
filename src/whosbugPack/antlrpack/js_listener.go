@@ -7,42 +7,6 @@ import (
 	javascript "whosbugPack/antlrpack/js_lib"
 )
 
-// JSTreeShapeListener is a complete listener for a parse tree produced by JavaScriptParser.
-//type JSTreeShapeListener struct{}
-//type classInfoType struct {
-//	StartLine int
-//	EndLine   int
-//	ClassName string
-//	Extends   string
-//}
-//
-//type MethodInfoType struct {
-//	StartLine  int
-//	EndLine    int
-//	MethodName string
-//	Params     []string
-//}
-//
-//type ObjectInfoType struct {
-//	StartLine   int
-//	EndLine     int
-//	ObjectName  string
-//	ObjFuncName []string
-//}
-//
-//type astInfoType struct {
-//	Classes []classInfoType
-//	Funcs   []MethodInfoType
-//	Objects []ObjectInfoType
-//}
-//
-//type AnalysisInfoType struct {
-//	CallMethods []string
-//	AstInfoList astInfoType
-//}
-
-//var _ JavaScriptParserListener = &JSTreeShapeListener{}
-
 // VisitTerminal is called when a terminal node is visited.
 func (s *JSTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {}
 

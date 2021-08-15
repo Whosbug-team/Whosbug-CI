@@ -50,3 +50,18 @@ func TestExecuteKotlin(t *testing.T) {
 		}
 	}
 }
+
+func TestExecuteJavaScript(t *testing.T) {
+	input, _ := os.Open("D:\\Desktop\\Whosbug_antlr_go\\antlr4_js\\testfiles\\test.js")
+	text, _ := ioutil.ReadAll(input)
+	rest := ExecuteJavaScript(string(text))
+	utility.ForDebug(rest)
+	for _, item := range rest.AstInfoList.Classes {
+		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tMasterObject: ", item.MasterObject)
+	}
+	for _, item := range rest.AstInfoList.Methods {
+		if item.CallMethods != nil {
+			fmt.Println("Methods: ", item.CallMethods)
+		}
+	}
+}
