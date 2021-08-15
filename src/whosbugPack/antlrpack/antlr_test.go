@@ -30,7 +30,7 @@ func TestExecuteCpp(t *testing.T) {
 	}
 	for _, item := range rest.AstInfoList.Methods {
 		if item.CallMethods != nil {
-			fmt.Println("Methods: ", item.CallMethods)
+			fmt.Printf("Methods:%s,Calling:%s\n ", item.MethodName,item.CallMethods)
 		}
 	}
 }

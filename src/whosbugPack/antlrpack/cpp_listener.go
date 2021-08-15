@@ -1,6 +1,7 @@
 package antlrpack
 
 import (
+	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/wxnacy/wgo/arrays"
 	"strings"
@@ -38,17 +39,18 @@ func (s *CppTreeShapeListener) ExitFunctionDefinition(ctx *cpp.FunctionDefinitio
 	}
 
 	name := strings.Split(ctx.Declarator().GetText(), "(")
-	FuncAndMaster := strings.Split(name[0],"::")
-	len := len(FuncAndMaster)
-	methodInfo.MethodName = FuncAndMaster[len - 1]
-	if len == 1{	//该方法不是成员方法
-		methodInfo.MasterObject = masterObjectInfoType{}
-	}else{
-		methodInfo.MasterObject = masterObjectInfoType{
-			ObjectName: strings.Join(FuncAndMaster[:len],"."),
-			StartLine:  0,
-		}
-	}
+	methodInfo.MethodName = strings.Replace(name[0],"::",".",-1)
+	//FuncAndMaster := strings.Split(name[0],"::")
+	//len := len(FuncAndMaster)
+	//methodInfo.MethodName = FuncAndMaster[len - 1]
+	//if len == 1{	//该方法不是成员方法
+	//	methodInfo.MasterObject = masterObjectInfoType{}
+	//}else{
+	//	methodInfo.MasterObject = masterObjectInfoType{
+	//		ObjectName: strings.Join(FuncAndMaster[:len],"."),
+	//		StartLine:  0,
+	//	}
+	//}
 
 	methodInfo.CallMethods = s.findMethodCall()
 
@@ -109,7 +111,7 @@ func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclaration
 				}
 			}
 		}
-		//fmt.Printf("---Declaration:%+v\n",s.Declaration)
+		fmt.Printf("---Declaration:%+v\n",s.Declaration)
 	}
 
 }
