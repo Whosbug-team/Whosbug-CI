@@ -50,17 +50,17 @@ func init() {
 
 	global_type.ObjectChan = make(chan global_type.ObjectInfoType, 10000)
 
-	_, err := os.Stat(global_type.WorkPath + "allDiffs.out")
+	_, err := os.Stat(global_type.WorkPath + "/allDiffs.out")
 	if !os.IsNotExist(err) {
-		err = os.Remove(global_type.WorkPath + "allDiffs.out")
+		err = os.Remove(global_type.WorkPath + "/allDiffs.out")
 		if err != nil {
 			log.Println(utility.ErrorMessage(errors.WithStack(err)))
 		}
 	}
 
-	_, err = os.Stat(global_type.WorkPath + "commitInfo.out")
+	_, err = os.Stat(global_type.WorkPath + "/commitInfo.out")
 	if !os.IsNotExist(err) {
-		err = os.Remove(global_type.WorkPath + "commitInfo.out")
+		err = os.Remove(global_type.WorkPath + "/commitInfo.out")
 		if err != nil {
 			log.Println(utility.ErrorMessage(errors.WithStack(err)))
 		}
