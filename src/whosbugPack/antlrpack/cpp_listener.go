@@ -2,7 +2,6 @@ package antlrpack
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/wxnacy/wgo/arrays"
 	"strings"
 	cpp "whosbugPack/antlrpack/cpp_lib"
 )
@@ -41,10 +40,7 @@ func (s *CppTreeShapeListener) ExitFunctionDefinition(ctx *cpp.FunctionDefinitio
 
 	name := strings.Split(ctx.Declarator().GetText(), "(")
 	methodInfo.MethodName = strings.Replace(name[0], "::", ".", -1)
-	resCallMethods := s.findMethodCall()
-	if resCallMethods != nil {
-		methodInfo.CallMethods = RemoveRep(resCallMethods)
-	}
+	methodInfo.CallMethods = s.findMethodCall()
 
 	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, methodInfo)
 	s.Infos.CallMethods = []CallMethodType{}
@@ -52,11 +48,22 @@ func (s *CppTreeShapeListener) ExitFunctionDefinition(ctx *cpp.FunctionDefinitio
 }
 
 func (s *CppTreeShapeListener) findMethodCall() []string {
-	var structMethods []string
-	for index := range s.Infos.CallMethods {
-		structMethods = append(structMethods, s.Infos.CallMethods[index].Id)
+	var CallMethods []string
+	for _,index := range s.Infos.CallMethods {	//box3.get
+		classBelong := strings.Split(index.Id,".")[0]
+		calledMethod := strings.Split(index.Id,".")[1]
+		for _, declaration := range s.Declaration {
+			if declaration.Name == classBelong{
+				classBelong = declaration.Type
+				CallMethods = append(CallMethods, classBelong+"."+calledMethod)
+			}
+		}
+		//structMethods = append(structMethods, s.Infos.CallMethods[index].Id)
 	}
-	return structMethods
+	if CallMethods != nil{
+		CallMethods = RemoveRep(CallMethods)
+	}
+	return CallMethods
 }
 
 // EnterExpressionStatement is called when production expressionStatement is entered.
@@ -64,48 +71,48 @@ func (s *CppTreeShapeListener) EnterExpressionStatement(ctx *cpp.ExpressionState
 
 // EnterPostfixExpression is called when production postfixExpression is entered.
 func (s *CppTreeShapeListener) EnterPostfixExpression(ctx *cpp.PostfixExpressionContext) {
-	children := ctx.GetChildren()
-	_, parentOk := ctx.GetParent().(*cpp.PostfixExpressionContext)
-	if len(children) == 3 && parentOk && children[1].(antlr.ParseTree).GetText() == "." {
-		if _, ok := ctx.GetChild(2).(*cpp.IdExpressionContext); ok {
-			methodCalled := children[2].(antlr.ParseTree).GetText()
-			classBelong := children[0].(antlr.ParseTree).GetText()
-			var flag bool = false
-			for _, member := range s.Declaration {
-				if member.Type == classBelong {
-					classBelong = member.Name
-					flag = true
-					break
-				}
+	if ctx.GetChildCount() == 3 && ctx.PrimaryExpression() == nil{
+		if _,ok := ctx.GetParent().(*cpp.UnaryExpressionContext);!ok{
+			var callmethod = CallMethodType{
+				StartLine: ctx.GetStart().GetLine(),
+				Id:        ctx.GetText(),
 			}
-			if flag == true {
-				var callMethod = CallMethodType{
-					StartLine: ctx.GetStart().GetLine(),
-					Id:        classBelong + "." + methodCalled,
-				}
-				s.Infos.CallMethods = append(s.Infos.CallMethods, callMethod)
-			}
+			s.Infos.CallMethods = append(s.Infos.CallMethods, callmethod)
+			//fmt.Printf("postfix:%s\n",ctx.GetText())
 		}
+
 	}
 }
 
-func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclarationContext) {
-	if s.Type == "function" {
-		if ctx.DeclSpecifierSeq() != nil {
-			def := arrays.ContainsString([]string{"int", "double", "bool", "byte", "float64", "float32", "auto"}, ctx.DeclSpecifierSeq().GetText())
-			if def < 0 {
-				var member MemberType
-				member.Name = ctx.DeclSpecifierSeq().GetText()
-				list := strings.Split(ctx.InitDeclaratorList().GetText(), ",")
-				for i := 0; i < len(list); i++ {
-					member.Type = list[i]
+// EnterDeclarator is called when production declarator is entered.
+func (s *CppTreeShapeListener) EnterDeclarator(ctx *cpp.DeclaratorContext) {
+	if s.Type == "function"{
+		temp := ctx.GetParent()
+		if temp == nil {
+			return
+		}
+		for {
+			if _,ok := temp.(*cpp.ClassSpecifierContext);ok{
+				return}
+			if _, ok := temp.(*cpp.SimpleDeclarationContext); ok {
+				memberType := temp.(*cpp.SimpleDeclarationContext).DeclSpecifierSeq()
+				if memberType != nil && memberType.GetText() != ""{
+					var member MemberType
+					member.Name = ctx.GetText()
+					member.Type = memberType.GetText()
 					s.Declaration = append(s.Declaration, member)
 				}
+				break
+			}
+			temp = temp.GetParent()
+			if temp == nil {
+				return
 			}
 		}
+		//fmt.Printf("===decl:%+v\n",s.Declaration)
 	}
-
 }
+func (s *CppTreeShapeListener) EnterSimpleDeclaration(ctx *cpp.SimpleDeclarationContext) {}
 
 // ExitExpressionStatement is called when production expressionStatement is exited.
 func (s *CppTreeShapeListener) ExitExpressionStatement(ctx *cpp.ExpressionStatementContext) {}
@@ -548,9 +555,7 @@ func (s *CppTreeShapeListener) ExitStorageClassSpecifier(ctx *cpp.StorageClassSp
 func (s *CppTreeShapeListener) EnterFunctionSpecifier(ctx *cpp.FunctionSpecifierContext) {}
 
 // ExitFunctionSpecifier is called when production functionSpecifier is exited.
-func (s *CppTreeShapeListener) ExitFunctionSpecifier(ctx *cpp.FunctionSpecifierContext) {
-
-}
+func (s *CppTreeShapeListener) ExitFunctionSpecifier(ctx *cpp.FunctionSpecifierContext) {}
 
 // EnterTypedefName is called when production typedefName is entered.
 func (s *CppTreeShapeListener) EnterTypedefName(ctx *cpp.TypedefNameContext) {}
@@ -810,8 +815,7 @@ func (s *CppTreeShapeListener) EnterInitDeclarator(ctx *cpp.InitDeclaratorContex
 // ExitInitDeclarator is called when production initDeclarator is exited.
 func (s *CppTreeShapeListener) ExitInitDeclarator(ctx *cpp.InitDeclaratorContext) {}
 
-// EnterDeclarator is called when production declarator is entered.
-func (s *CppTreeShapeListener) EnterDeclarator(ctx *cpp.DeclaratorContext) {}
+
 
 // ExitDeclarator is called when production declarator is exited.
 func (s *CppTreeShapeListener) ExitDeclarator(ctx *cpp.DeclaratorContext) {}
