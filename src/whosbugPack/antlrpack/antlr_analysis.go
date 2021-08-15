@@ -2,6 +2,8 @@ package antlrpack
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	cpp "whosbugPack/antlrpack/cpp_lib"
+	golang "whosbugPack/antlrpack/go_lib"
 	javaparser "whosbugPack/antlrpack/java_lib"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
 	"whosbugPack/global_type"
@@ -62,10 +64,64 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 		result = ExecutePython(diffText)
 	case "kotlin":
 		result = ExecuteKotlin(diffText)
+	case "golang":
+		result = ExecuteGolang(diffText)
 	default:
 		break
 	}
 	return result
+}
+func ExecuteGolang(diffText string) AnalysisInfoType{
+	//	截取目标文本的输入流
+	input := antlr.NewInputStream(diffText)
+	//	初始化lexer
+	lexer := goLexerPool.Get().(*golang.GoLexer)
+	defer goLexerPool.Put(lexer)
+	lexer.SetInputStream(input)
+	//	初始化Token流
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//	初始化Parser
+	p := goParserPool.Get().(*golang.GoParser)
+	defer goParserPool.Put(p)
+	p.SetTokenStream(stream)
+	//	构建语法解析树
+	p.BuildParseTrees = true
+	//	启用SLL两阶段加速解析模式
+	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+	//	解析模式->每个编译单位
+	tree := p.SourceFile()
+	//	创建listener
+	listener := newGoTreeShapeListenerPool.Get().(*GoTreeShapeListener)
+	defer newGoTreeShapeListenerPool.Put(listener)
+	//	执行分析
+	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+	return listener.Infos
+}
+func ExecuteCpp(diffText string) AnalysisInfoType{
+	//	截取目标文本的输入流
+	input := antlr.NewInputStream(diffText)
+	//	初始化lexer
+	lexer := cppLexerPool.Get().(*cpp.CPP14Lexer)
+	defer cppLexerPool.Put(lexer)
+	lexer.SetInputStream(input)
+	//	初始化Token流
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//	初始化Parser
+	p := cppParserPool.Get().(*cpp.CPP14Parser)
+	defer cppParserPool.Put(p)
+	p.SetTokenStream(stream)
+	//	构建语法解析树
+	p.BuildParseTrees = true
+	//	启用SLL两阶段加速解析模式
+	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+	//	解析模式->每个编译单位
+	tree := p.TranslationUnit()
+	//	创建listener
+	listener := newCppTreeShapeListenerPool.Get().(*CppTreeShapeListener)
+	defer newCppTreeShapeListenerPool.Put(listener)
+	//	执行分析
+	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+	return listener.Infos
 }
 
 func ExecutePython(diffText string) AnalysisInfoType {

@@ -5,40 +5,6 @@ import (
 	javaparser "whosbugPack/antlrpack/java_lib"
 )
 
-type MethodInfoType struct {
-	StartLine       int
-	EndLine         int
-	MethodName      string
-	MasterObject    masterObjectInfoType
-	CallMethods     []string
-	ChangeLineCount int
-}
-
-type masterObjectInfoType struct {
-	ObjectName string
-	StartLine  int
-}
-
-type classInfoType struct {
-	StartLine    int
-	EndLine      int
-	ClassName    string
-	MasterObject masterObjectInfoType
-}
-
-type astInfoType struct {
-	Classes []classInfoType
-	Methods []MethodInfoType
-}
-type CallMethodType struct {
-	StartLine int
-	Id        string
-}
-type AnalysisInfoType struct {
-	CallMethods []CallMethodType
-	AstInfoList astInfoType
-}
-
 // ExitMethodDeclaration
 //	@Description: 匹配到方法结束时被调用
 //	@receiver s
@@ -93,23 +59,6 @@ func (s *JavaTreeShapeListener) EnterMethodCall(ctx *javaparser.MethodCallContex
 	}
 }
 
-// RemoveRep
-// 	@Description: 切片去重
-// 	@param s
-// 	@return []string
-// 	@author KevinMatt 2021-08-14 15:14:28
-// 	@function_mark
-func RemoveRep(s []string) []string {
-	var result []string
-	m := make(map[string]bool)
-	for _, v := range s {
-		if _, ok := m[v]; !ok {
-			result = append(result, v)
-			m[v] = true
-		}
-	}
-	return result
-}
 
 // EnterClassDeclaration
 //	@Description: 类对象匹配
