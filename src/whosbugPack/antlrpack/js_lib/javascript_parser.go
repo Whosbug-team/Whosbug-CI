@@ -310,17 +310,17 @@ func (s *ProgramContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ProgramContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterProgram(s)
-	}
-}
-
-func (s *ProgramContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitProgram(s)
-	}
-}
+//func (s *ProgramContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterProgram(s)
+//	}
+//}
+//
+//func (s *ProgramContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitProgram(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Program() (localctx IProgramContext) {
 	localctx = NewProgramContext(p, p.GetParserRuleContext(), p.GetState())
@@ -427,17 +427,17 @@ func (s *SourceElementContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SourceElementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterSourceElement(s)
-	}
-}
-
-func (s *SourceElementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitSourceElement(s)
-	}
-}
+//func (s *SourceElementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterSourceElement(s)
+//	}
+//}
+//
+//func (s *SourceElementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitSourceElement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) SourceElement() (localctx ISourceElementContext) {
 	localctx = NewSourceElementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -714,17 +714,17 @@ func (s *StatementContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *StatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterStatement(s)
-	}
-}
-
-func (s *StatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitStatement(s)
-	}
-}
+//func (s *StatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterStatement(s)
+//	}
+//}
+//
+//func (s *StatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Statement() (localctx IStatementContext) {
 	localctx = NewStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -958,17 +958,17 @@ func (s *BlockContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) 
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *BlockContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterBlock(s)
-	}
-}
-
-func (s *BlockContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitBlock(s)
-	}
-}
+//func (s *BlockContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterBlock(s)
+//	}
+//}
+//
+//func (s *BlockContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitBlock(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Block() (localctx IBlockContext) {
 	localctx = NewBlockContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1082,17 +1082,17 @@ func (s *StatementListContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *StatementListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterStatementList(s)
-	}
-}
-
-func (s *StatementListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitStatementList(s)
-	}
-}
+//func (s *StatementListContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterStatementList(s)
+//	}
+//}
+//
+//func (s *StatementListContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitStatementList(s)
+//	}
+//}
 
 func (p *JavaScriptParser) StatementList() (localctx IStatementListContext) {
 	localctx = NewStatementListContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1200,17 +1200,17 @@ func (s *ImportStatementContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ImportStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterImportStatement(s)
-	}
-}
-
-func (s *ImportStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitImportStatement(s)
-	}
-}
+//func (s *ImportStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterImportStatement(s)
+//	}
+//}
+//
+//func (s *ImportStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitImportStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ImportStatement() (localctx IImportStatementContext) {
 	localctx = NewImportStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1345,17 +1345,17 @@ func (s *ImportFromBlockContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ImportFromBlockContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterImportFromBlock(s)
-	}
-}
-
-func (s *ImportFromBlockContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitImportFromBlock(s)
-	}
-}
+//func (s *ImportFromBlockContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterImportFromBlock(s)
+//	}
+//}
+//
+//func (s *ImportFromBlockContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitImportFromBlock(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ImportFromBlock() (localctx IImportFromBlockContext) {
 	localctx = NewImportFromBlockContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1524,17 +1524,17 @@ func (s *ModuleItemsContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ModuleItemsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterModuleItems(s)
-	}
-}
-
-func (s *ModuleItemsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitModuleItems(s)
-	}
-}
+//func (s *ModuleItemsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterModuleItems(s)
+//	}
+//}
+//
+//func (s *ModuleItemsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitModuleItems(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ModuleItems() (localctx IModuleItemsContext) {
 	localctx = NewModuleItemsContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1674,17 +1674,17 @@ func (s *ImportDefaultContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ImportDefaultContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterImportDefault(s)
-	}
-}
-
-func (s *ImportDefaultContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitImportDefault(s)
-	}
-}
+//func (s *ImportDefaultContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterImportDefault(s)
+//	}
+//}
+//
+//func (s *ImportDefaultContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitImportDefault(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ImportDefault() (localctx IImportDefaultContext) {
 	localctx = NewImportDefaultContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1796,17 +1796,17 @@ func (s *ImportNamespaceContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ImportNamespaceContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterImportNamespace(s)
-	}
-}
-
-func (s *ImportNamespaceContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitImportNamespace(s)
-	}
-}
+//func (s *ImportNamespaceContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterImportNamespace(s)
+//	}
+//}
+//
+//func (s *ImportNamespaceContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitImportNamespace(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ImportNamespace() (localctx IImportNamespaceContext) {
 	localctx = NewImportNamespaceContext(p, p.GetParserRuleContext(), p.GetState())
@@ -1922,17 +1922,17 @@ func (s *ImportFromContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ImportFromContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterImportFrom(s)
-	}
-}
-
-func (s *ImportFromContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitImportFrom(s)
-	}
-}
+//func (s *ImportFromContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterImportFrom(s)
+//	}
+//}
+//
+//func (s *ImportFromContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitImportFrom(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ImportFrom() (localctx IImportFromContext) {
 	localctx = NewImportFromContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2040,17 +2040,17 @@ func (s *AliasNameContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AliasNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterAliasName(s)
-	}
-}
-
-func (s *AliasNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitAliasName(s)
-	}
-}
+//func (s *AliasNameContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterAliasName(s)
+//	}
+//}
+//
+//func (s *AliasNameContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitAliasName(s)
+//	}
+//}
 
 func (p *JavaScriptParser) AliasName() (localctx IAliasNameContext) {
 	localctx = NewAliasNameContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2193,17 +2193,17 @@ func (s *ExportDefaultDeclarationContext) Eos() IEosContext {
 	return t.(IEosContext)
 }
 
-func (s *ExportDefaultDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterExportDefaultDeclaration(s)
-	}
-}
-
-func (s *ExportDefaultDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitExportDefaultDeclaration(s)
-	}
-}
+//func (s *ExportDefaultDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterExportDefaultDeclaration(s)
+//	}
+//}
+//
+//func (s *ExportDefaultDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitExportDefaultDeclaration(s)
+//	}
+//}
 
 type ExportDeclarationContext struct {
 	*ExportStatementContext
@@ -2257,17 +2257,17 @@ func (s *ExportDeclarationContext) Declaration() IDeclarationContext {
 	return t.(IDeclarationContext)
 }
 
-func (s *ExportDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterExportDeclaration(s)
-	}
-}
-
-func (s *ExportDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitExportDeclaration(s)
-	}
-}
+//func (s *ExportDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterExportDeclaration(s)
+//	}
+//}
+//
+//func (s *ExportDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitExportDeclaration(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ExportStatement() (localctx IExportStatementContext) {
 	localctx = NewExportStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2431,17 +2431,17 @@ func (s *ExportFromBlockContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ExportFromBlockContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterExportFromBlock(s)
-	}
-}
-
-func (s *ExportFromBlockContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitExportFromBlock(s)
-	}
-}
+//func (s *ExportFromBlockContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterExportFromBlock(s)
+//	}
+//}
+//
+//func (s *ExportFromBlockContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitExportFromBlock(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ExportFromBlock() (localctx IExportFromBlockContext) {
 	localctx = NewExportFromBlockContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2586,17 +2586,17 @@ func (s *DeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *DeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterDeclaration(s)
-	}
-}
-
-func (s *DeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitDeclaration(s)
-	}
-}
+//func (s *DeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterDeclaration(s)
+//	}
+//}
+//
+//func (s *DeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitDeclaration(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Declaration() (localctx IDeclarationContext) {
 	localctx = NewDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2716,17 +2716,17 @@ func (s *VariableStatementContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterVariableStatement(s)
-	}
-}
-
-func (s *VariableStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitVariableStatement(s)
-	}
-}
+//func (s *VariableStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterVariableStatement(s)
+//	}
+//}
+//
+//func (s *VariableStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitVariableStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) VariableStatement() (localctx IVariableStatementContext) {
 	localctx = NewVariableStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -2848,11 +2848,11 @@ func (s *VariableDeclarationListContext) ToStringTree(ruleNames []string, recog 
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableDeclarationListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterVariableDeclarationList(s)
-	}
-}
+//func (s *VariableDeclarationListContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterVariableDeclarationList(s)
+//	}
+//}
 
 func (s *VariableDeclarationListContext) ExitRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(JavaScriptParserListener); ok {
@@ -2985,17 +2985,17 @@ func (s *VariableDeclarationContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterVariableDeclaration(s)
-	}
-}
-
-func (s *VariableDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitVariableDeclaration(s)
-	}
-}
+//func (s *VariableDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterVariableDeclaration(s)
+//	}
+//}
+//
+//func (s *VariableDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitVariableDeclaration(s)
+//	}
+//}
 
 func (p *JavaScriptParser) VariableDeclaration() (localctx IVariableDeclarationContext) {
 	localctx = NewVariableDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3090,17 +3090,17 @@ func (s *EmptyStatementContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EmptyStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterEmptyStatement(s)
-	}
-}
-
-func (s *EmptyStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitEmptyStatement(s)
-	}
-}
+//func (s *EmptyStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterEmptyStatement(s)
+//	}
+//}
+//
+//func (s *EmptyStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitEmptyStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) EmptyStatement() (localctx IEmptyStatementContext) {
 	localctx = NewEmptyStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3197,17 +3197,17 @@ func (s *ExpressionStatementContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ExpressionStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterExpressionStatement(s)
-	}
-}
-
-func (s *ExpressionStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitExpressionStatement(s)
-	}
-}
+//func (s *ExpressionStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterExpressionStatement(s)
+//	}
+//}
+//
+//func (s *ExpressionStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitExpressionStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ExpressionStatement() (localctx IExpressionStatementContext) {
 	localctx = NewExpressionStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3342,17 +3342,17 @@ func (s *IfStatementContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *IfStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterIfStatement(s)
-	}
-}
-
-func (s *IfStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitIfStatement(s)
-	}
-}
+//func (s *IfStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterIfStatement(s)
+//	}
+//}
+//
+//func (s *IfStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitIfStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) IfStatement() (localctx IIfStatementContext) {
 	localctx = NewIfStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -3527,17 +3527,17 @@ func (s *DoStatementContext) Eos() IEosContext {
 	return t.(IEosContext)
 }
 
-func (s *DoStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterDoStatement(s)
-	}
-}
-
-func (s *DoStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitDoStatement(s)
-	}
-}
+//func (s *DoStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterDoStatement(s)
+//	}
+//}
+//
+//func (s *DoStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitDoStatement(s)
+//	}
+//}
 
 type WhileStatementContext struct {
 	*IterationStatementContext
@@ -3589,17 +3589,17 @@ func (s *WhileStatementContext) Statement() IStatementContext {
 	return t.(IStatementContext)
 }
 
-func (s *WhileStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterWhileStatement(s)
-	}
-}
-
-func (s *WhileStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitWhileStatement(s)
-	}
-}
+//func (s *WhileStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterWhileStatement(s)
+//	}
+//}
+//
+//func (s *WhileStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitWhileStatement(s)
+//	}
+//}
 
 type ForStatementContext struct {
 	*IterationStatementContext
@@ -3682,17 +3682,17 @@ func (s *ForStatementContext) VariableDeclarationList() IVariableDeclarationList
 	return t.(IVariableDeclarationListContext)
 }
 
-func (s *ForStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterForStatement(s)
-	}
-}
-
-func (s *ForStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitForStatement(s)
-	}
-}
+//func (s *ForStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterForStatement(s)
+//	}
+//}
+//
+//func (s *ForStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitForStatement(s)
+//	}
+//}
 
 type ForInStatementContext struct {
 	*IterationStatementContext
@@ -3768,17 +3768,17 @@ func (s *ForInStatementContext) VariableDeclarationList() IVariableDeclarationLi
 	return t.(IVariableDeclarationListContext)
 }
 
-func (s *ForInStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterForInStatement(s)
-	}
-}
-
-func (s *ForInStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitForInStatement(s)
-	}
-}
+//func (s *ForInStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterForInStatement(s)
+//	}
+//}
+//
+//func (s *ForInStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitForInStatement(s)
+//	}
+//}
 
 type ForOfStatementContext struct {
 	*IterationStatementContext
@@ -3864,17 +3864,17 @@ func (s *ForOfStatementContext) Await() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserAwait, 0)
 }
 
-func (s *ForOfStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterForOfStatement(s)
-	}
-}
-
-func (s *ForOfStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitForOfStatement(s)
-	}
-}
+//func (s *ForOfStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterForOfStatement(s)
+//	}
+//}
+//
+//func (s *ForOfStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitForOfStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) IterationStatement() (localctx IIterationStatementContext) {
 	localctx = NewIterationStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4195,17 +4195,17 @@ func (s *VarModifierContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VarModifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterVarModifier(s)
-	}
-}
-
-func (s *VarModifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitVarModifier(s)
-	}
-}
+//func (s *VarModifierContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterVarModifier(s)
+//	}
+//}
+//
+//func (s *VarModifierContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitVarModifier(s)
+//	}
+//}
 
 func (p *JavaScriptParser) VarModifier() (localctx IVarModifierContext) {
 	localctx = NewVarModifierContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4329,17 +4329,17 @@ func (s *ContinueStatementContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ContinueStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterContinueStatement(s)
-	}
-}
-
-func (s *ContinueStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitContinueStatement(s)
-	}
-}
+//func (s *ContinueStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterContinueStatement(s)
+//	}
+//}
+//
+//func (s *ContinueStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitContinueStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ContinueStatement() (localctx IContinueStatementContext) {
 	localctx = NewContinueStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4459,17 +4459,18 @@ func (s *BreakStatementContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *BreakStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterBreakStatement(s)
-	}
-}
-
-func (s *BreakStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitBreakStatement(s)
-	}
-}
+//
+//func (s *BreakStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterBreakStatement(s)
+//	}
+//}
+//
+//func (s *BreakStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitBreakStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) BreakStatement() (localctx IBreakStatementContext) {
 	localctx = NewBreakStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4589,17 +4590,17 @@ func (s *ReturnStatementContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ReturnStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterReturnStatement(s)
-	}
-}
-
-func (s *ReturnStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitReturnStatement(s)
-	}
-}
+//func (s *ReturnStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterReturnStatement(s)
+//	}
+//}
+//
+//func (s *ReturnStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitReturnStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ReturnStatement() (localctx IReturnStatementContext) {
 	localctx = NewReturnStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4719,17 +4720,17 @@ func (s *YieldStatementContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *YieldStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterYieldStatement(s)
-	}
-}
-
-func (s *YieldStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitYieldStatement(s)
-	}
-}
+//func (s *YieldStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterYieldStatement(s)
+//	}
+//}
+//
+//func (s *YieldStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitYieldStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) YieldStatement() (localctx IYieldStatementContext) {
 	localctx = NewYieldStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4857,17 +4858,17 @@ func (s *WithStatementContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *WithStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterWithStatement(s)
-	}
-}
-
-func (s *WithStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitWithStatement(s)
-	}
-}
+//func (s *WithStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterWithStatement(s)
+//	}
+//}
+//
+//func (s *WithStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitWithStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) WithStatement() (localctx IWithStatementContext) {
 	localctx = NewWithStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -4992,17 +4993,17 @@ func (s *SwitchStatementContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SwitchStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterSwitchStatement(s)
-	}
-}
-
-func (s *SwitchStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitSwitchStatement(s)
-	}
-}
+//func (s *SwitchStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterSwitchStatement(s)
+//	}
+//}
+//
+//func (s *SwitchStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitSwitchStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) SwitchStatement() (localctx ISwitchStatementContext) {
 	localctx = NewSwitchStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5136,17 +5137,17 @@ func (s *CaseBlockContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CaseBlockContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterCaseBlock(s)
-	}
-}
-
-func (s *CaseBlockContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitCaseBlock(s)
-	}
-}
+//func (s *CaseBlockContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterCaseBlock(s)
+//	}
+//}
+//
+//func (s *CaseBlockContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitCaseBlock(s)
+//	}
+//}
 
 func (p *JavaScriptParser) CaseBlock() (localctx ICaseBlockContext) {
 	localctx = NewCaseBlockContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5284,17 +5285,17 @@ func (s *CaseClausesContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CaseClausesContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterCaseClauses(s)
-	}
-}
-
-func (s *CaseClausesContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitCaseClauses(s)
-	}
-}
+//func (s *CaseClausesContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterCaseClauses(s)
+//	}
+//}
+//
+//func (s *CaseClausesContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitCaseClauses(s)
+//	}
+//}
 
 func (p *JavaScriptParser) CaseClauses() (localctx ICaseClausesContext) {
 	localctx = NewCaseClausesContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5410,17 +5411,17 @@ func (s *CaseClauseContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CaseClauseContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterCaseClause(s)
-	}
-}
-
-func (s *CaseClauseContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitCaseClause(s)
-	}
-}
+//func (s *CaseClauseContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterCaseClause(s)
+//	}
+//}
+//
+//func (s *CaseClauseContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitCaseClause(s)
+//	}
+//}
 
 func (p *JavaScriptParser) CaseClause() (localctx ICaseClauseContext) {
 	localctx = NewCaseClauseContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5533,17 +5534,17 @@ func (s *DefaultClauseContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *DefaultClauseContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterDefaultClause(s)
-	}
-}
-
-func (s *DefaultClauseContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitDefaultClause(s)
-	}
-}
+//func (s *DefaultClauseContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterDefaultClause(s)
+//	}
+//}
+//
+//func (s *DefaultClauseContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitDefaultClause(s)
+//	}
+//}
 
 func (p *JavaScriptParser) DefaultClause() (localctx IDefaultClauseContext) {
 	localctx = NewDefaultClauseContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5658,17 +5659,17 @@ func (s *LabelledStatementContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LabelledStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterLabelledStatement(s)
-	}
-}
-
-func (s *LabelledStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitLabelledStatement(s)
-	}
-}
+//func (s *LabelledStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterLabelledStatement(s)
+//	}
+//}
+//
+//func (s *LabelledStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitLabelledStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) LabelledStatement() (localctx ILabelledStatementContext) {
 	localctx = NewLabelledStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5777,17 +5778,17 @@ func (s *ThrowStatementContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ThrowStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterThrowStatement(s)
-	}
-}
-
-func (s *ThrowStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitThrowStatement(s)
-	}
-}
+//func (s *ThrowStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterThrowStatement(s)
+//	}
+//}
+//
+//func (s *ThrowStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitThrowStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ThrowStatement() (localctx IThrowStatementContext) {
 	localctx = NewThrowStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -5911,17 +5912,17 @@ func (s *TryStatementContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TryStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterTryStatement(s)
-	}
-}
-
-func (s *TryStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitTryStatement(s)
-	}
-}
+//func (s *TryStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterTryStatement(s)
+//	}
+//}
+//
+//func (s *TryStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitTryStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) TryStatement() (localctx ITryStatementContext) {
 	localctx = NewTryStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6063,17 +6064,17 @@ func (s *CatchProductionContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CatchProductionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterCatchProduction(s)
-	}
-}
-
-func (s *CatchProductionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitCatchProduction(s)
-	}
-}
+//func (s *CatchProductionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterCatchProduction(s)
+//	}
+//}
+//
+//func (s *CatchProductionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitCatchProduction(s)
+//	}
+//}
 
 func (p *JavaScriptParser) CatchProduction() (localctx ICatchProductionContext) {
 	localctx = NewCatchProductionContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6195,17 +6196,17 @@ func (s *FinallyProductionContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FinallyProductionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterFinallyProduction(s)
-	}
-}
-
-func (s *FinallyProductionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitFinallyProduction(s)
-	}
-}
+//func (s *FinallyProductionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterFinallyProduction(s)
+//	}
+//}
+//
+//func (s *FinallyProductionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitFinallyProduction(s)
+//	}
+//}
 
 func (p *JavaScriptParser) FinallyProduction() (localctx IFinallyProductionContext) {
 	localctx = NewFinallyProductionContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6300,17 +6301,17 @@ func (s *DebuggerStatementContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *DebuggerStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterDebuggerStatement(s)
-	}
-}
-
-func (s *DebuggerStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitDebuggerStatement(s)
-	}
-}
+//func (s *DebuggerStatementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterDebuggerStatement(s)
+//	}
+//}
+//
+//func (s *DebuggerStatementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitDebuggerStatement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) DebuggerStatement() (localctx IDebuggerStatementContext) {
 	localctx = NewDebuggerStatementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6441,11 +6442,11 @@ func (s *FunctionDeclarationContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FunctionDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterFunctionDeclaration(s)
-	}
-}
+//func (s *FunctionDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterFunctionDeclaration(s)
+//	}
+//}
 
 func (s *FunctionDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(JavaScriptParserListener); ok {
@@ -6742,17 +6743,17 @@ func (s *ClassTailContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassTailContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterClassTail(s)
-	}
-}
-
-func (s *ClassTailContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitClassTail(s)
-	}
-}
+//func (s *ClassTailContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterClassTail(s)
+//	}
+//}
+//
+//func (s *ClassTailContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitClassTail(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ClassTail() (localctx IClassTailContext) {
 	localctx = NewClassTailContext(p, p.GetParserRuleContext(), p.GetState())
@@ -6978,17 +6979,17 @@ func (s *ClassElementContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassElementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterClassElement(s)
-	}
-}
-
-func (s *ClassElementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitClassElement(s)
-	}
-}
+//func (s *ClassElementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterClassElement(s)
+//	}
+//}
+//
+//func (s *ClassElementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitClassElement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ClassElement() (localctx IClassElementContext) {
 	localctx = NewClassElementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7236,17 +7237,17 @@ func (s *MethodDefinitionContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *MethodDefinitionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterMethodDefinition(s)
-	}
-}
-
-func (s *MethodDefinitionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitMethodDefinition(s)
-	}
-}
+//func (s *MethodDefinitionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterMethodDefinition(s)
+//	}
+//}
+//
+//func (s *MethodDefinitionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitMethodDefinition(s)
+//	}
+//}
 
 func (p *JavaScriptParser) MethodDefinition() (localctx IMethodDefinitionContext) {
 	localctx = NewMethodDefinitionContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7505,17 +7506,17 @@ func (s *FormalParameterListContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FormalParameterListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterFormalParameterList(s)
-	}
-}
-
-func (s *FormalParameterListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitFormalParameterList(s)
-	}
-}
+//func (s *FormalParameterListContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterFormalParameterList(s)
+//	}
+//}
+//
+//func (s *FormalParameterListContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitFormalParameterList(s)
+//	}
+//}
 
 func (p *JavaScriptParser) FormalParameterList() (localctx IFormalParameterListContext) {
 	localctx = NewFormalParameterListContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7670,17 +7671,17 @@ func (s *FormalParameterArgContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FormalParameterArgContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterFormalParameterArg(s)
-	}
-}
-
-func (s *FormalParameterArgContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitFormalParameterArg(s)
-	}
-}
+//func (s *FormalParameterArgContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterFormalParameterArg(s)
+//	}
+//}
+//
+//func (s *FormalParameterArgContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitFormalParameterArg(s)
+//	}
+//}
 
 func (p *JavaScriptParser) FormalParameterArg() (localctx IFormalParameterArgContext) {
 	localctx = NewFormalParameterArgContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7787,17 +7788,18 @@ func (s *LastFormalParameterArgContext) ToStringTree(ruleNames []string, recog a
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LastFormalParameterArgContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterLastFormalParameterArg(s)
-	}
-}
-
-func (s *LastFormalParameterArgContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitLastFormalParameterArg(s)
-	}
-}
+//
+//func (s *LastFormalParameterArgContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterLastFormalParameterArg(s)
+//	}
+//}
+//
+//func (s *LastFormalParameterArgContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitLastFormalParameterArg(s)
+//	}
+//}
 
 func (p *JavaScriptParser) LastFormalParameterArg() (localctx ILastFormalParameterArgContext) {
 	localctx = NewLastFormalParameterArgContext(p, p.GetParserRuleContext(), p.GetState())
@@ -7896,17 +7898,17 @@ func (s *FunctionBodyContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FunctionBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterFunctionBody(s)
-	}
-}
-
-func (s *FunctionBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitFunctionBody(s)
-	}
-}
+//func (s *FunctionBodyContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterFunctionBody(s)
+//	}
+//}
+//
+//func (s *FunctionBodyContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitFunctionBody(s)
+//	}
+//}
 
 func (p *JavaScriptParser) FunctionBody() (localctx IFunctionBodyContext) {
 	localctx = NewFunctionBodyContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8020,17 +8022,17 @@ func (s *SourceElementsContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SourceElementsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterSourceElements(s)
-	}
-}
-
-func (s *SourceElementsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitSourceElements(s)
-	}
-}
+//func (s *SourceElementsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterSourceElements(s)
+//	}
+//}
+//
+//func (s *SourceElementsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitSourceElements(s)
+//	}
+//}
 
 func (p *JavaScriptParser) SourceElements() (localctx ISourceElementsContext) {
 	localctx = NewSourceElementsContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8142,17 +8144,17 @@ func (s *ArrayLiteralContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArrayLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterArrayLiteral(s)
-	}
-}
-
-func (s *ArrayLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitArrayLiteral(s)
-	}
-}
+//func (s *ArrayLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterArrayLiteral(s)
+//	}
+//}
+//
+//func (s *ArrayLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitArrayLiteral(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ArrayLiteral() (localctx IArrayLiteralContext) {
 	localctx = NewArrayLiteralContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8268,17 +8270,17 @@ func (s *ElementListContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ElementListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterElementList(s)
-	}
-}
-
-func (s *ElementListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitElementList(s)
-	}
-}
+//func (s *ElementListContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterElementList(s)
+//	}
+//}
+//
+//func (s *ElementListContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitElementList(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ElementList() (localctx IElementListContext) {
 	localctx = NewElementListContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8439,17 +8441,17 @@ func (s *ArrayElementContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArrayElementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterArrayElement(s)
-	}
-}
-
-func (s *ArrayElementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitArrayElement(s)
-	}
-}
+//func (s *ArrayElementContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterArrayElement(s)
+//	}
+//}
+//
+//func (s *ArrayElementContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitArrayElement(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ArrayElement() (localctx IArrayElementContext) {
 	localctx = NewArrayElementContext(p, p.GetParserRuleContext(), p.GetState())
@@ -8584,17 +8586,17 @@ func (s *PropertyExpressionAssignmentContext) SingleExpression() ISingleExpressi
 	return t.(ISingleExpressionContext)
 }
 
-func (s *PropertyExpressionAssignmentContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPropertyExpressionAssignment(s)
-	}
-}
-
-func (s *PropertyExpressionAssignmentContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPropertyExpressionAssignment(s)
-	}
-}
+//func (s *PropertyExpressionAssignmentContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPropertyExpressionAssignment(s)
+//	}
+//}
+//
+//func (s *PropertyExpressionAssignmentContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPropertyExpressionAssignment(s)
+//	}
+//}
 
 type ComputedPropertyExpressionAssignmentContext struct {
 	*PropertyAssignmentContext
@@ -8649,17 +8651,17 @@ func (s *ComputedPropertyExpressionAssignmentContext) Colon() antlr.TerminalNode
 	return s.GetToken(JavaScriptParserColon, 0)
 }
 
-func (s *ComputedPropertyExpressionAssignmentContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterComputedPropertyExpressionAssignment(s)
-	}
-}
-
-func (s *ComputedPropertyExpressionAssignmentContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitComputedPropertyExpressionAssignment(s)
-	}
-}
+//func (s *ComputedPropertyExpressionAssignmentContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterComputedPropertyExpressionAssignment(s)
+//	}
+//}
+//
+//func (s *ComputedPropertyExpressionAssignmentContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitComputedPropertyExpressionAssignment(s)
+//	}
+//}
 
 type PropertyShorthandContext struct {
 	*PropertyAssignmentContext
@@ -8693,17 +8695,17 @@ func (s *PropertyShorthandContext) Ellipsis() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserEllipsis, 0)
 }
 
-func (s *PropertyShorthandContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPropertyShorthand(s)
-	}
-}
-
-func (s *PropertyShorthandContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPropertyShorthand(s)
-	}
-}
+//func (s *PropertyShorthandContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPropertyShorthand(s)
+//	}
+//}
+//
+//func (s *PropertyShorthandContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPropertyShorthand(s)
+//	}
+//}
 
 type PropertySetterContext struct {
 	*PropertyAssignmentContext
@@ -8761,17 +8763,17 @@ func (s *PropertySetterContext) FunctionBody() IFunctionBodyContext {
 	return t.(IFunctionBodyContext)
 }
 
-func (s *PropertySetterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPropertySetter(s)
-	}
-}
-
-func (s *PropertySetterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPropertySetter(s)
-	}
-}
+//func (s *PropertySetterContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPropertySetter(s)
+//	}
+//}
+//
+//func (s *PropertySetterContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPropertySetter(s)
+//	}
+//}
 
 type PropertyGetterContext struct {
 	*PropertyAssignmentContext
@@ -8819,17 +8821,17 @@ func (s *PropertyGetterContext) FunctionBody() IFunctionBodyContext {
 	return t.(IFunctionBodyContext)
 }
 
-func (s *PropertyGetterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPropertyGetter(s)
-	}
-}
-
-func (s *PropertyGetterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPropertyGetter(s)
-	}
-}
+//func (s *PropertyGetterContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPropertyGetter(s)
+//	}
+//}
+//
+//func (s *PropertyGetterContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPropertyGetter(s)
+//	}
+//}
 
 type FunctionPropertyContext struct {
 	*PropertyAssignmentContext
@@ -8895,17 +8897,17 @@ func (s *FunctionPropertyContext) FormalParameterList() IFormalParameterListCont
 	return t.(IFormalParameterListContext)
 }
 
-func (s *FunctionPropertyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterFunctionProperty(s)
-	}
-}
-
-func (s *FunctionPropertyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitFunctionProperty(s)
-	}
-}
+//func (s *FunctionPropertyContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterFunctionProperty(s)
+//	}
+//}
+//
+//func (s *FunctionPropertyContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitFunctionProperty(s)
+//	}
+//}
 
 func (p *JavaScriptParser) PropertyAssignment() (localctx IPropertyAssignmentContext) {
 	localctx = NewPropertyAssignmentContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9179,17 +9181,17 @@ func (s *PropertyNameContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *PropertyNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPropertyName(s)
-	}
-}
-
-func (s *PropertyNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPropertyName(s)
-	}
-}
+//func (s *PropertyNameContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPropertyName(s)
+//	}
+//}
+//
+//func (s *PropertyNameContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPropertyName(s)
+//	}
+//}
 
 func (p *JavaScriptParser) PropertyName() (localctx IPropertyNameContext) {
 	localctx = NewPropertyNameContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9343,17 +9345,17 @@ func (s *ArgumentsContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterArguments(s)
-	}
-}
-
-func (s *ArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitArguments(s)
-	}
-}
+//func (s *ArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterArguments(s)
+//	}
+//}
+//
+//func (s *ArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitArguments(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Arguments() (localctx IArgumentsContext) {
 	localctx = NewArgumentsContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9503,17 +9505,17 @@ func (s *ArgumentContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArgumentContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterArgument(s)
-	}
-}
-
-func (s *ArgumentContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitArgument(s)
-	}
-}
+//func (s *ArgumentContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterArgument(s)
+//	}
+//}
+//
+//func (s *ArgumentContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitArgument(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Argument() (localctx IArgumentContext) {
 	localctx = NewArgumentContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9645,17 +9647,17 @@ func (s *ExpressionSequenceContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ExpressionSequenceContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterExpressionSequence(s)
-	}
-}
-
-func (s *ExpressionSequenceContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitExpressionSequence(s)
-	}
-}
+//func (s *ExpressionSequenceContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterExpressionSequence(s)
+//	}
+//}
+//
+//func (s *ExpressionSequenceContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitExpressionSequence(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ExpressionSequence() (localctx IExpressionSequenceContext) {
 	localctx = NewExpressionSequenceContext(p, p.GetParserRuleContext(), p.GetState())
@@ -9790,17 +9792,17 @@ func (s *TemplateStringExpressionContext) TemplateStringLiteral() antlr.Terminal
 	return s.GetToken(JavaScriptParserTemplateStringLiteral, 0)
 }
 
-func (s *TemplateStringExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterTemplateStringExpression(s)
-	}
-}
-
-func (s *TemplateStringExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitTemplateStringExpression(s)
-	}
-}
+//func (s *TemplateStringExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterTemplateStringExpression(s)
+//	}
+//}
+//
+//func (s *TemplateStringExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitTemplateStringExpression(s)
+//	}
+//}
 
 type TernaryExpressionContext struct {
 	*SingleExpressionContext
@@ -9851,17 +9853,17 @@ func (s *TernaryExpressionContext) Colon() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserColon, 0)
 }
 
-func (s *TernaryExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterTernaryExpression(s)
-	}
-}
-
-func (s *TernaryExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitTernaryExpression(s)
-	}
-}
+//func (s *TernaryExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterTernaryExpression(s)
+//	}
+//}
+//
+//func (s *TernaryExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitTernaryExpression(s)
+//	}
+//}
 
 type LogicalAndExpressionContext struct {
 	*SingleExpressionContext
@@ -9908,17 +9910,17 @@ func (s *LogicalAndExpressionContext) And() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserAnd, 0)
 }
 
-func (s *LogicalAndExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterLogicalAndExpression(s)
-	}
-}
-
-func (s *LogicalAndExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitLogicalAndExpression(s)
-	}
-}
+//func (s *LogicalAndExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterLogicalAndExpression(s)
+//	}
+//}
+//
+//func (s *LogicalAndExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitLogicalAndExpression(s)
+//	}
+//}
 
 type PowerExpressionContext struct {
 	*SingleExpressionContext
@@ -9965,17 +9967,17 @@ func (s *PowerExpressionContext) Power() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserPower, 0)
 }
 
-func (s *PowerExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPowerExpression(s)
-	}
-}
-
-func (s *PowerExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPowerExpression(s)
-	}
-}
+//func (s *PowerExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPowerExpression(s)
+//	}
+//}
+//
+//func (s *PowerExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPowerExpression(s)
+//	}
+//}
 
 type PreIncrementExpressionContext struct {
 	*SingleExpressionContext
@@ -10009,17 +10011,17 @@ func (s *PreIncrementExpressionContext) SingleExpression() ISingleExpressionCont
 	return t.(ISingleExpressionContext)
 }
 
-func (s *PreIncrementExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPreIncrementExpression(s)
-	}
-}
-
-func (s *PreIncrementExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPreIncrementExpression(s)
-	}
-}
+//func (s *PreIncrementExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPreIncrementExpression(s)
+//	}
+//}
+//
+//func (s *PreIncrementExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPreIncrementExpression(s)
+//	}
+//}
 
 type ObjectLiteralExpressionContext struct {
 	*SingleExpressionContext
@@ -10055,11 +10057,11 @@ func (s *ObjectLiteralExpressionContext) EnterRule(listener antlr.ParseTreeListe
 	}
 }
 
-func (s *ObjectLiteralExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitObjectLiteralExpression(s)
-	}
-}
+//func (s *ObjectLiteralExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitObjectLiteralExpression(s)
+//	}
+//}
 
 type MetaExpressionContext struct {
 	*SingleExpressionContext
@@ -10097,17 +10099,17 @@ func (s *MetaExpressionContext) Identifier() IIdentifierContext {
 	return t.(IIdentifierContext)
 }
 
-func (s *MetaExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterMetaExpression(s)
-	}
-}
-
-func (s *MetaExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitMetaExpression(s)
-	}
-}
+//func (s *MetaExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterMetaExpression(s)
+//	}
+//}
+//
+//func (s *MetaExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitMetaExpression(s)
+//	}
+//}
 
 type InExpressionContext struct {
 	*SingleExpressionContext
@@ -10154,17 +10156,17 @@ func (s *InExpressionContext) In() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserIn, 0)
 }
 
-func (s *InExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterInExpression(s)
-	}
-}
-
-func (s *InExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitInExpression(s)
-	}
-}
+//func (s *InExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterInExpression(s)
+//	}
+//}
+//
+//func (s *InExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitInExpression(s)
+//	}
+//}
 
 type LogicalOrExpressionContext struct {
 	*SingleExpressionContext
@@ -10211,17 +10213,17 @@ func (s *LogicalOrExpressionContext) Or() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserOr, 0)
 }
 
-func (s *LogicalOrExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterLogicalOrExpression(s)
-	}
-}
-
-func (s *LogicalOrExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitLogicalOrExpression(s)
-	}
-}
+//func (s *LogicalOrExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterLogicalOrExpression(s)
+//	}
+//}
+//
+//func (s *LogicalOrExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitLogicalOrExpression(s)
+//	}
+//}
 
 type NotExpressionContext struct {
 	*SingleExpressionContext
@@ -10255,17 +10257,17 @@ func (s *NotExpressionContext) SingleExpression() ISingleExpressionContext {
 	return t.(ISingleExpressionContext)
 }
 
-func (s *NotExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterNotExpression(s)
-	}
-}
-
-func (s *NotExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitNotExpression(s)
-	}
-}
+//func (s *NotExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterNotExpression(s)
+//	}
+//}
+//
+//func (s *NotExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitNotExpression(s)
+//	}
+//}
 
 type PreDecreaseExpressionContext struct {
 	*SingleExpressionContext
@@ -10299,17 +10301,17 @@ func (s *PreDecreaseExpressionContext) SingleExpression() ISingleExpressionConte
 	return t.(ISingleExpressionContext)
 }
 
-func (s *PreDecreaseExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPreDecreaseExpression(s)
-	}
-}
-
-func (s *PreDecreaseExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPreDecreaseExpression(s)
-	}
-}
+//func (s *PreDecreaseExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPreDecreaseExpression(s)
+//	}
+//}
+//
+//func (s *PreDecreaseExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPreDecreaseExpression(s)
+//	}
+//}
 
 type ArgumentsExpressionContext struct {
 	*SingleExpressionContext
@@ -10349,11 +10351,12 @@ func (s *ArgumentsExpressionContext) Arguments() IArgumentsContext {
 	return t.(IArgumentsContext)
 }
 
-func (s *ArgumentsExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterArgumentsExpression(s)
-	}
-}
+//
+//func (s *ArgumentsExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterArgumentsExpression(s)
+//	}
+//}
 
 func (s *ArgumentsExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(JavaScriptParserListener); ok {
@@ -10393,17 +10396,17 @@ func (s *AwaitExpressionContext) SingleExpression() ISingleExpressionContext {
 	return t.(ISingleExpressionContext)
 }
 
-func (s *AwaitExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterAwaitExpression(s)
-	}
-}
-
-func (s *AwaitExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitAwaitExpression(s)
-	}
-}
+//func (s *AwaitExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterAwaitExpression(s)
+//	}
+//}
+//
+//func (s *AwaitExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitAwaitExpression(s)
+//	}
+//}
 
 type ThisExpressionContext struct {
 	*SingleExpressionContext
@@ -10427,17 +10430,17 @@ func (s *ThisExpressionContext) This() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserThis, 0)
 }
 
-func (s *ThisExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterThisExpression(s)
-	}
-}
-
-func (s *ThisExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitThisExpression(s)
-	}
-}
+//func (s *ThisExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterThisExpression(s)
+//	}
+//}
+//
+//func (s *ThisExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitThisExpression(s)
+//	}
+//}
 
 type FunctionExpressionContext struct {
 	*SingleExpressionContext
@@ -10467,17 +10470,17 @@ func (s *FunctionExpressionContext) AnoymousFunction() IAnoymousFunctionContext 
 	return t.(IAnoymousFunctionContext)
 }
 
-func (s *FunctionExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterFunctionExpression(s)
-	}
-}
-
-func (s *FunctionExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitFunctionExpression(s)
-	}
-}
+//func (s *FunctionExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterFunctionExpression(s)
+//	}
+//}
+//
+//func (s *FunctionExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitFunctionExpression(s)
+//	}
+//}
 
 type UnaryMinusExpressionContext struct {
 	*SingleExpressionContext
@@ -10511,17 +10514,18 @@ func (s *UnaryMinusExpressionContext) SingleExpression() ISingleExpressionContex
 	return t.(ISingleExpressionContext)
 }
 
-func (s *UnaryMinusExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterUnaryMinusExpression(s)
-	}
-}
-
-func (s *UnaryMinusExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitUnaryMinusExpression(s)
-	}
-}
+//
+//func (s *UnaryMinusExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterUnaryMinusExpression(s)
+//	}
+//}
+//
+//func (s *UnaryMinusExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitUnaryMinusExpression(s)
+//	}
+//}
 
 type AssignmentExpressionContext struct {
 	*SingleExpressionContext
@@ -10568,17 +10572,17 @@ func (s *AssignmentExpressionContext) Assign() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserAssign, 0)
 }
 
-func (s *AssignmentExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterAssignmentExpression(s)
-	}
-}
-
-func (s *AssignmentExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitAssignmentExpression(s)
-	}
-}
+//func (s *AssignmentExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterAssignmentExpression(s)
+//	}
+//}
+//
+//func (s *AssignmentExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitAssignmentExpression(s)
+//	}
+//}
 
 type PostDecreaseExpressionContext struct {
 	*SingleExpressionContext
@@ -10612,17 +10616,17 @@ func (s *PostDecreaseExpressionContext) MinusMinus() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserMinusMinus, 0)
 }
 
-func (s *PostDecreaseExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPostDecreaseExpression(s)
-	}
-}
-
-func (s *PostDecreaseExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPostDecreaseExpression(s)
-	}
-}
+//func (s *PostDecreaseExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPostDecreaseExpression(s)
+//	}
+//}
+//
+//func (s *PostDecreaseExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPostDecreaseExpression(s)
+//	}
+//}
 
 type TypeofExpressionContext struct {
 	*SingleExpressionContext
@@ -10656,17 +10660,17 @@ func (s *TypeofExpressionContext) SingleExpression() ISingleExpressionContext {
 	return t.(ISingleExpressionContext)
 }
 
-func (s *TypeofExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterTypeofExpression(s)
-	}
-}
-
-func (s *TypeofExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitTypeofExpression(s)
-	}
-}
+//func (s *TypeofExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterTypeofExpression(s)
+//	}
+//}
+//
+//func (s *TypeofExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitTypeofExpression(s)
+//	}
+//}
 
 type InstanceofExpressionContext struct {
 	*SingleExpressionContext
@@ -10713,17 +10717,17 @@ func (s *InstanceofExpressionContext) Instanceof() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserInstanceof, 0)
 }
 
-func (s *InstanceofExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterInstanceofExpression(s)
-	}
-}
-
-func (s *InstanceofExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitInstanceofExpression(s)
-	}
-}
+//func (s *InstanceofExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterInstanceofExpression(s)
+//	}
+//}
+//
+//func (s *InstanceofExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitInstanceofExpression(s)
+//	}
+//}
 
 type UnaryPlusExpressionContext struct {
 	*SingleExpressionContext
@@ -10757,17 +10761,17 @@ func (s *UnaryPlusExpressionContext) SingleExpression() ISingleExpressionContext
 	return t.(ISingleExpressionContext)
 }
 
-func (s *UnaryPlusExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterUnaryPlusExpression(s)
-	}
-}
-
-func (s *UnaryPlusExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitUnaryPlusExpression(s)
-	}
-}
+//func (s *UnaryPlusExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterUnaryPlusExpression(s)
+//	}
+//}
+//
+//func (s *UnaryPlusExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitUnaryPlusExpression(s)
+//	}
+//}
 
 type DeleteExpressionContext struct {
 	*SingleExpressionContext
@@ -10801,17 +10805,17 @@ func (s *DeleteExpressionContext) SingleExpression() ISingleExpressionContext {
 	return t.(ISingleExpressionContext)
 }
 
-func (s *DeleteExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterDeleteExpression(s)
-	}
-}
-
-func (s *DeleteExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitDeleteExpression(s)
-	}
-}
+//func (s *DeleteExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterDeleteExpression(s)
+//	}
+//}
+//
+//func (s *DeleteExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitDeleteExpression(s)
+//	}
+//}
 
 type ImportExpressionContext struct {
 	*SingleExpressionContext
@@ -10853,17 +10857,17 @@ func (s *ImportExpressionContext) CloseParen() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserCloseParen, 0)
 }
 
-func (s *ImportExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterImportExpression(s)
-	}
-}
-
-func (s *ImportExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitImportExpression(s)
-	}
-}
+//func (s *ImportExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterImportExpression(s)
+//	}
+//}
+//
+//func (s *ImportExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitImportExpression(s)
+//	}
+//}
 
 type EqualityExpressionContext struct {
 	*SingleExpressionContext
@@ -10922,17 +10926,17 @@ func (s *EqualityExpressionContext) IdentityNotEquals() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserIdentityNotEquals, 0)
 }
 
-func (s *EqualityExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterEqualityExpression(s)
-	}
-}
-
-func (s *EqualityExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitEqualityExpression(s)
-	}
-}
+//func (s *EqualityExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterEqualityExpression(s)
+//	}
+//}
+//
+//func (s *EqualityExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitEqualityExpression(s)
+//	}
+//}
 
 type BitXOrExpressionContext struct {
 	*SingleExpressionContext
@@ -10979,17 +10983,17 @@ func (s *BitXOrExpressionContext) BitXOr() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserBitXOr, 0)
 }
 
-func (s *BitXOrExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterBitXOrExpression(s)
-	}
-}
-
-func (s *BitXOrExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitBitXOrExpression(s)
-	}
-}
+//func (s *BitXOrExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterBitXOrExpression(s)
+//	}
+//}
+//
+//func (s *BitXOrExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitBitXOrExpression(s)
+//	}
+//}
 
 type SuperExpressionContext struct {
 	*SingleExpressionContext
@@ -11013,17 +11017,17 @@ func (s *SuperExpressionContext) Super() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserSuper, 0)
 }
 
-func (s *SuperExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterSuperExpression(s)
-	}
-}
-
-func (s *SuperExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitSuperExpression(s)
-	}
-}
+//func (s *SuperExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterSuperExpression(s)
+//	}
+//}
+//
+//func (s *SuperExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitSuperExpression(s)
+//	}
+//}
 
 type MultiplicativeExpressionContext struct {
 	*SingleExpressionContext
@@ -11078,17 +11082,17 @@ func (s *MultiplicativeExpressionContext) Modulus() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserModulus, 0)
 }
 
-func (s *MultiplicativeExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterMultiplicativeExpression(s)
-	}
-}
-
-func (s *MultiplicativeExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitMultiplicativeExpression(s)
-	}
-}
+//func (s *MultiplicativeExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterMultiplicativeExpression(s)
+//	}
+//}
+//
+//func (s *MultiplicativeExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitMultiplicativeExpression(s)
+//	}
+//}
 
 type BitShiftExpressionContext struct {
 	*SingleExpressionContext
@@ -11143,17 +11147,17 @@ func (s *BitShiftExpressionContext) RightShiftLogical() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserRightShiftLogical, 0)
 }
 
-func (s *BitShiftExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterBitShiftExpression(s)
-	}
-}
-
-func (s *BitShiftExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitBitShiftExpression(s)
-	}
-}
+//func (s *BitShiftExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterBitShiftExpression(s)
+//	}
+//}
+//
+//func (s *BitShiftExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitBitShiftExpression(s)
+//	}
+//}
 
 type ParenthesizedExpressionContext struct {
 	*SingleExpressionContext
@@ -11191,17 +11195,17 @@ func (s *ParenthesizedExpressionContext) CloseParen() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserCloseParen, 0)
 }
 
-func (s *ParenthesizedExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterParenthesizedExpression(s)
-	}
-}
-
-func (s *ParenthesizedExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitParenthesizedExpression(s)
-	}
-}
+//func (s *ParenthesizedExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterParenthesizedExpression(s)
+//	}
+//}
+//
+//func (s *ParenthesizedExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitParenthesizedExpression(s)
+//	}
+//}
 
 type AdditiveExpressionContext struct {
 	*SingleExpressionContext
@@ -11252,17 +11256,17 @@ func (s *AdditiveExpressionContext) Minus() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserMinus, 0)
 }
 
-func (s *AdditiveExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterAdditiveExpression(s)
-	}
-}
-
-func (s *AdditiveExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitAdditiveExpression(s)
-	}
-}
+//func (s *AdditiveExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterAdditiveExpression(s)
+//	}
+//}
+//
+//func (s *AdditiveExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitAdditiveExpression(s)
+//	}
+//}
 
 type RelationalExpressionContext struct {
 	*SingleExpressionContext
@@ -11321,17 +11325,17 @@ func (s *RelationalExpressionContext) GreaterThanEquals() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserGreaterThanEquals, 0)
 }
 
-func (s *RelationalExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterRelationalExpression(s)
-	}
-}
-
-func (s *RelationalExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitRelationalExpression(s)
-	}
-}
+//func (s *RelationalExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterRelationalExpression(s)
+//	}
+//}
+//
+//func (s *RelationalExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitRelationalExpression(s)
+//	}
+//}
 
 type PostIncrementExpressionContext struct {
 	*SingleExpressionContext
@@ -11365,17 +11369,17 @@ func (s *PostIncrementExpressionContext) PlusPlus() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserPlusPlus, 0)
 }
 
-func (s *PostIncrementExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterPostIncrementExpression(s)
-	}
-}
-
-func (s *PostIncrementExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitPostIncrementExpression(s)
-	}
-}
+//func (s *PostIncrementExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterPostIncrementExpression(s)
+//	}
+//}
+//
+//func (s *PostIncrementExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitPostIncrementExpression(s)
+//	}
+//}
 
 type YieldExpressionContext struct {
 	*SingleExpressionContext
@@ -11405,17 +11409,17 @@ func (s *YieldExpressionContext) YieldStatement() IYieldStatementContext {
 	return t.(IYieldStatementContext)
 }
 
-func (s *YieldExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterYieldExpression(s)
-	}
-}
-
-func (s *YieldExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitYieldExpression(s)
-	}
-}
+//func (s *YieldExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterYieldExpression(s)
+//	}
+//}
+//
+//func (s *YieldExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitYieldExpression(s)
+//	}
+//}
 
 type BitNotExpressionContext struct {
 	*SingleExpressionContext
@@ -11449,17 +11453,17 @@ func (s *BitNotExpressionContext) SingleExpression() ISingleExpressionContext {
 	return t.(ISingleExpressionContext)
 }
 
-func (s *BitNotExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterBitNotExpression(s)
-	}
-}
-
-func (s *BitNotExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitBitNotExpression(s)
-	}
-}
+//func (s *BitNotExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterBitNotExpression(s)
+//	}
+//}
+//
+//func (s *BitNotExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitBitNotExpression(s)
+//	}
+//}
 
 type NewExpressionContext struct {
 	*SingleExpressionContext
@@ -11509,11 +11513,12 @@ func (s *NewExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
 	}
 }
 
-func (s *NewExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitNewExpression(s)
-	}
-}
+//
+//func (s *NewExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitNewExpression(s)
+//	}
+//}
 
 type LiteralExpressionContext struct {
 	*SingleExpressionContext
@@ -11543,17 +11548,17 @@ func (s *LiteralExpressionContext) Literal() ILiteralContext {
 	return t.(ILiteralContext)
 }
 
-func (s *LiteralExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterLiteralExpression(s)
-	}
-}
-
-func (s *LiteralExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitLiteralExpression(s)
-	}
-}
+//func (s *LiteralExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterLiteralExpression(s)
+//	}
+//}
+//
+//func (s *LiteralExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitLiteralExpression(s)
+//	}
+//}
 
 type ArrayLiteralExpressionContext struct {
 	*SingleExpressionContext
@@ -11583,17 +11588,17 @@ func (s *ArrayLiteralExpressionContext) ArrayLiteral() IArrayLiteralContext {
 	return t.(IArrayLiteralContext)
 }
 
-func (s *ArrayLiteralExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterArrayLiteralExpression(s)
-	}
-}
-
-func (s *ArrayLiteralExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitArrayLiteralExpression(s)
-	}
-}
+//func (s *ArrayLiteralExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterArrayLiteralExpression(s)
+//	}
+//}
+//
+//func (s *ArrayLiteralExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitArrayLiteralExpression(s)
+//	}
+//}
 
 type MemberDotExpressionContext struct {
 	*SingleExpressionContext
@@ -11645,17 +11650,17 @@ func (s *MemberDotExpressionContext) Hashtag() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserHashtag, 0)
 }
 
-func (s *MemberDotExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterMemberDotExpression(s)
-	}
-}
-
-func (s *MemberDotExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitMemberDotExpression(s)
-	}
-}
+//func (s *MemberDotExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterMemberDotExpression(s)
+//	}
+//}
+//
+//func (s *MemberDotExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitMemberDotExpression(s)
+//	}
+//}
 
 type ClassExpressionContext struct {
 	*SingleExpressionContext
@@ -11699,17 +11704,17 @@ func (s *ClassExpressionContext) Identifier() IIdentifierContext {
 	return t.(IIdentifierContext)
 }
 
-func (s *ClassExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterClassExpression(s)
-	}
-}
-
-func (s *ClassExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitClassExpression(s)
-	}
-}
+//func (s *ClassExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterClassExpression(s)
+//	}
+//}
+//
+//func (s *ClassExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitClassExpression(s)
+//	}
+//}
 
 type MemberIndexExpressionContext struct {
 	*SingleExpressionContext
@@ -11757,17 +11762,17 @@ func (s *MemberIndexExpressionContext) CloseBracket() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserCloseBracket, 0)
 }
 
-func (s *MemberIndexExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterMemberIndexExpression(s)
-	}
-}
-
-func (s *MemberIndexExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitMemberIndexExpression(s)
-	}
-}
+//func (s *MemberIndexExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterMemberIndexExpression(s)
+//	}
+//}
+//
+//func (s *MemberIndexExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitMemberIndexExpression(s)
+//	}
+//}
 
 type IdentifierExpressionContext struct {
 	*SingleExpressionContext
@@ -11797,17 +11802,17 @@ func (s *IdentifierExpressionContext) Identifier() IIdentifierContext {
 	return t.(IIdentifierContext)
 }
 
-func (s *IdentifierExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterIdentifierExpression(s)
-	}
-}
-
-func (s *IdentifierExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitIdentifierExpression(s)
-	}
-}
+//func (s *IdentifierExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterIdentifierExpression(s)
+//	}
+//}
+//
+//func (s *IdentifierExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitIdentifierExpression(s)
+//	}
+//}
 
 type BitAndExpressionContext struct {
 	*SingleExpressionContext
@@ -11854,17 +11859,17 @@ func (s *BitAndExpressionContext) BitAnd() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserBitAnd, 0)
 }
 
-func (s *BitAndExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterBitAndExpression(s)
-	}
-}
-
-func (s *BitAndExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitBitAndExpression(s)
-	}
-}
+//func (s *BitAndExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterBitAndExpression(s)
+//	}
+//}
+//
+//func (s *BitAndExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitBitAndExpression(s)
+//	}
+//}
 
 type BitOrExpressionContext struct {
 	*SingleExpressionContext
@@ -11911,17 +11916,17 @@ func (s *BitOrExpressionContext) BitOr() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserBitOr, 0)
 }
 
-func (s *BitOrExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterBitOrExpression(s)
-	}
-}
-
-func (s *BitOrExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitBitOrExpression(s)
-	}
-}
+//func (s *BitOrExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterBitOrExpression(s)
+//	}
+//}
+//
+//func (s *BitOrExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitBitOrExpression(s)
+//	}
+//}
 
 type AssignmentOperatorExpressionContext struct {
 	*SingleExpressionContext
@@ -11974,17 +11979,17 @@ func (s *AssignmentOperatorExpressionContext) AssignmentOperator() IAssignmentOp
 	return t.(IAssignmentOperatorContext)
 }
 
-func (s *AssignmentOperatorExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterAssignmentOperatorExpression(s)
-	}
-}
-
-func (s *AssignmentOperatorExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitAssignmentOperatorExpression(s)
-	}
-}
+//func (s *AssignmentOperatorExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterAssignmentOperatorExpression(s)
+//	}
+//}
+//
+//func (s *AssignmentOperatorExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitAssignmentOperatorExpression(s)
+//	}
+//}
 
 type VoidExpressionContext struct {
 	*SingleExpressionContext
@@ -12018,17 +12023,17 @@ func (s *VoidExpressionContext) SingleExpression() ISingleExpressionContext {
 	return t.(ISingleExpressionContext)
 }
 
-func (s *VoidExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterVoidExpression(s)
-	}
-}
-
-func (s *VoidExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitVoidExpression(s)
-	}
-}
+//func (s *VoidExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterVoidExpression(s)
+//	}
+//}
+//
+//func (s *VoidExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitVoidExpression(s)
+//	}
+//}
 
 type CoalesceExpressionContext struct {
 	*SingleExpressionContext
@@ -12075,17 +12080,17 @@ func (s *CoalesceExpressionContext) NullCoalesce() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserNullCoalesce, 0)
 }
 
-func (s *CoalesceExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterCoalesceExpression(s)
-	}
-}
-
-func (s *CoalesceExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitCoalesceExpression(s)
-	}
-}
+//func (s *CoalesceExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterCoalesceExpression(s)
+//	}
+//}
+//
+//func (s *CoalesceExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitCoalesceExpression(s)
+//	}
+//}
 
 func (p *JavaScriptParser) SingleExpression() (localctx ISingleExpressionContext) {
 	return p.singleExpression(0)
@@ -12984,17 +12989,17 @@ func (s *AssignableContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AssignableContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterAssignable(s)
-	}
-}
-
-func (s *AssignableContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitAssignable(s)
-	}
-}
+//func (s *AssignableContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterAssignable(s)
+//	}
+//}
+//
+//func (s *AssignableContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitAssignable(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Assignable() (localctx IAssignableContext) {
 	localctx = NewAssignableContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13133,17 +13138,17 @@ func (s *ObjectLiteralContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ObjectLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterObjectLiteral(s)
-	}
-}
-
-func (s *ObjectLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitObjectLiteral(s)
-	}
-}
+//func (s *ObjectLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterObjectLiteral(s)
+//	}
+//}
+//
+//func (s *ObjectLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitObjectLiteral(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ObjectLiteral() (localctx IObjectLiteralContext) {
 	localctx = NewObjectLiteralContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13330,17 +13335,17 @@ func (s *AnoymousFunctionDeclContext) FormalParameterList() IFormalParameterList
 	return t.(IFormalParameterListContext)
 }
 
-func (s *AnoymousFunctionDeclContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterAnoymousFunctionDecl(s)
-	}
-}
-
-func (s *AnoymousFunctionDeclContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitAnoymousFunctionDecl(s)
-	}
-}
+//func (s *AnoymousFunctionDeclContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterAnoymousFunctionDecl(s)
+//	}
+//}
+//
+//func (s *AnoymousFunctionDeclContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitAnoymousFunctionDecl(s)
+//	}
+//}
 
 type ArrowFunctionContext struct {
 	*AnoymousFunctionContext
@@ -13388,17 +13393,17 @@ func (s *ArrowFunctionContext) Async() antlr.TerminalNode {
 	return s.GetToken(JavaScriptParserAsync, 0)
 }
 
-func (s *ArrowFunctionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterArrowFunction(s)
-	}
-}
-
-func (s *ArrowFunctionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitArrowFunction(s)
-	}
-}
+//func (s *ArrowFunctionContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterArrowFunction(s)
+//	}
+//}
+//
+//func (s *ArrowFunctionContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitArrowFunction(s)
+//	}
+//}
 
 type FunctionDeclContext struct {
 	*AnoymousFunctionContext
@@ -13428,17 +13433,17 @@ func (s *FunctionDeclContext) FunctionDeclaration() IFunctionDeclarationContext 
 	return t.(IFunctionDeclarationContext)
 }
 
-func (s *FunctionDeclContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterFunctionDecl(s)
-	}
-}
-
-func (s *FunctionDeclContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitFunctionDecl(s)
-	}
-}
+//func (s *FunctionDeclContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterFunctionDecl(s)
+//	}
+//}
+//
+//func (s *FunctionDeclContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitFunctionDecl(s)
+//	}
+//}
 
 func (p *JavaScriptParser) AnoymousFunction() (localctx IAnoymousFunctionContext) {
 	localctx = NewAnoymousFunctionContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13630,17 +13635,17 @@ func (s *ArrowFunctionParametersContext) ToStringTree(ruleNames []string, recog 
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArrowFunctionParametersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterArrowFunctionParameters(s)
-	}
-}
-
-func (s *ArrowFunctionParametersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitArrowFunctionParameters(s)
-	}
-}
+//func (s *ArrowFunctionParametersContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterArrowFunctionParameters(s)
+//	}
+//}
+//
+//func (s *ArrowFunctionParametersContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitArrowFunctionParameters(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ArrowFunctionParameters() (localctx IArrowFunctionParametersContext) {
 	localctx = NewArrowFunctionParametersContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13769,17 +13774,17 @@ func (s *ArrowFunctionBodyContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArrowFunctionBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterArrowFunctionBody(s)
-	}
-}
-
-func (s *ArrowFunctionBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitArrowFunctionBody(s)
-	}
-}
+//func (s *ArrowFunctionBodyContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterArrowFunctionBody(s)
+//	}
+//}
+//
+//func (s *ArrowFunctionBodyContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitArrowFunctionBody(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ArrowFunctionBody() (localctx IArrowFunctionBodyContext) {
 	localctx = NewArrowFunctionBodyContext(p, p.GetParserRuleContext(), p.GetState())
@@ -13917,17 +13922,18 @@ func (s *AssignmentOperatorContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AssignmentOperatorContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterAssignmentOperator(s)
-	}
-}
-
-func (s *AssignmentOperatorContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitAssignmentOperator(s)
-	}
-}
+//
+//func (s *AssignmentOperatorContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterAssignmentOperator(s)
+//	}
+//}
+//
+//func (s *AssignmentOperatorContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitAssignmentOperator(s)
+//	}
+//}
 
 func (p *JavaScriptParser) AssignmentOperator() (localctx IAssignmentOperatorContext) {
 	localctx = NewAssignmentOperatorContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14052,17 +14058,17 @@ func (s *LiteralContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterLiteral(s)
-	}
-}
-
-func (s *LiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitLiteral(s)
-	}
-}
+//func (s *LiteralContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterLiteral(s)
+//	}
+//}
+//
+//func (s *LiteralContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitLiteral(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Literal() (localctx ILiteralContext) {
 	localctx = NewLiteralContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14210,17 +14216,17 @@ func (s *NumericLiteralContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *NumericLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterNumericLiteral(s)
-	}
-}
-
-func (s *NumericLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitNumericLiteral(s)
-	}
-}
+//func (s *NumericLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterNumericLiteral(s)
+//	}
+//}
+//
+//func (s *NumericLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitNumericLiteral(s)
+//	}
+//}
 
 func (p *JavaScriptParser) NumericLiteral() (localctx INumericLiteralContext) {
 	localctx = NewNumericLiteralContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14321,17 +14327,17 @@ func (s *BigintLiteralContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *BigintLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterBigintLiteral(s)
-	}
-}
-
-func (s *BigintLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitBigintLiteral(s)
-	}
-}
+//func (s *BigintLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterBigintLiteral(s)
+//	}
+//}
+//
+//func (s *BigintLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitBigintLiteral(s)
+//	}
+//}
 
 func (p *JavaScriptParser) BigintLiteral() (localctx IBigintLiteralContext) {
 	localctx = NewBigintLiteralContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14436,17 +14442,17 @@ func (s *GetterContext) ToStringTree(ruleNames []string, recog antlr.Recognizer)
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *GetterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterGetter(s)
-	}
-}
-
-func (s *GetterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitGetter(s)
-	}
-}
+//func (s *GetterContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterGetter(s)
+//	}
+//}
+//
+//func (s *GetterContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitGetter(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Getter() (localctx IGetterContext) {
 	localctx = NewGetterContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14552,17 +14558,17 @@ func (s *SetterContext) ToStringTree(ruleNames []string, recog antlr.Recognizer)
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SetterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterSetter(s)
-	}
-}
-
-func (s *SetterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitSetter(s)
-	}
-}
+//func (s *SetterContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterSetter(s)
+//	}
+//}
+//
+//func (s *SetterContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitSetter(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Setter() (localctx ISetterContext) {
 	localctx = NewSetterContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14668,17 +14674,17 @@ func (s *IdentifierNameContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *IdentifierNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterIdentifierName(s)
-	}
-}
-
-func (s *IdentifierNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitIdentifierName(s)
-	}
-}
+//func (s *IdentifierNameContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterIdentifierName(s)
+//	}
+//}
+//
+//func (s *IdentifierNameContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitIdentifierName(s)
+//	}
+//}
 
 func (p *JavaScriptParser) IdentifierName() (localctx IIdentifierNameContext) {
 	localctx = NewIdentifierNameContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14780,17 +14786,17 @@ func (s *IdentifierContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *IdentifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterIdentifier(s)
-	}
-}
-
-func (s *IdentifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitIdentifier(s)
-	}
-}
+//func (s *IdentifierContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterIdentifier(s)
+//	}
+//}
+//
+//func (s *IdentifierContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitIdentifier(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Identifier() (localctx IIdentifierContext) {
 	localctx = NewIdentifierContext(p, p.GetParserRuleContext(), p.GetState())
@@ -14893,17 +14899,17 @@ func (s *ReservedWordContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ReservedWordContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterReservedWord(s)
-	}
-}
-
-func (s *ReservedWordContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitReservedWord(s)
-	}
-}
+//func (s *ReservedWordContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterReservedWord(s)
+//	}
+//}
+//
+//func (s *ReservedWordContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitReservedWord(s)
+//	}
+//}
 
 func (p *JavaScriptParser) ReservedWord() (localctx IReservedWordContext) {
 	localctx = NewReservedWordContext(p, p.GetParserRuleContext(), p.GetState())
@@ -15193,17 +15199,17 @@ func (s *KeywordContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *KeywordContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterKeyword(s)
-	}
-}
-
-func (s *KeywordContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitKeyword(s)
-	}
-}
+//func (s *KeywordContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterKeyword(s)
+//	}
+//}
+//
+//func (s *KeywordContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitKeyword(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Keyword() (localctx IKeywordContext) {
 	localctx = NewKeywordContext(p, p.GetParserRuleContext(), p.GetState())
@@ -15612,17 +15618,17 @@ func (s *Let_Context) ToStringTree(ruleNames []string, recog antlr.Recognizer) s
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *Let_Context) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterLet_(s)
-	}
-}
-
-func (s *Let_Context) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitLet_(s)
-	}
-}
+//func (s *Let_Context) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterLet_(s)
+//	}
+//}
+//
+//func (s *Let_Context) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitLet_(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Let_() (localctx ILet_Context) {
 	localctx = NewLet_Context(p, p.GetParserRuleContext(), p.GetState())
@@ -15715,17 +15721,17 @@ func (s *EosContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) st
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EosContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.EnterEos(s)
-	}
-}
-
-func (s *EosContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(JavaScriptParserListener); ok {
-		listenerT.ExitEos(s)
-	}
-}
+//func (s *EosContext) EnterRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.EnterEos(s)
+//	}
+//}
+//
+//func (s *EosContext) ExitRule(listener antlr.ParseTreeListener) {
+//	if listenerT, ok := listener.(JavaScriptParserListener); ok {
+//		listenerT.ExitEos(s)
+//	}
+//}
 
 func (p *JavaScriptParser) Eos() (localctx IEosContext) {
 	localctx = NewEosContext(p, p.GetParserRuleContext(), p.GetState())

@@ -74,7 +74,7 @@ func antlrAnalysis(diffText string, langMode string) AnalysisInfoType {
 	}
 	return result
 }
-func ExecuteGolang(diffText string) AnalysisInfoType{
+func ExecuteGolang(diffText string) AnalysisInfoType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
@@ -100,7 +100,8 @@ func ExecuteGolang(diffText string) AnalysisInfoType{
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.Infos
 }
-func ExecuteCpp(diffText string) AnalysisInfoType{
+
+func ExecuteCpp(diffText string) AnalysisInfoType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
@@ -127,7 +128,7 @@ func ExecuteCpp(diffText string) AnalysisInfoType{
 	return listener.Infos
 }
 
-func ExecuteJavaScript(diffText string) AnalysisInfoType{
+func ExecuteJavaScript(diffText string) AnalysisInfoType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
@@ -185,8 +186,6 @@ func ExecuteJava(diffText string) AnalysisInfoType {
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.Infos
 }
-
-
 
 // ExecuteJava
 //	@Description: 执行java分析

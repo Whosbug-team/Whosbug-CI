@@ -24,19 +24,15 @@ type GoTreeShapeListener struct {
 type MemberType struct {
 	Name string
 	Type string
+}
+
 type JSTreeShapeListener struct {
-	ObjectInfo ObjectInfoType
-	ClassInfo  classInfoType
-	Infos      AnalysisInfoType
+	ObjectInfo  ObjectInfoType
+	ClassInfo   classInfoType
+	Infos       AnalysisInfoType
+	Declaration []MemberType
 }
 
-func (k KotlinTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {
-	panic("implement me")
-}
-
-func (k KotlinTreeShapeListener) VisitErrorNode(node antlr.ErrorNode) {
-	panic("implement me")
-}
 type CallMethodType struct {
 	StartLine int
 	Id        string
@@ -54,9 +50,9 @@ type astInfoType struct {
 }
 
 type classInfoType struct {
-	StartLine int
-	EndLine   int
-	ClassName string
+	StartLine    int
+	EndLine      int
+	ClassName    string
 	MasterObject masterObjectInfoType
 	Extends      string
 }

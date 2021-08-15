@@ -1,7 +1,6 @@
 package antlrpack
 
 import (
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"strings"
 	javascript "whosbugPack/antlrpack/js_lib"
@@ -39,10 +38,35 @@ func (s *JSTreeShapeListener) ExitArgumentsExpression(ctx *javascript.ArgumentsE
 		}
 		callInfo.StartLine = ctx.GetStart().GetLine()
 
-		callInfo.Id = call
+		for _, temp := range s.Declaration {
+			if strings.Split(ctx.GetChild(0).(antlr.ParseTree).GetText(), ".")[0] == temp.Name {
+				callInfo.Id = strings.Replace(call, temp.Name, temp.Type, 1)
+				break
+			}
+		}
+
+		if call == "" {
+			return
+		}
+
+		if callInfo.Id == "" {
+			callInfo.Id = call
+		}
+
+		for _, temp := range s.Infos.CallMethods {
+			if callInfo.Id == temp.Id {
+				return
+			}
+		}
+
+		for _, temp := range s.Infos.AstInfoList.Classes {
+			if call == temp.ClassName {
+				return
+			}
+		}
 		s.Infos.CallMethods = append(s.Infos.CallMethods, callInfo)
 		//s.Infos.CallMethods = RemoveRep(s.Infos.CallMethods)
-		fmt.Println(s.Infos.CallMethods)
+		//fmt.Println(s.Infos.CallMethods)
 	}
 }
 
@@ -71,7 +95,6 @@ func (s *JSTreeShapeListener) EnterClassDeclaration(ctx *javascript.ClassDeclara
 		s.ClassInfo.Extends = "None"
 	}
 	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, s.ClassInfo)
-	fmt.Println(s.Infos.AstInfoList.Classes)
 }
 
 // ExitFunctionDeclaration is called when production functionDeclaration is exited.
@@ -87,8 +110,12 @@ func (s *JSTreeShapeListener) ExitFunctionDeclaration(ctx *javascript.FunctionDe
 			i += 2
 		}
 	}
+	resIndex := s.FindMethodCallIndex(funcInfo.StartLine, funcInfo.EndLine)
+	if resIndex != nil {
+		funcInfo.CallMethods = RemoveRep(resIndex)
+	}
 	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, funcInfo)
-	fmt.Println(s.Infos.AstInfoList.Methods)
+	//fmt.Println(s.Infos.AstInfoList.Methods)
 }
 
 // ExitVariableDeclarationList is called when production variableDeclarationList is exited.
@@ -97,7 +124,7 @@ func (s *JSTreeShapeListener) ExitVariableDeclarationList(ctx *javascript.Variab
 		s.ObjectInfo.StartLine = ctx.GetStart().GetLine()
 		s.ObjectInfo.EndLine = ctx.GetStop().GetLine()
 		s.Infos.AstInfoList.Objects = append(s.Infos.AstInfoList.Objects, s.ObjectInfo)
-		fmt.Println(s.Infos.AstInfoList.Objects)
+		//fmt.Println(s.Infos.AstInfoList.Objects)
 		var obj ObjectInfoType
 		s.ObjectInfo = obj
 	}
@@ -113,14 +140,13 @@ func (s *JSTreeShapeListener) FindMethodCallIndex(targetStart, targetEnd int) []
 	return resIndex
 }
 
-func RemoveRep(s []string) []string {
-	var result []string
-	m := make(map[string]bool)
-	for _, v := range s {
-		if _, ok := m[v]; !ok {
-			result = append(result, v)
-			m[v] = true
+func (s *JSTreeShapeListener) EnterNewExpression(ctx *javascript.NewExpressionContext) {
+	for _, temp := range s.Infos.AstInfoList.Classes {
+		if strings.Split(ctx.GetChild(1).(antlr.ParseTree).GetText(), "(")[0] == temp.ClassName {
+			var member MemberType
+			member.Name = ctx.GetParent().GetChild(0).(antlr.ParseTree).GetText()
+			member.Type = temp.ClassName
+			s.Declaration = append(s.Declaration, member)
 		}
 	}
-	return result
 }

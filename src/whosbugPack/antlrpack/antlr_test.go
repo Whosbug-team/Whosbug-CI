@@ -70,11 +70,15 @@ func TestExecuteJavaScript(t *testing.T) {
 	rest := ExecuteJavaScript(string(text))
 	utility.ForDebug(rest)
 	for _, item := range rest.AstInfoList.Classes {
-		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tMasterObject: ", item.MasterObject)
+		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName)
 	}
-	for _, item := range rest.AstInfoList.Methods {
-		if item.CallMethods != nil {
-			fmt.Println("Methods: ", item.CallMethods)
+	for _, item := range rest.AstInfoList.Objects {
+		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ObjectName)
+	}
+	var temp CallMethodType
+	for _, item := range rest.CallMethods {
+		if item != temp {
+			fmt.Println("Methods: ", item.Id)
 		}
 	}
 }
