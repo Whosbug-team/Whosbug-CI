@@ -74,7 +74,7 @@ var ObjectChan chan ObjectInfoType
 //var ObjectChanLarge chan ObjectInfoType
 
 // SupportLans 语言的支持
-var SupportLans = []string{".java", ".kt", ".kts", ".js", ".cpp"}
+var SupportLans = []string{".java", ".kt", ".kts", ".js", ".cpp", ".go"}
 
 var LatestCommitHash string
 

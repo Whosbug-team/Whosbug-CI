@@ -2,10 +2,9 @@ package parser
 
 import (
 	"bytes"
+	"golang.org/x/net/html"
 	"io"
 	"strings"
-
-	"golang.org/x/net/html"
 )
 
 type Node struct {
