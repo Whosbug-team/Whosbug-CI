@@ -92,12 +92,12 @@ func ExecuteGolang(diffText string) AnalysisInfoType {
 	//	启用SLL两阶段加速解析模式
 	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
 	//	解析模式->每个编译单位
-	tree := p.SourceFile()
+	//tree := p.SourceFile()
 	//	创建listener
 	listener := newGoTreeShapeListenerPool.Get().(*GoTreeShapeListener)
 	defer newGoTreeShapeListenerPool.Put(listener)
 	//	执行分析
-	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+	//antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.Infos
 }
 
