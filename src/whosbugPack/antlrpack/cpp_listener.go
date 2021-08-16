@@ -50,8 +50,10 @@ func (s *CppTreeShapeListener) ExitFunctionDefinition(ctx *cpp.FunctionDefinitio
 func (s *CppTreeShapeListener) findMethodCall() []string {
 	var CallMethods []string
 	for _,index := range s.Infos.CallMethods {	//box3.get
-		classBelong := strings.Split(index.Id,".")[0]
-		calledMethod := strings.Split(index.Id,".")[1]
+		temp := strings.Split(index.Id,".")
+		if len(temp) == 1{break }
+		classBelong := strings.Join(temp[:len(temp)-1],".")
+		calledMethod := temp[len(temp) - 1]
 		for _, declaration := range s.Declaration {
 			if declaration.Name == classBelong{
 				classBelong = declaration.Type
