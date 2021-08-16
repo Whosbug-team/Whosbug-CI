@@ -18,21 +18,7 @@ var _ kotlin.KotlinParserListener = &KotlinTreeShapeListener{}
 // 	@author KevinMatt 2021-08-12 23:41:08
 // 	@function_mark
 // ExitInfixFunctionCall is called when production infixFunctionCall is exited.
-func (s *KotlinTreeShapeListener) ExitInfixFunctionCall(ctx *kotlin.InfixFunctionCallContext) {
-	//temp := ctx.GetChildren()
-	//for _, item := range temp {
-	//	if _, ok := item.(*kotlin.SimpleIdentifierContext); ok {
-	//		for index, item := range temp {
-	//			fmt.Println(index, "", item.(antlr.ParseTree).GetText())
-	//		}
-	//		var methodCall CallMethodType
-	//		methodCall.Id = item.(*kotlin.SimpleIdentifierContext).GetText()
-	//		methodCall.StartLine = item.(*kotlin.SimpleIdentifierContext).GetStart().GetLine()
-	//		s.MethodInfo.CallMethods = append(s.MethodInfo.CallMethods, methodCall.Id)
-	//		return
-	//	}
-	//}
-}
+func (s *KotlinTreeShapeListener) ExitInfixFunctionCall(ctx *kotlin.InfixFunctionCallContext) {}
 
 // ExitFunctionBody is called when production functionBody is exited.
 func (s *KotlinTreeShapeListener) ExitFunctionBody(ctx *kotlin.FunctionBodyContext) {

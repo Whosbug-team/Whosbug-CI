@@ -1,5 +1,4 @@
 // Code generated from D:/Desktop/Whosbug_antlr_go/antlr4_kotlin/ast_kotlin\KotlinParser.g4 by ANTLR 4.9.1. DO NOT EDIT.
-
 package parser // KotlinParser
 
 import (
