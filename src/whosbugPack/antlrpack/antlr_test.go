@@ -50,7 +50,7 @@ func TestExecuteGolang(t *testing.T) {
 }
 
 func TestExecuteKotlin(t *testing.T) {
-	input, _ := os.Open("C:\\Users\\KevinMatt\\Desktop\\whosbug-Golang\\test.kt")
+	input, _ := os.Open("D:\\Desktop\\Whosbug_antlr_go\\antlr4_kotlin\\testfiles\\test.kt")
 	text, _ := ioutil.ReadAll(input)
 	rest := ExecuteKotlin(string(text))
 	utility.ForDebug(rest)
@@ -59,7 +59,7 @@ func TestExecuteKotlin(t *testing.T) {
 	}
 	for _, item := range rest.AstInfoList.Methods {
 		if item.CallMethods != nil {
-			fmt.Println("Methods: ", item.CallMethods)
+			fmt.Println("Methods: ", item.MethodName, "Calling: ", item.CallMethods)
 		}
 	}
 }

@@ -6,8 +6,9 @@ type JavaTreeShapeListener struct {
 }
 
 type KotlinTreeShapeListener struct {
-	MethodInfo MethodInfoType
-	Infos      AnalysisInfoType
+	MethodInfo  MethodInfoType
+	Infos       AnalysisInfoType
+	Declaration []MemberType
 }
 
 type CppTreeShapeListener struct {

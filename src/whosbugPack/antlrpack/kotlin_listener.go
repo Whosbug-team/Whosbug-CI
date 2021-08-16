@@ -3,8 +3,8 @@
 package antlrpack // KotlinParser
 
 import (
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"strings"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
 	"whosbugPack/utility"
 )
@@ -19,35 +19,27 @@ var _ kotlin.KotlinParserListener = &KotlinTreeShapeListener{}
 // 	@function_mark
 // ExitInfixFunctionCall is called when production infixFunctionCall is exited.
 func (s *KotlinTreeShapeListener) ExitInfixFunctionCall(ctx *kotlin.InfixFunctionCallContext) {
-	temp := ctx.GetChildren()
-	for _, item := range temp {
-		if _, ok := item.(*kotlin.SimpleIdentifierContext); ok {
-			for index, item := range temp {
-				fmt.Println(index, "", item.(antlr.ParseTree).GetText())
-			}
-			var methodCall CallMethodType
-			methodCall.Id = item.(*kotlin.SimpleIdentifierContext).GetText()
-			methodCall.StartLine = item.(*kotlin.SimpleIdentifierContext).GetStart().GetLine()
-			s.MethodInfo.CallMethods = append(s.MethodInfo.CallMethods, methodCall.Id)
-			return
-		}
-	}
+	//temp := ctx.GetChildren()
+	//for _, item := range temp {
+	//	if _, ok := item.(*kotlin.SimpleIdentifierContext); ok {
+	//		for index, item := range temp {
+	//			fmt.Println(index, "", item.(antlr.ParseTree).GetText())
+	//		}
+	//		var methodCall CallMethodType
+	//		methodCall.Id = item.(*kotlin.SimpleIdentifierContext).GetText()
+	//		methodCall.StartLine = item.(*kotlin.SimpleIdentifierContext).GetStart().GetLine()
+	//		s.MethodInfo.CallMethods = append(s.MethodInfo.CallMethods, methodCall.Id)
+	//		return
+	//	}
+	//}
 }
 
 // ExitFunctionBody is called when production functionBody is exited.
 func (s *KotlinTreeShapeListener) ExitFunctionBody(ctx *kotlin.FunctionBodyContext) {
-	if ctx.GetChildCount() == 1 { //正常函数声明
-		Methods := ctx.GetChild(0).GetChild(1)
-		for i := 0; i < Methods.GetChildCount(); i++ {
-			method := Methods.GetChild(i).(antlr.ParseTree).GetText()
-			if method != "\n" {
-				s.MethodInfo.CallMethods = append(s.MethodInfo.CallMethods, method)
-			}
-		}
-	} else if ctx.GetChildCount() == 2 { //单表示式函数
-		s.MethodInfo.CallMethods = append(s.MethodInfo.CallMethods, ctx.GetChild(1).(antlr.ParseTree).GetText())
-	} else {
-		fmt.Println("Invaild Function")
+	s.MethodInfo.EndLine = ctx.GetStop().GetLine()
+	resIndex := s.FindKotlinFuncCallIndex(s.MethodInfo.StartLine, s.MethodInfo.EndLine)
+	if resIndex != nil {
+		s.MethodInfo.CallMethods = RemoveRep(resIndex)
 	}
 	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, s.MethodInfo)
 }
@@ -150,6 +142,32 @@ func (s *KotlinTreeShapeListener) ExitClassDeclaration(ctx *kotlin.ClassDeclarat
 	s.Infos.AstInfoList.Classes = append(s.Infos.AstInfoList.Classes, classInfo)
 }
 
+func (s *KotlinTreeShapeListener) ExitPostfixUnaryOperation(ctx *kotlin.PostfixUnaryOperationContext) {
+	temp := strings.Split(ctx.GetText(), "")
+	if ctx.GetParent().GetChildCount() == 2 && temp[len(temp)-1] == ")" {
+		if ctx.GetParent().GetParent().GetChild(0).(antlr.ParseTree).GetText() == "." {
+			return
+		}
+		id := ctx.GetParent().GetChild(0).(antlr.ParseTree).GetText() + strings.Split(ctx.GetText(), "(")[0]
+		if id == "constructor" || id == "super" {
+			return
+		}
+		var callInfo = CallMethodType{StartLine: ctx.GetStart().GetLine()}
+		for _, temp_ := range s.Declaration {
+			if ctx.GetParent().GetChild(0).(antlr.ParseTree).GetText() == temp_.Name {
+				callInfo.Id = temp_.Type + strings.Split(ctx.GetText(), "(")[0]
+				break
+			}
+		}
+
+		if callInfo.Id == "" {
+			callInfo.Id = id
+		}
+
+		s.Infos.CallMethods = append(s.Infos.CallMethods, callInfo)
+	}
+}
+
 // VisitTerminal is called when a terminal node is visited.
 func (s *KotlinTreeShapeListener) VisitTerminal(node antlr.TerminalNode) {}
 
@@ -174,6 +192,18 @@ func (s *KotlinTreeShapeListener) EnterScript(ctx *kotlin.ScriptContext) {}
 // ExitScript is called when production script is exited.
 func (s *KotlinTreeShapeListener) ExitScript(ctx *kotlin.ScriptContext) {}
 
+// EnterPreamble is called when production preamble is entered.
+func (s *KotlinTreeShapeListener) EnterPreamble(ctx *kotlin.PreambleContext) {}
+
+// ExitPreamble is called when production preamble is exited.
+func (s *KotlinTreeShapeListener) ExitPreamble(ctx *kotlin.PreambleContext) {}
+
+// EnterFileAnnotations is called when production fileAnnotations is entered.
+func (s *KotlinTreeShapeListener) EnterFileAnnotations(ctx *kotlin.FileAnnotationsContext) {}
+
+// ExitFileAnnotations is called when production fileAnnotations is exited.
+func (s *KotlinTreeShapeListener) ExitFileAnnotations(ctx *kotlin.FileAnnotationsContext) {}
+
 // EnterFileAnnotation is called when production fileAnnotation is entered.
 func (s *KotlinTreeShapeListener) EnterFileAnnotation(ctx *kotlin.FileAnnotationContext) {}
 
@@ -184,7 +214,15 @@ func (s *KotlinTreeShapeListener) ExitFileAnnotation(ctx *kotlin.FileAnnotationC
 func (s *KotlinTreeShapeListener) EnterPackageHeader(ctx *kotlin.PackageHeaderContext) {}
 
 // ExitPackageHeader is called when production packageHeader is exited.
-func (s *KotlinTreeShapeListener) ExitPackageHeader(ctx *kotlin.PackageHeaderContext) {}
+func (s *KotlinTreeShapeListener) ExitPackageHeader(ctx *kotlin.PackageHeaderContext) {
+	//count := ctx.GetChildCount()
+	//if count != 3 {
+	//	fmt.Println("packageheader error")
+	//} else {
+	//	s.Infos.AstInfoList.PackageName = ctx.GetChild(1).(antlr.ParseTree).GetText()
+	//	fmt.Println(s.Infos.AstInfoList.PackageName)
+	//}
+}
 
 // EnterImportList is called when production importList is entered.
 func (s *KotlinTreeShapeListener) EnterImportList(ctx *kotlin.ImportListContext) {}
@@ -196,7 +234,19 @@ func (s *KotlinTreeShapeListener) ExitImportList(ctx *kotlin.ImportListContext) 
 func (s *KotlinTreeShapeListener) EnterImportHeader(ctx *kotlin.ImportHeaderContext) {}
 
 // ExitImportHeader is called when production importHeader is exited.
-func (s *KotlinTreeShapeListener) ExitImportHeader(ctx *kotlin.ImportHeaderContext) {}
+func (s *KotlinTreeShapeListener) ExitImportHeader(ctx *kotlin.ImportHeaderContext) {
+	//count := ctx.GetChildCount()
+	//if count == 3 {
+	//	s.Infos.AstInfoList.Imports = append(s.Infos.AstInfoList.Imports, ctx.GetChild(1).(antlr.ParseTree).GetText())
+	//	fmt.Println(s.Infos.AstInfoList.Imports)
+	//} else {
+	//	Import := ctx.GetChild(1).(antlr.ParseTree).GetText()
+	//	Import += "=="
+	//	Import += ctx.GetChild(2).GetChild(1).(antlr.ParseTree).GetText()
+	//	s.Infos.AstInfoList.Imports = append(s.Infos.AstInfoList.Imports, Import)
+	//	fmt.Println(s.Infos.AstInfoList.Imports)
+	//}
+}
 
 // EnterImportAlias is called when production importAlias is entered.
 func (s *KotlinTreeShapeListener) EnterImportAlias(ctx *kotlin.ImportAliasContext) {}
@@ -238,14 +288,6 @@ func (s *KotlinTreeShapeListener) EnterDelegationSpecifiers(ctx *kotlin.Delegati
 // ExitDelegationSpecifiers is called when production delegationSpecifiers is exited.
 func (s *KotlinTreeShapeListener) ExitDelegationSpecifiers(ctx *kotlin.DelegationSpecifiersContext) {}
 
-// EnterAnnotatedDelegationSpecifier is called when production annotatedDelegationSpecifier is entered.
-func (s *KotlinTreeShapeListener) EnterAnnotatedDelegationSpecifier(ctx *kotlin.AnnotatedDelegationSpecifierContext) {
-}
-
-// ExitAnnotatedDelegationSpecifier is called when production annotatedDelegationSpecifier is exited.
-func (s *KotlinTreeShapeListener) ExitAnnotatedDelegationSpecifier(ctx *kotlin.AnnotatedDelegationSpecifierContext) {
-}
-
 // EnterDelegationSpecifier is called when production delegationSpecifier is entered.
 func (s *KotlinTreeShapeListener) EnterDelegationSpecifier(ctx *kotlin.DelegationSpecifierContext) {}
 
@@ -271,14 +313,6 @@ func (s *KotlinTreeShapeListener) EnterClassBody(ctx *kotlin.ClassBodyContext) {
 
 // ExitClassBody is called when production classBody is exited.
 func (s *KotlinTreeShapeListener) ExitClassBody(ctx *kotlin.ClassBodyContext) {}
-
-// EnterClassMemberDeclarations is called when production classMemberDeclarations is entered.
-func (s *KotlinTreeShapeListener) EnterClassMemberDeclarations(ctx *kotlin.ClassMemberDeclarationsContext) {
-}
-
-// ExitClassMemberDeclarations is called when production classMemberDeclarations is exited.
-func (s *KotlinTreeShapeListener) ExitClassMemberDeclarations(ctx *kotlin.ClassMemberDeclarationsContext) {
-}
 
 // EnterClassMemberDeclaration is called when production classMemberDeclaration is entered.
 func (s *KotlinTreeShapeListener) EnterClassMemberDeclaration(ctx *kotlin.ClassMemberDeclarationContext) {
@@ -328,16 +362,20 @@ func (s *KotlinTreeShapeListener) EnterEnumEntry(ctx *kotlin.EnumEntryContext) {
 // ExitEnumEntry is called when production enumEntry is exited.
 func (s *KotlinTreeShapeListener) ExitEnumEntry(ctx *kotlin.EnumEntryContext) {}
 
+// ExitFunctionDeclaration is called when production functionDeclaration is exited.
+//func (s *KotlinTreeShapeListener) ExitFunctionDeclaration(ctx *kotlin.FunctionDeclarationContext) {
+//	s.Infos.AstInfoList.Methods = append(s.Infos.AstInfoList.Methods, s.MethodInfo)
+//	//fmt.Printf("ExitFunc:%s\n", s.MethodInfo.MethodName)
+//	s.MethodInfo = MethodInfoType{}
+//}
+
 // EnterFunctionValueParameters is called when production functionValueParameters is entered.
 func (s *KotlinTreeShapeListener) EnterFunctionValueParameters(ctx *kotlin.FunctionValueParametersContext) {
+	//fmt.Printf("!!!EnterFunctionValueParameters:%s,counts:%d\n",ctx.GetText(),ctx.GetChildCount())
 }
 
 // ExitFunctionValueParameters is called when production functionValueParameters is exited.
 func (s *KotlinTreeShapeListener) ExitFunctionValueParameters(ctx *kotlin.FunctionValueParametersContext) {
-}
-
-// EnterFunctionValueParameter is called when production functionValueParameter is entered.
-func (s *KotlinTreeShapeListener) EnterFunctionValueParameter(ctx *kotlin.FunctionValueParameterContext) {
 }
 
 // ExitFunctionValueParameter is called when production functionValueParameter is exited.
@@ -349,12 +387,6 @@ func (s *KotlinTreeShapeListener) EnterParameter(ctx *kotlin.ParameterContext) {
 
 // ExitParameter is called when production parameter is exited.
 func (s *KotlinTreeShapeListener) ExitParameter(ctx *kotlin.ParameterContext) {}
-
-// EnterSetterParameter is called when production setterParameter is entered.
-func (s *KotlinTreeShapeListener) EnterSetterParameter(ctx *kotlin.SetterParameterContext) {}
-
-// ExitSetterParameter is called when production setterParameter is exited.
-func (s *KotlinTreeShapeListener) ExitSetterParameter(ctx *kotlin.SetterParameterContext) {}
 
 // EnterFunctionBody is called when production functionBody is entered.
 func (s *KotlinTreeShapeListener) EnterFunctionBody(ctx *kotlin.FunctionBodyContext) {}
@@ -375,7 +407,17 @@ func (s *KotlinTreeShapeListener) ExitCompanionObject(ctx *kotlin.CompanionObjec
 func (s *KotlinTreeShapeListener) EnterPropertyDeclaration(ctx *kotlin.PropertyDeclarationContext) {}
 
 // ExitPropertyDeclaration is called when production propertyDeclaration is exited.
-func (s *KotlinTreeShapeListener) ExitPropertyDeclaration(ctx *kotlin.PropertyDeclarationContext) {}
+func (s *KotlinTreeShapeListener) ExitPropertyDeclaration(ctx *kotlin.PropertyDeclarationContext) {
+	if ctx.VariableDeclaration() != nil && ctx.Expression() != nil {
+		for _, temp := range s.Infos.AstInfoList.Classes {
+			if strings.Split(ctx.Expression().GetText(), "(")[0] == temp.ClassName {
+				var mem = MemberType{Name: ctx.VariableDeclaration().GetText()}
+				mem.Type = temp.ClassName
+				s.Declaration = append(s.Declaration, mem)
+			}
+		}
+	}
+}
 
 // EnterMultiVariableDeclaration is called when production multiVariableDeclaration is entered.
 func (s *KotlinTreeShapeListener) EnterMultiVariableDeclaration(ctx *kotlin.MultiVariableDeclarationContext) {
@@ -390,12 +432,6 @@ func (s *KotlinTreeShapeListener) EnterVariableDeclaration(ctx *kotlin.VariableD
 
 // ExitVariableDeclaration is called when production variableDeclaration is exited.
 func (s *KotlinTreeShapeListener) ExitVariableDeclaration(ctx *kotlin.VariableDeclarationContext) {}
-
-// EnterPropertyDelegate is called when production propertyDelegate is entered.
-func (s *KotlinTreeShapeListener) EnterPropertyDelegate(ctx *kotlin.PropertyDelegateContext) {}
-
-// ExitPropertyDelegate is called when production propertyDelegate is exited.
-func (s *KotlinTreeShapeListener) ExitPropertyDelegate(ctx *kotlin.PropertyDelegateContext) {}
 
 // EnterGetter is called when production getter is entered.
 func (s *KotlinTreeShapeListener) EnterGetter(ctx *kotlin.GetterContext) {}
@@ -427,39 +463,17 @@ func (s *KotlinTreeShapeListener) EnterTypeParameter(ctx *kotlin.TypeParameterCo
 // ExitTypeParameter is called when production typeParameter is exited.
 func (s *KotlinTreeShapeListener) ExitTypeParameter(ctx *kotlin.TypeParameterContext) {}
 
-// EnterTypeParameterModifiers is called when production typeParameterModifiers is entered.
-func (s *KotlinTreeShapeListener) EnterTypeParameterModifiers(ctx *kotlin.TypeParameterModifiersContext) {
-}
+// EnterType is called when production type is entered.
+func (s *KotlinTreeShapeListener) EnterType(ctx *kotlin.TypeContext) {}
 
-// ExitTypeParameterModifiers is called when production typeParameterModifiers is exited.
-func (s *KotlinTreeShapeListener) ExitTypeParameterModifiers(ctx *kotlin.TypeParameterModifiersContext) {
-}
+// ExitType is called when production type is exited.
+func (s *KotlinTreeShapeListener) ExitType(ctx *kotlin.TypeContext) {}
 
-// EnterTypeParameterModifier is called when production typeParameterModifier is entered.
-func (s *KotlinTreeShapeListener) EnterTypeParameterModifier(ctx *kotlin.TypeParameterModifierContext) {
-}
+// EnterTypeModifierList is called when production typeModifierList is entered.
+func (s *KotlinTreeShapeListener) EnterTypeModifierList(ctx *kotlin.TypeModifierListContext) {}
 
-// ExitTypeParameterModifier is called when production typeParameterModifier is exited.
-func (s *KotlinTreeShapeListener) ExitTypeParameterModifier(ctx *kotlin.TypeParameterModifierContext) {
-}
-
-// EnterType_ is called when production type_ is entered.
-func (s *KotlinTreeShapeListener) EnterType_(ctx *kotlin.Type_Context) {}
-
-// ExitType_ is called when production type_ is exited.
-func (s *KotlinTreeShapeListener) ExitType_(ctx *kotlin.Type_Context) {}
-
-// EnterTypeModifiers is called when production typeModifiers is entered.
-func (s *KotlinTreeShapeListener) EnterTypeModifiers(ctx *kotlin.TypeModifiersContext) {}
-
-// ExitTypeModifiers is called when production typeModifiers is exited.
-func (s *KotlinTreeShapeListener) ExitTypeModifiers(ctx *kotlin.TypeModifiersContext) {}
-
-// EnterTypeModifier is called when production typeModifier is entered.
-func (s *KotlinTreeShapeListener) EnterTypeModifier(ctx *kotlin.TypeModifierContext) {}
-
-// ExitTypeModifier is called when production typeModifier is exited.
-func (s *KotlinTreeShapeListener) ExitTypeModifier(ctx *kotlin.TypeModifierContext) {}
+// ExitTypeModifierList is called when production typeModifierList is exited.
+func (s *KotlinTreeShapeListener) ExitTypeModifierList(ctx *kotlin.TypeModifierListContext) {}
 
 // EnterParenthesizedType is called when production parenthesizedType is entered.
 func (s *KotlinTreeShapeListener) EnterParenthesizedType(ctx *kotlin.ParenthesizedTypeContext) {}
@@ -485,25 +499,18 @@ func (s *KotlinTreeShapeListener) EnterFunctionType(ctx *kotlin.FunctionTypeCont
 // ExitFunctionType is called when production functionType is exited.
 func (s *KotlinTreeShapeListener) ExitFunctionType(ctx *kotlin.FunctionTypeContext) {}
 
-// EnterReceiverType is called when production receiverType is entered.
-func (s *KotlinTreeShapeListener) EnterReceiverType(ctx *kotlin.ReceiverTypeContext) {}
+// EnterFunctionTypeReceiver is called when production functionTypeReceiver is entered.
+func (s *KotlinTreeShapeListener) EnterFunctionTypeReceiver(ctx *kotlin.FunctionTypeReceiverContext) {
+}
 
-// ExitReceiverType is called when production receiverType is exited.
-func (s *KotlinTreeShapeListener) ExitReceiverType(ctx *kotlin.ReceiverTypeContext) {}
+// ExitFunctionTypeReceiver is called when production functionTypeReceiver is exited.
+func (s *KotlinTreeShapeListener) ExitFunctionTypeReceiver(ctx *kotlin.FunctionTypeReceiverContext) {}
 
 // EnterUserType is called when production userType is entered.
 func (s *KotlinTreeShapeListener) EnterUserType(ctx *kotlin.UserTypeContext) {}
 
 // ExitUserType is called when production userType is exited.
 func (s *KotlinTreeShapeListener) ExitUserType(ctx *kotlin.UserTypeContext) {}
-
-// EnterParenthesizedUserType is called when production parenthesizedUserType is entered.
-func (s *KotlinTreeShapeListener) EnterParenthesizedUserType(ctx *kotlin.ParenthesizedUserTypeContext) {
-}
-
-// ExitParenthesizedUserType is called when production parenthesizedUserType is exited.
-func (s *KotlinTreeShapeListener) ExitParenthesizedUserType(ctx *kotlin.ParenthesizedUserTypeContext) {
-}
 
 // EnterSimpleUserType is called when production simpleUserType is entered.
 func (s *KotlinTreeShapeListener) EnterSimpleUserType(ctx *kotlin.SimpleUserTypeContext) {}
@@ -513,6 +520,7 @@ func (s *KotlinTreeShapeListener) ExitSimpleUserType(ctx *kotlin.SimpleUserTypeC
 
 // EnterFunctionTypeParameters is called when production functionTypeParameters is entered.
 func (s *KotlinTreeShapeListener) EnterFunctionTypeParameters(ctx *kotlin.FunctionTypeParametersContext) {
+	//fmt.Printf("@@@EnterFunctionTypeParameters:%s,counts%d\n",ctx.GetText(),ctx.GetChildCount())
 }
 
 // ExitFunctionTypeParameters is called when production functionTypeParameters is exited.
@@ -549,17 +557,18 @@ func (s *KotlinTreeShapeListener) EnterStatement(ctx *kotlin.StatementContext) {
 // ExitStatement is called when production statement is exited.
 func (s *KotlinTreeShapeListener) ExitStatement(ctx *kotlin.StatementContext) {}
 
+// EnterBlockLevelExpression is called when production blockLevelExpression is entered.
+func (s *KotlinTreeShapeListener) EnterBlockLevelExpression(ctx *kotlin.BlockLevelExpressionContext) {
+}
+
+// ExitBlockLevelExpression is called when production blockLevelExpression is exited.
+func (s *KotlinTreeShapeListener) ExitBlockLevelExpression(ctx *kotlin.BlockLevelExpressionContext) {}
+
 // EnterDeclaration is called when production declaration is entered.
 func (s *KotlinTreeShapeListener) EnterDeclaration(ctx *kotlin.DeclarationContext) {}
 
 // ExitDeclaration is called when production declaration is exited.
 func (s *KotlinTreeShapeListener) ExitDeclaration(ctx *kotlin.DeclarationContext) {}
-
-// EnterAssignment is called when production assignment is entered.
-func (s *KotlinTreeShapeListener) EnterAssignment(ctx *kotlin.AssignmentContext) {}
-
-// ExitAssignment is called when production assignment is exited.
-func (s *KotlinTreeShapeListener) ExitAssignment(ctx *kotlin.AssignmentContext) {}
 
 // EnterExpression is called when production expression is entered.
 func (s *KotlinTreeShapeListener) EnterExpression(ctx *kotlin.ExpressionContext) {}
@@ -579,11 +588,11 @@ func (s *KotlinTreeShapeListener) EnterConjunction(ctx *kotlin.ConjunctionContex
 // ExitConjunction is called when production conjunction is exited.
 func (s *KotlinTreeShapeListener) ExitConjunction(ctx *kotlin.ConjunctionContext) {}
 
-// EnterEquality is called when production equality is entered.
-func (s *KotlinTreeShapeListener) EnterEquality(ctx *kotlin.EqualityContext) {}
+// EnterEqualityComparison is called when production equalityComparison is entered.
+func (s *KotlinTreeShapeListener) EnterEqualityComparison(ctx *kotlin.EqualityComparisonContext) {}
 
-// ExitEquality is called when production equality is exited.
-func (s *KotlinTreeShapeListener) ExitEquality(ctx *kotlin.EqualityContext) {}
+// ExitEqualityComparison is called when production equalityComparison is exited.
+func (s *KotlinTreeShapeListener) ExitEqualityComparison(ctx *kotlin.EqualityComparisonContext) {}
 
 // EnterComparison is called when production comparison is entered.
 func (s *KotlinTreeShapeListener) EnterComparison(ctx *kotlin.ComparisonContext) {}
@@ -591,11 +600,11 @@ func (s *KotlinTreeShapeListener) EnterComparison(ctx *kotlin.ComparisonContext)
 // ExitComparison is called when production comparison is exited.
 func (s *KotlinTreeShapeListener) ExitComparison(ctx *kotlin.ComparisonContext) {}
 
-// EnterInfixOperation is called when production infixOperation is entered.
-func (s *KotlinTreeShapeListener) EnterInfixOperation(ctx *kotlin.InfixOperationContext) {}
+// EnterNamedInfix is called when production namedInfix is entered.
+func (s *KotlinTreeShapeListener) EnterNamedInfix(ctx *kotlin.NamedInfixContext) {}
 
-// ExitInfixOperation is called when production infixOperation is exited.
-func (s *KotlinTreeShapeListener) ExitInfixOperation(ctx *kotlin.InfixOperationContext) {}
+// ExitNamedInfix is called when production namedInfix is exited.
+func (s *KotlinTreeShapeListener) ExitNamedInfix(ctx *kotlin.NamedInfixContext) {}
 
 // EnterElvisExpression is called when production elvisExpression is entered.
 func (s *KotlinTreeShapeListener) EnterElvisExpression(ctx *kotlin.ElvisExpressionContext) {}
@@ -604,7 +613,15 @@ func (s *KotlinTreeShapeListener) EnterElvisExpression(ctx *kotlin.ElvisExpressi
 func (s *KotlinTreeShapeListener) ExitElvisExpression(ctx *kotlin.ElvisExpressionContext) {}
 
 // EnterInfixFunctionCall is called when production infixFunctionCall is entered.
-func (s *KotlinTreeShapeListener) EnterInfixFunctionCall(ctx *kotlin.InfixFunctionCallContext) {}
+func (s *KotlinTreeShapeListener) EnterInfixFunctionCall(ctx *kotlin.InfixFunctionCallContext) {
+	//fmt.Printf("$$$$EnterInfixFunctionCall:%s,counts%d\n",ctx.GetText(),ctx.GetChildCount())
+	//fmt.Println("\n")
+	//fmt.Println(ctx.GetText())
+	//fmt.Println("\n")
+}
+
+// ExitInfixFunctionCall is called when production infixFunctionCall is exited.
+//func (s *KotlinTreeShapeListener) ExitInfixFunctionCall(ctx *kotlin.InfixFunctionCallContext) {}
 
 // EnterRangeExpression is called when production rangeExpression is entered.
 func (s *KotlinTreeShapeListener) EnterRangeExpression(ctx *kotlin.RangeExpressionContext) {}
@@ -626,11 +643,11 @@ func (s *KotlinTreeShapeListener) EnterMultiplicativeExpression(ctx *kotlin.Mult
 func (s *KotlinTreeShapeListener) ExitMultiplicativeExpression(ctx *kotlin.MultiplicativeExpressionContext) {
 }
 
-// EnterAsExpression is called when production asExpression is entered.
-func (s *KotlinTreeShapeListener) EnterAsExpression(ctx *kotlin.AsExpressionContext) {}
+// EnterTypeRHS is called when production typeRHS is entered.
+func (s *KotlinTreeShapeListener) EnterTypeRHS(ctx *kotlin.TypeRHSContext) {}
 
-// ExitAsExpression is called when production asExpression is exited.
-func (s *KotlinTreeShapeListener) ExitAsExpression(ctx *kotlin.AsExpressionContext) {}
+// ExitTypeRHS is called when production typeRHS is exited.
+func (s *KotlinTreeShapeListener) ExitTypeRHS(ctx *kotlin.TypeRHSContext) {}
 
 // EnterPrefixUnaryExpression is called when production prefixUnaryExpression is entered.
 func (s *KotlinTreeShapeListener) EnterPrefixUnaryExpression(ctx *kotlin.PrefixUnaryExpressionContext) {
@@ -640,11 +657,14 @@ func (s *KotlinTreeShapeListener) EnterPrefixUnaryExpression(ctx *kotlin.PrefixU
 func (s *KotlinTreeShapeListener) ExitPrefixUnaryExpression(ctx *kotlin.PrefixUnaryExpressionContext) {
 }
 
-// EnterUnaryPrefix is called when production unaryPrefix is entered.
-func (s *KotlinTreeShapeListener) EnterUnaryPrefix(ctx *kotlin.UnaryPrefixContext) {}
-
-// ExitUnaryPrefix is called when production unaryPrefix is exited.
-func (s *KotlinTreeShapeListener) ExitUnaryPrefix(ctx *kotlin.UnaryPrefixContext) {}
+//	if ctx.GetChild(0).GetChildCount() == 2{
+//		if ctx.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(ctx.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChildCount()-1).(antlr.ParseTree).GetText()==")" {
+//			lineNumber := ctx.GetStart().GetLine()
+//			columnNumber := ctx.GetStart().GetColumn()
+//			s.Infos.CallMethods = append(s.Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetChild(0).(antlr.ParseTree).GetText()))
+//		}
+//	}
+//}
 
 // EnterPostfixUnaryExpression is called when production postfixUnaryExpression is entered.
 func (s *KotlinTreeShapeListener) EnterPostfixUnaryExpression(ctx *kotlin.PostfixUnaryExpressionContext) {
@@ -654,47 +674,30 @@ func (s *KotlinTreeShapeListener) EnterPostfixUnaryExpression(ctx *kotlin.Postfi
 func (s *KotlinTreeShapeListener) ExitPostfixUnaryExpression(ctx *kotlin.PostfixUnaryExpressionContext) {
 }
 
-// EnterPostfixUnarySuffix is called when production postfixUnarySuffix is entered.
-func (s *KotlinTreeShapeListener) EnterPostfixUnarySuffix(ctx *kotlin.PostfixUnarySuffixContext) {}
+// EnterAtomicExpression is called when production atomicExpression is entered.
+func (s *KotlinTreeShapeListener) EnterAtomicExpression(ctx *kotlin.AtomicExpressionContext) {}
 
-// ExitPostfixUnarySuffix is called when production postfixUnarySuffix is exited.
-func (s *KotlinTreeShapeListener) ExitPostfixUnarySuffix(ctx *kotlin.PostfixUnarySuffixContext) {}
+// ExitAtomicExpression is called when production atomicExpression is exited.
+func (s *KotlinTreeShapeListener) ExitAtomicExpression(ctx *kotlin.AtomicExpressionContext) {}
 
-// EnterDirectlyAssignableExpression is called when production directlyAssignableExpression is entered.
-func (s *KotlinTreeShapeListener) EnterDirectlyAssignableExpression(ctx *kotlin.DirectlyAssignableExpressionContext) {
+// EnterParenthesizedExpression is called when production parenthesizedExpression is entered.
+func (s *KotlinTreeShapeListener) EnterParenthesizedExpression(ctx *kotlin.ParenthesizedExpressionContext) {
 }
 
-// ExitDirectlyAssignableExpression is called when production directlyAssignableExpression is exited.
-func (s *KotlinTreeShapeListener) ExitDirectlyAssignableExpression(ctx *kotlin.DirectlyAssignableExpressionContext) {
+// ExitParenthesizedExpression is called when production parenthesizedExpression is exited.
+func (s *KotlinTreeShapeListener) ExitParenthesizedExpression(ctx *kotlin.ParenthesizedExpressionContext) {
 }
-
-// EnterAssignableExpression is called when production assignableExpression is entered.
-func (s *KotlinTreeShapeListener) EnterAssignableExpression(ctx *kotlin.AssignableExpressionContext) {
-}
-
-// ExitAssignableExpression is called when production assignableExpression is exited.
-func (s *KotlinTreeShapeListener) ExitAssignableExpression(ctx *kotlin.AssignableExpressionContext) {}
-
-// EnterAssignableSuffix is called when production assignableSuffix is entered.
-func (s *KotlinTreeShapeListener) EnterAssignableSuffix(ctx *kotlin.AssignableSuffixContext) {}
-
-// ExitAssignableSuffix is called when production assignableSuffix is exited.
-func (s *KotlinTreeShapeListener) ExitAssignableSuffix(ctx *kotlin.AssignableSuffixContext) {}
-
-// EnterIndexingSuffix is called when production indexingSuffix is entered.
-func (s *KotlinTreeShapeListener) EnterIndexingSuffix(ctx *kotlin.IndexingSuffixContext) {}
-
-// ExitIndexingSuffix is called when production indexingSuffix is exited.
-func (s *KotlinTreeShapeListener) ExitIndexingSuffix(ctx *kotlin.IndexingSuffixContext) {}
-
-// EnterNavigationSuffix is called when production navigationSuffix is entered.
-func (s *KotlinTreeShapeListener) EnterNavigationSuffix(ctx *kotlin.NavigationSuffixContext) {}
-
-// ExitNavigationSuffix is called when production navigationSuffix is exited.
-func (s *KotlinTreeShapeListener) ExitNavigationSuffix(ctx *kotlin.NavigationSuffixContext) {}
 
 // EnterCallSuffix is called when production callSuffix is entered.
-func (s *KotlinTreeShapeListener) EnterCallSuffix(ctx *kotlin.CallSuffixContext) {}
+func (s *KotlinTreeShapeListener) EnterCallSuffix(ctx *kotlin.CallSuffixContext) {
+	//if ctx.ValueArguments() != nil{
+	//	lineNumber := ctx.GetStart().GetLine()
+	//	columnNumber := ctx.GetStart().GetColumn()
+	//	s.Infos.CallMethods = append(s.Infos.CallMethods, fmt.Sprintf("%s %s %s", strconv.Itoa(lineNumber), strconv.Itoa(columnNumber), ctx.GetParent().GetParent().GetChild(0).(antlr.ParseTree).GetText()))
+	//
+	//	//s.Infos.CallMethods = append(s.Infos.CallMethods, ctx.GetParent().GetParent().GetChild(0).(antlr.ParseTree).GetText())
+	//}
+}
 
 // ExitCallSuffix is called when production callSuffix is exited.
 func (s *KotlinTreeShapeListener) ExitCallSuffix(ctx *kotlin.CallSuffixContext) {}
@@ -704,6 +707,12 @@ func (s *KotlinTreeShapeListener) EnterAnnotatedLambda(ctx *kotlin.AnnotatedLamb
 
 // ExitAnnotatedLambda is called when production annotatedLambda is exited.
 func (s *KotlinTreeShapeListener) ExitAnnotatedLambda(ctx *kotlin.AnnotatedLambdaContext) {}
+
+// EnterArrayAccess is called when production arrayAccess is entered.
+func (s *KotlinTreeShapeListener) EnterArrayAccess(ctx *kotlin.ArrayAccessContext) {}
+
+// ExitArrayAccess is called when production arrayAccess is exited.
+func (s *KotlinTreeShapeListener) ExitArrayAccess(ctx *kotlin.ArrayAccessContext) {}
 
 // EnterValueArguments is called when production valueArguments is entered.
 func (s *KotlinTreeShapeListener) EnterValueArguments(ctx *kotlin.ValueArgumentsContext) {}
@@ -723,20 +732,12 @@ func (s *KotlinTreeShapeListener) EnterTypeProjection(ctx *kotlin.TypeProjection
 // ExitTypeProjection is called when production typeProjection is exited.
 func (s *KotlinTreeShapeListener) ExitTypeProjection(ctx *kotlin.TypeProjectionContext) {}
 
-// EnterTypeProjectionModifiers is called when production typeProjectionModifiers is entered.
-func (s *KotlinTreeShapeListener) EnterTypeProjectionModifiers(ctx *kotlin.TypeProjectionModifiersContext) {
+// EnterTypeProjectionModifierList is called when production typeProjectionModifierList is entered.
+func (s *KotlinTreeShapeListener) EnterTypeProjectionModifierList(ctx *kotlin.TypeProjectionModifierListContext) {
 }
 
-// ExitTypeProjectionModifiers is called when production typeProjectionModifiers is exited.
-func (s *KotlinTreeShapeListener) ExitTypeProjectionModifiers(ctx *kotlin.TypeProjectionModifiersContext) {
-}
-
-// EnterTypeProjectionModifier is called when production typeProjectionModifier is entered.
-func (s *KotlinTreeShapeListener) EnterTypeProjectionModifier(ctx *kotlin.TypeProjectionModifierContext) {
-}
-
-// ExitTypeProjectionModifier is called when production typeProjectionModifier is exited.
-func (s *KotlinTreeShapeListener) ExitTypeProjectionModifier(ctx *kotlin.TypeProjectionModifierContext) {
+// ExitTypeProjectionModifierList is called when production typeProjectionModifierList is exited.
+func (s *KotlinTreeShapeListener) ExitTypeProjectionModifierList(ctx *kotlin.TypeProjectionModifierListContext) {
 }
 
 // EnterValueArgument is called when production valueArgument is entered.
@@ -744,26 +745,6 @@ func (s *KotlinTreeShapeListener) EnterValueArgument(ctx *kotlin.ValueArgumentCo
 
 // ExitValueArgument is called when production valueArgument is exited.
 func (s *KotlinTreeShapeListener) ExitValueArgument(ctx *kotlin.ValueArgumentContext) {}
-
-// EnterPrimaryExpression is called when production primaryExpression is entered.
-func (s *KotlinTreeShapeListener) EnterPrimaryExpression(ctx *kotlin.PrimaryExpressionContext) {}
-
-// ExitPrimaryExpression is called when production primaryExpression is exited.
-func (s *KotlinTreeShapeListener) ExitPrimaryExpression(ctx *kotlin.PrimaryExpressionContext) {}
-
-// EnterParenthesizedExpression is called when production parenthesizedExpression is entered.
-func (s *KotlinTreeShapeListener) EnterParenthesizedExpression(ctx *kotlin.ParenthesizedExpressionContext) {
-}
-
-// ExitParenthesizedExpression is called when production parenthesizedExpression is exited.
-func (s *KotlinTreeShapeListener) ExitParenthesizedExpression(ctx *kotlin.ParenthesizedExpressionContext) {
-}
-
-// EnterCollectionLiteral is called when production collectionLiteral is entered.
-func (s *KotlinTreeShapeListener) EnterCollectionLiteral(ctx *kotlin.CollectionLiteralContext) {}
-
-// ExitCollectionLiteral is called when production collectionLiteral is exited.
-func (s *KotlinTreeShapeListener) ExitCollectionLiteral(ctx *kotlin.CollectionLiteralContext) {}
 
 // EnterLiteralConstant is called when production literalConstant is entered.
 func (s *KotlinTreeShapeListener) EnterLiteralConstant(ctx *kotlin.LiteralConstantContext) {}
@@ -820,11 +801,11 @@ func (s *KotlinTreeShapeListener) EnterMultiLineStringExpression(ctx *kotlin.Mul
 func (s *KotlinTreeShapeListener) ExitMultiLineStringExpression(ctx *kotlin.MultiLineStringExpressionContext) {
 }
 
-// EnterLambdaLiteral is called when production lambdaLiteral is entered.
-func (s *KotlinTreeShapeListener) EnterLambdaLiteral(ctx *kotlin.LambdaLiteralContext) {}
+// EnterFunctionLiteral is called when production functionLiteral is entered.
+func (s *KotlinTreeShapeListener) EnterFunctionLiteral(ctx *kotlin.FunctionLiteralContext) {}
 
-// ExitLambdaLiteral is called when production lambdaLiteral is exited.
-func (s *KotlinTreeShapeListener) ExitLambdaLiteral(ctx *kotlin.LambdaLiteralContext) {}
+// ExitFunctionLiteral is called when production functionLiteral is exited.
+func (s *KotlinTreeShapeListener) ExitFunctionLiteral(ctx *kotlin.FunctionLiteralContext) {}
 
 // EnterLambdaParameters is called when production lambdaParameters is entered.
 func (s *KotlinTreeShapeListener) EnterLambdaParameters(ctx *kotlin.LambdaParametersContext) {}
@@ -838,23 +819,17 @@ func (s *KotlinTreeShapeListener) EnterLambdaParameter(ctx *kotlin.LambdaParamet
 // ExitLambdaParameter is called when production lambdaParameter is exited.
 func (s *KotlinTreeShapeListener) ExitLambdaParameter(ctx *kotlin.LambdaParameterContext) {}
 
-// EnterAnonymousFunction is called when production anonymousFunction is entered.
-func (s *KotlinTreeShapeListener) EnterAnonymousFunction(ctx *kotlin.AnonymousFunctionContext) {}
-
-// ExitAnonymousFunction is called when production anonymousFunction is exited.
-func (s *KotlinTreeShapeListener) ExitAnonymousFunction(ctx *kotlin.AnonymousFunctionContext) {}
-
-// EnterFunctionLiteral is called when production functionLiteral is entered.
-func (s *KotlinTreeShapeListener) EnterFunctionLiteral(ctx *kotlin.FunctionLiteralContext) {}
-
-// ExitFunctionLiteral is called when production functionLiteral is exited.
-func (s *KotlinTreeShapeListener) ExitFunctionLiteral(ctx *kotlin.FunctionLiteralContext) {}
-
 // EnterObjectLiteral is called when production objectLiteral is entered.
 func (s *KotlinTreeShapeListener) EnterObjectLiteral(ctx *kotlin.ObjectLiteralContext) {}
 
 // ExitObjectLiteral is called when production objectLiteral is exited.
 func (s *KotlinTreeShapeListener) ExitObjectLiteral(ctx *kotlin.ObjectLiteralContext) {}
+
+// EnterCollectionLiteral is called when production collectionLiteral is entered.
+func (s *KotlinTreeShapeListener) EnterCollectionLiteral(ctx *kotlin.CollectionLiteralContext) {}
+
+// ExitCollectionLiteral is called when production collectionLiteral is exited.
+func (s *KotlinTreeShapeListener) ExitCollectionLiteral(ctx *kotlin.CollectionLiteralContext) {}
 
 // EnterThisExpression is called when production thisExpression is entered.
 func (s *KotlinTreeShapeListener) EnterThisExpression(ctx *kotlin.ThisExpressionContext) {}
@@ -868,18 +843,26 @@ func (s *KotlinTreeShapeListener) EnterSuperExpression(ctx *kotlin.SuperExpressi
 // ExitSuperExpression is called when production superExpression is exited.
 func (s *KotlinTreeShapeListener) ExitSuperExpression(ctx *kotlin.SuperExpressionContext) {}
 
-// EnterControlStructureBody is called when production controlStructureBody is entered.
-func (s *KotlinTreeShapeListener) EnterControlStructureBody(ctx *kotlin.ControlStructureBodyContext) {
+// EnterConditionalExpression is called when production conditionalExpression is entered.
+func (s *KotlinTreeShapeListener) EnterConditionalExpression(ctx *kotlin.ConditionalExpressionContext) {
 }
 
-// ExitControlStructureBody is called when production controlStructureBody is exited.
-func (s *KotlinTreeShapeListener) ExitControlStructureBody(ctx *kotlin.ControlStructureBodyContext) {}
+// ExitConditionalExpression is called when production conditionalExpression is exited.
+func (s *KotlinTreeShapeListener) ExitConditionalExpression(ctx *kotlin.ConditionalExpressionContext) {
+}
 
 // EnterIfExpression is called when production ifExpression is entered.
 func (s *KotlinTreeShapeListener) EnterIfExpression(ctx *kotlin.IfExpressionContext) {}
 
 // ExitIfExpression is called when production ifExpression is exited.
 func (s *KotlinTreeShapeListener) ExitIfExpression(ctx *kotlin.IfExpressionContext) {}
+
+// EnterControlStructureBody is called when production controlStructureBody is entered.
+func (s *KotlinTreeShapeListener) EnterControlStructureBody(ctx *kotlin.ControlStructureBodyContext) {
+}
+
+// ExitControlStructureBody is called when production controlStructureBody is exited.
+func (s *KotlinTreeShapeListener) ExitControlStructureBody(ctx *kotlin.ControlStructureBodyContext) {}
 
 // EnterWhenExpression is called when production whenExpression is entered.
 func (s *KotlinTreeShapeListener) EnterWhenExpression(ctx *kotlin.WhenExpressionContext) {}
@@ -929,29 +912,29 @@ func (s *KotlinTreeShapeListener) EnterFinallyBlock(ctx *kotlin.FinallyBlockCont
 // ExitFinallyBlock is called when production finallyBlock is exited.
 func (s *KotlinTreeShapeListener) ExitFinallyBlock(ctx *kotlin.FinallyBlockContext) {}
 
-// EnterLoopStatement is called when production loopStatement is entered.
-func (s *KotlinTreeShapeListener) EnterLoopStatement(ctx *kotlin.LoopStatementContext) {}
+// EnterLoopExpression is called when production loopExpression is entered.
+func (s *KotlinTreeShapeListener) EnterLoopExpression(ctx *kotlin.LoopExpressionContext) {}
 
-// ExitLoopStatement is called when production loopStatement is exited.
-func (s *KotlinTreeShapeListener) ExitLoopStatement(ctx *kotlin.LoopStatementContext) {}
+// ExitLoopExpression is called when production loopExpression is exited.
+func (s *KotlinTreeShapeListener) ExitLoopExpression(ctx *kotlin.LoopExpressionContext) {}
 
-// EnterForStatement is called when production forStatement is entered.
-func (s *KotlinTreeShapeListener) EnterForStatement(ctx *kotlin.ForStatementContext) {}
+// EnterForExpression is called when production forExpression is entered.
+func (s *KotlinTreeShapeListener) EnterForExpression(ctx *kotlin.ForExpressionContext) {}
 
-// ExitForStatement is called when production forStatement is exited.
-func (s *KotlinTreeShapeListener) ExitForStatement(ctx *kotlin.ForStatementContext) {}
+// ExitForExpression is called when production forExpression is exited.
+func (s *KotlinTreeShapeListener) ExitForExpression(ctx *kotlin.ForExpressionContext) {}
 
-// EnterWhileStatement is called when production whileStatement is entered.
-func (s *KotlinTreeShapeListener) EnterWhileStatement(ctx *kotlin.WhileStatementContext) {}
+// EnterWhileExpression is called when production whileExpression is entered.
+func (s *KotlinTreeShapeListener) EnterWhileExpression(ctx *kotlin.WhileExpressionContext) {}
 
-// ExitWhileStatement is called when production whileStatement is exited.
-func (s *KotlinTreeShapeListener) ExitWhileStatement(ctx *kotlin.WhileStatementContext) {}
+// ExitWhileExpression is called when production whileExpression is exited.
+func (s *KotlinTreeShapeListener) ExitWhileExpression(ctx *kotlin.WhileExpressionContext) {}
 
-// EnterDoWhileStatement is called when production doWhileStatement is entered.
-func (s *KotlinTreeShapeListener) EnterDoWhileStatement(ctx *kotlin.DoWhileStatementContext) {}
+// EnterDoWhileExpression is called when production doWhileExpression is entered.
+func (s *KotlinTreeShapeListener) EnterDoWhileExpression(ctx *kotlin.DoWhileExpressionContext) {}
 
-// ExitDoWhileStatement is called when production doWhileStatement is exited.
-func (s *KotlinTreeShapeListener) ExitDoWhileStatement(ctx *kotlin.DoWhileStatementContext) {}
+// ExitDoWhileExpression is called when production doWhileExpression is exited.
+func (s *KotlinTreeShapeListener) ExitDoWhileExpression(ctx *kotlin.DoWhileExpressionContext) {}
 
 // EnterJumpExpression is called when production jumpExpression is entered.
 func (s *KotlinTreeShapeListener) EnterJumpExpression(ctx *kotlin.JumpExpressionContext) {}
@@ -965,19 +948,17 @@ func (s *KotlinTreeShapeListener) EnterCallableReference(ctx *kotlin.CallableRef
 // ExitCallableReference is called when production callableReference is exited.
 func (s *KotlinTreeShapeListener) ExitCallableReference(ctx *kotlin.CallableReferenceContext) {}
 
-// EnterAssignmentAndOperator is called when production assignmentAndOperator is entered.
-func (s *KotlinTreeShapeListener) EnterAssignmentAndOperator(ctx *kotlin.AssignmentAndOperatorContext) {
-}
+// EnterAssignmentOperator is called when production assignmentOperator is entered.
+func (s *KotlinTreeShapeListener) EnterAssignmentOperator(ctx *kotlin.AssignmentOperatorContext) {}
 
-// ExitAssignmentAndOperator is called when production assignmentAndOperator is exited.
-func (s *KotlinTreeShapeListener) ExitAssignmentAndOperator(ctx *kotlin.AssignmentAndOperatorContext) {
-}
+// ExitAssignmentOperator is called when production assignmentOperator is exited.
+func (s *KotlinTreeShapeListener) ExitAssignmentOperator(ctx *kotlin.AssignmentOperatorContext) {}
 
-// EnterEqualityOperator is called when production equalityOperator is entered.
-func (s *KotlinTreeShapeListener) EnterEqualityOperator(ctx *kotlin.EqualityOperatorContext) {}
+// EnterEqualityOperation is called when production equalityOperation is entered.
+func (s *KotlinTreeShapeListener) EnterEqualityOperation(ctx *kotlin.EqualityOperationContext) {}
 
-// ExitEqualityOperator is called when production equalityOperator is exited.
-func (s *KotlinTreeShapeListener) ExitEqualityOperator(ctx *kotlin.EqualityOperatorContext) {}
+// ExitEqualityOperation is called when production equalityOperation is exited.
+func (s *KotlinTreeShapeListener) ExitEqualityOperation(ctx *kotlin.EqualityOperationContext) {}
 
 // EnterComparisonOperator is called when production comparisonOperator is entered.
 func (s *KotlinTreeShapeListener) EnterComparisonOperator(ctx *kotlin.ComparisonOperatorContext) {}
@@ -1003,32 +984,44 @@ func (s *KotlinTreeShapeListener) EnterAdditiveOperator(ctx *kotlin.AdditiveOper
 // ExitAdditiveOperator is called when production additiveOperator is exited.
 func (s *KotlinTreeShapeListener) ExitAdditiveOperator(ctx *kotlin.AdditiveOperatorContext) {}
 
-// EnterMultiplicativeOperator is called when production multiplicativeOperator is entered.
-func (s *KotlinTreeShapeListener) EnterMultiplicativeOperator(ctx *kotlin.MultiplicativeOperatorContext) {
+// EnterMultiplicativeOperation is called when production multiplicativeOperation is entered.
+func (s *KotlinTreeShapeListener) EnterMultiplicativeOperation(ctx *kotlin.MultiplicativeOperationContext) {
 }
 
-// ExitMultiplicativeOperator is called when production multiplicativeOperator is exited.
-func (s *KotlinTreeShapeListener) ExitMultiplicativeOperator(ctx *kotlin.MultiplicativeOperatorContext) {
+// ExitMultiplicativeOperation is called when production multiplicativeOperation is exited.
+func (s *KotlinTreeShapeListener) ExitMultiplicativeOperation(ctx *kotlin.MultiplicativeOperationContext) {
 }
 
-// EnterAsOperator is called when production asOperator is entered.
-func (s *KotlinTreeShapeListener) EnterAsOperator(ctx *kotlin.AsOperatorContext) {}
+// EnterTypeOperation is called when production typeOperation is entered.
+func (s *KotlinTreeShapeListener) EnterTypeOperation(ctx *kotlin.TypeOperationContext) {}
 
-// ExitAsOperator is called when production asOperator is exited.
-func (s *KotlinTreeShapeListener) ExitAsOperator(ctx *kotlin.AsOperatorContext) {}
+// ExitTypeOperation is called when production typeOperation is exited.
+func (s *KotlinTreeShapeListener) ExitTypeOperation(ctx *kotlin.TypeOperationContext) {}
 
-// EnterPrefixUnaryOperator is called when production prefixUnaryOperator is entered.
-func (s *KotlinTreeShapeListener) EnterPrefixUnaryOperator(ctx *kotlin.PrefixUnaryOperatorContext) {}
-
-// ExitPrefixUnaryOperator is called when production prefixUnaryOperator is exited.
-func (s *KotlinTreeShapeListener) ExitPrefixUnaryOperator(ctx *kotlin.PrefixUnaryOperatorContext) {}
-
-// EnterPostfixUnaryOperator is called when production postfixUnaryOperator is entered.
-func (s *KotlinTreeShapeListener) EnterPostfixUnaryOperator(ctx *kotlin.PostfixUnaryOperatorContext) {
+// EnterPrefixUnaryOperation is called when production prefixUnaryOperation is entered.
+func (s *KotlinTreeShapeListener) EnterPrefixUnaryOperation(ctx *kotlin.PrefixUnaryOperationContext) {
 }
 
-// ExitPostfixUnaryOperator is called when production postfixUnaryOperator is exited.
-func (s *KotlinTreeShapeListener) ExitPostfixUnaryOperator(ctx *kotlin.PostfixUnaryOperatorContext) {}
+// ExitPrefixUnaryOperation is called when production prefixUnaryOperation is exited.
+func (s *KotlinTreeShapeListener) ExitPrefixUnaryOperation(ctx *kotlin.PrefixUnaryOperationContext) {
+}
+
+// EnterPostfixUnaryOperation is called when production postfixUnaryOperation is entered.
+func (s *KotlinTreeShapeListener) EnterPostfixUnaryOperation(ctx *kotlin.PostfixUnaryOperationContext) {
+}
+
+//// ExitPostfixUnaryOperation is called when production postfixUnaryOperation is exited.
+//func (s *KotlinTreeShapeListener) ExitPostfixUnaryOperation(ctx *kotlin.PostfixUnaryOperationContext) {
+//	temp := strings.Split(ctx.GetText(),"")
+//	if ctx.GetParent().GetChildCount() == 2 && temp[len(temp)-1]==")"{
+//		if ctx.GetParent().GetParent().GetChild(0).(antlr.ParseTree).GetText() == "."{
+//			return}
+//		id := ctx.GetParent().GetChild(0).(antlr.ParseTree).GetText() + strings.Split(ctx.GetText(),"(")[0]
+//		if id == "constructor" || id == "super"{
+//			return}
+//		s.Infos.CallMethods = append(s.Infos.CallMethods, id)
+//	}
+//}
 
 // EnterMemberAccessOperator is called when production memberAccessOperator is entered.
 func (s *KotlinTreeShapeListener) EnterMemberAccessOperator(ctx *kotlin.MemberAccessOperatorContext) {
@@ -1037,11 +1030,11 @@ func (s *KotlinTreeShapeListener) EnterMemberAccessOperator(ctx *kotlin.MemberAc
 // ExitMemberAccessOperator is called when production memberAccessOperator is exited.
 func (s *KotlinTreeShapeListener) ExitMemberAccessOperator(ctx *kotlin.MemberAccessOperatorContext) {}
 
-// EnterModifiers is called when production modifiers is entered.
-func (s *KotlinTreeShapeListener) EnterModifiers(ctx *kotlin.ModifiersContext) {}
+// EnterModifierList is called when production modifierList is entered.
+func (s *KotlinTreeShapeListener) EnterModifierList(ctx *kotlin.ModifierListContext) {}
 
-// ExitModifiers is called when production modifiers is exited.
-func (s *KotlinTreeShapeListener) ExitModifiers(ctx *kotlin.ModifiersContext) {}
+// ExitModifierList is called when production modifierList is exited.
+func (s *KotlinTreeShapeListener) ExitModifierList(ctx *kotlin.ModifierListContext) {}
 
 // EnterModifier is called when production modifier is entered.
 func (s *KotlinTreeShapeListener) EnterModifier(ctx *kotlin.ModifierContext) {}
@@ -1067,11 +1060,11 @@ func (s *KotlinTreeShapeListener) EnterVisibilityModifier(ctx *kotlin.Visibility
 // ExitVisibilityModifier is called when production visibilityModifier is exited.
 func (s *KotlinTreeShapeListener) ExitVisibilityModifier(ctx *kotlin.VisibilityModifierContext) {}
 
-// EnterVarianceModifier is called when production varianceModifier is entered.
-func (s *KotlinTreeShapeListener) EnterVarianceModifier(ctx *kotlin.VarianceModifierContext) {}
+// EnterVarianceAnnotation is called when production varianceAnnotation is entered.
+func (s *KotlinTreeShapeListener) EnterVarianceAnnotation(ctx *kotlin.VarianceAnnotationContext) {}
 
-// ExitVarianceModifier is called when production varianceModifier is exited.
-func (s *KotlinTreeShapeListener) ExitVarianceModifier(ctx *kotlin.VarianceModifierContext) {}
+// ExitVarianceAnnotation is called when production varianceAnnotation is exited.
+func (s *KotlinTreeShapeListener) ExitVarianceAnnotation(ctx *kotlin.VarianceAnnotationContext) {}
 
 // EnterFunctionModifier is called when production functionModifier is entered.
 func (s *KotlinTreeShapeListener) EnterFunctionModifier(ctx *kotlin.FunctionModifierContext) {}
@@ -1097,23 +1090,25 @@ func (s *KotlinTreeShapeListener) EnterParameterModifier(ctx *kotlin.ParameterMo
 // ExitParameterModifier is called when production parameterModifier is exited.
 func (s *KotlinTreeShapeListener) ExitParameterModifier(ctx *kotlin.ParameterModifierContext) {}
 
-// EnterReificationModifier is called when production reificationModifier is entered.
-func (s *KotlinTreeShapeListener) EnterReificationModifier(ctx *kotlin.ReificationModifierContext) {}
+// EnterTypeParameterModifier is called when production typeParameterModifier is entered.
+func (s *KotlinTreeShapeListener) EnterTypeParameterModifier(ctx *kotlin.TypeParameterModifierContext) {
+}
 
-// ExitReificationModifier is called when production reificationModifier is exited.
-func (s *KotlinTreeShapeListener) ExitReificationModifier(ctx *kotlin.ReificationModifierContext) {}
+// ExitTypeParameterModifier is called when production typeParameterModifier is exited.
+func (s *KotlinTreeShapeListener) ExitTypeParameterModifier(ctx *kotlin.TypeParameterModifierContext) {
+}
 
-// EnterPlatformModifier is called when production platformModifier is entered.
-func (s *KotlinTreeShapeListener) EnterPlatformModifier(ctx *kotlin.PlatformModifierContext) {}
+// EnterLabelDefinition is called when production labelDefinition is entered.
+func (s *KotlinTreeShapeListener) EnterLabelDefinition(ctx *kotlin.LabelDefinitionContext) {}
 
-// ExitPlatformModifier is called when production platformModifier is exited.
-func (s *KotlinTreeShapeListener) ExitPlatformModifier(ctx *kotlin.PlatformModifierContext) {}
+// ExitLabelDefinition is called when production labelDefinition is exited.
+func (s *KotlinTreeShapeListener) ExitLabelDefinition(ctx *kotlin.LabelDefinitionContext) {}
 
-// EnterLabel is called when production label is entered.
-func (s *KotlinTreeShapeListener) EnterLabel(ctx *kotlin.LabelContext) {}
+// EnterAnnotations is called when production annotations is entered.
+func (s *KotlinTreeShapeListener) EnterAnnotations(ctx *kotlin.AnnotationsContext) {}
 
-// ExitLabel is called when production label is exited.
-func (s *KotlinTreeShapeListener) ExitLabel(ctx *kotlin.LabelContext) {}
+// ExitAnnotations is called when production annotations is exited.
+func (s *KotlinTreeShapeListener) ExitAnnotations(ctx *kotlin.AnnotationsContext) {}
 
 // EnterAnnotation is called when production annotation is entered.
 func (s *KotlinTreeShapeListener) EnterAnnotation(ctx *kotlin.AnnotationContext) {}
@@ -1121,17 +1116,11 @@ func (s *KotlinTreeShapeListener) EnterAnnotation(ctx *kotlin.AnnotationContext)
 // ExitAnnotation is called when production annotation is exited.
 func (s *KotlinTreeShapeListener) ExitAnnotation(ctx *kotlin.AnnotationContext) {}
 
-// EnterSingleAnnotation is called when production singleAnnotation is entered.
-func (s *KotlinTreeShapeListener) EnterSingleAnnotation(ctx *kotlin.SingleAnnotationContext) {}
+// EnterAnnotationList is called when production annotationList is entered.
+func (s *KotlinTreeShapeListener) EnterAnnotationList(ctx *kotlin.AnnotationListContext) {}
 
-// ExitSingleAnnotation is called when production singleAnnotation is exited.
-func (s *KotlinTreeShapeListener) ExitSingleAnnotation(ctx *kotlin.SingleAnnotationContext) {}
-
-// EnterMultiAnnotation is called when production multiAnnotation is entered.
-func (s *KotlinTreeShapeListener) EnterMultiAnnotation(ctx *kotlin.MultiAnnotationContext) {}
-
-// ExitMultiAnnotation is called when production multiAnnotation is exited.
-func (s *KotlinTreeShapeListener) ExitMultiAnnotation(ctx *kotlin.MultiAnnotationContext) {}
+// ExitAnnotationList is called when production annotationList is exited.
+func (s *KotlinTreeShapeListener) ExitAnnotationList(ctx *kotlin.AnnotationListContext) {}
 
 // EnterAnnotationUseSiteTarget is called when production annotationUseSiteTarget is entered.
 func (s *KotlinTreeShapeListener) EnterAnnotationUseSiteTarget(ctx *kotlin.AnnotationUseSiteTargetContext) {
@@ -1147,47 +1136,17 @@ func (s *KotlinTreeShapeListener) EnterUnescapedAnnotation(ctx *kotlin.Unescaped
 // ExitUnescapedAnnotation is called when production unescapedAnnotation is exited.
 func (s *KotlinTreeShapeListener) ExitUnescapedAnnotation(ctx *kotlin.UnescapedAnnotationContext) {}
 
-// EnterSimpleIdentifier is called when production simpleIdentifier is entered.
-func (s *KotlinTreeShapeListener) EnterSimpleIdentifier(ctx *kotlin.SimpleIdentifierContext) {}
-
-// ExitSimpleIdentifier is called when production simpleIdentifier is exited.
-func (s *KotlinTreeShapeListener) ExitSimpleIdentifier(ctx *kotlin.SimpleIdentifierContext) {}
-
 // EnterIdentifier is called when production identifier is entered.
 func (s *KotlinTreeShapeListener) EnterIdentifier(ctx *kotlin.IdentifierContext) {}
 
 // ExitIdentifier is called when production identifier is exited.
 func (s *KotlinTreeShapeListener) ExitIdentifier(ctx *kotlin.IdentifierContext) {}
 
-// EnterShebangLine is called when production shebangLine is entered.
-func (s *KotlinTreeShapeListener) EnterShebangLine(ctx *kotlin.ShebangLineContext) {}
+// EnterSimpleIdentifier is called when production simpleIdentifier is entered.
+func (s *KotlinTreeShapeListener) EnterSimpleIdentifier(ctx *kotlin.SimpleIdentifierContext) {}
 
-// ExitShebangLine is called when production shebangLine is exited.
-func (s *KotlinTreeShapeListener) ExitShebangLine(ctx *kotlin.ShebangLineContext) {}
-
-// EnterQuest is called when production quest is entered.
-func (s *KotlinTreeShapeListener) EnterQuest(ctx *kotlin.QuestContext) {}
-
-// ExitQuest is called when production quest is exited.
-func (s *KotlinTreeShapeListener) ExitQuest(ctx *kotlin.QuestContext) {}
-
-// EnterElvis is called when production elvis is entered.
-func (s *KotlinTreeShapeListener) EnterElvis(ctx *kotlin.ElvisContext) {}
-
-// ExitElvis is called when production elvis is exited.
-func (s *KotlinTreeShapeListener) ExitElvis(ctx *kotlin.ElvisContext) {}
-
-// EnterSafeNav is called when production safeNav is entered.
-func (s *KotlinTreeShapeListener) EnterSafeNav(ctx *kotlin.SafeNavContext) {}
-
-// ExitSafeNav is called when production safeNav is exited.
-func (s *KotlinTreeShapeListener) ExitSafeNav(ctx *kotlin.SafeNavContext) {}
-
-// EnterExcl is called when production excl is entered.
-func (s *KotlinTreeShapeListener) EnterExcl(ctx *kotlin.ExclContext) {}
-
-// ExitExcl is called when production excl is exited.
-func (s *KotlinTreeShapeListener) ExitExcl(ctx *kotlin.ExclContext) {}
+// ExitSimpleIdentifier is called when production simpleIdentifier is exited.
+func (s *KotlinTreeShapeListener) ExitSimpleIdentifier(ctx *kotlin.SimpleIdentifierContext) {}
 
 // EnterSemi is called when production semi is entered.
 func (s *KotlinTreeShapeListener) EnterSemi(ctx *kotlin.SemiContext) {}
@@ -1195,8 +1154,87 @@ func (s *KotlinTreeShapeListener) EnterSemi(ctx *kotlin.SemiContext) {}
 // ExitSemi is called when production semi is exited.
 func (s *KotlinTreeShapeListener) ExitSemi(ctx *kotlin.SemiContext) {}
 
-// EnterSemis is called when production semis is entered.
-func (s *KotlinTreeShapeListener) EnterSemis(ctx *kotlin.SemisContext) {}
+// EnterAnysemi is called when production anysemi is entered.
+func (s *KotlinTreeShapeListener) EnterAnysemi(ctx *kotlin.AnysemiContext) {}
 
-// ExitSemis is called when production semis is exited.
-func (s *KotlinTreeShapeListener) ExitSemis(ctx *kotlin.SemisContext) {}
+// ExitAnysemi is called when production anysemi is exited.
+func (s *KotlinTreeShapeListener) ExitAnysemi(ctx *kotlin.AnysemiContext) {}
+
+func (s *KotlinTreeShapeListener) EnterFunctionValueParameter(c *kotlin.FunctionValueParameterContext) {
+}
+
+//
+//func getClassParams(ctx antlr.ParseTree) []paramInfoType {
+//	var paramInfo paramInfoType
+//	var result []paramInfoType
+//	count := 1
+//
+//	for count < ctx.GetChildCount() {
+//		if ctx.GetChild(count).GetChild(1).(antlr.ParseTree).GetText() == ":" {
+//			paramInfo.ParamName = ctx.GetChild(count).GetChild(0).(antlr.ParseTree).GetText()
+//			paramInfo.ParamType = ctx.GetChild(count).GetChild(2).(antlr.ParseTree).GetText()
+//		} else if ctx.GetChild(count).GetChild(2).(antlr.ParseTree).GetText() == ":" {
+//			paramInfo.ParamName = ctx.GetChild(count).GetChild(1).(antlr.ParseTree).GetText()
+//			paramInfo.ParamType = ctx.GetChild(count).GetChild(3).(antlr.ParseTree).GetText()
+//		} else if ctx.GetChild(count).GetChild(3).(antlr.ParseTree).GetText() == ":" {
+//			paramInfo.ParamName = ctx.GetChild(count).GetChild(2).(antlr.ParseTree).GetText()
+//			paramInfo.ParamType = ctx.GetChild(count).GetChild(4).(antlr.ParseTree).GetText()
+//		}
+//		result = append(result, paramInfo)
+//		count += 2
+//	}
+//	return result
+//}
+//
+//func getParams(ctx antlr.ParseTree) []paramInfoType {
+//	var paramInfo paramInfoType
+//	var result []paramInfoType
+//	if ctx.GetChildCount() == 3 {
+//		paramCount := ctx.GetChild(1).GetChildCount()
+//		if paramCount == 1 {
+//			treeListCount := ctx.GetChild(1).GetChild(0).GetChildCount()
+//			if treeListCount == 3 {
+//				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
+//				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(2).(antlr.ParseTree).GetText()
+//			} else if treeListCount == 2 {
+//				paramInfo.ParamType = ctx.GetChild(1).GetChild(0).GetChild(0).(antlr.ParseTree).GetText()
+//				paramInfo.ParamName = ctx.GetChild(1).GetChild(0).GetChild(1).(antlr.ParseTree).GetText()
+//			}
+//		} else if paramCount > 1 {
+//			for index := 0; index < paramCount; index++ {
+//				count := ctx.GetChild(1).GetChild(index).GetChildCount()
+//				if count == 3 {
+//					//paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(*TypeTypeContext).GetText() + ctx.GetChild(1).GetChild(index).GetChild(1).(*antlr.TerminalNodeImpl).GetText()
+//					//paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(2).(*VariableDeclaratorIdContext).GetText()
+//					//result = append(result, paramInfo)
+//				} else if count == 2 {
+//					paramInfo.ParamType = ctx.GetChild(1).GetChild(index).GetChild(0).(antlr.ParseTree).GetText()
+//					paramInfo.ParamName = ctx.GetChild(1).GetChild(index).GetChild(1).(antlr.ParseTree).GetText()
+//					result = append(result, paramInfo)
+//				}
+//			}
+//		}
+//	} else if ctx.GetChildCount() == 2 {
+//		paramInfo.ParamType = "void"
+//		paramInfo.ParamName = "void"
+//		result = append(result, paramInfo)
+//	}
+//	return result
+//}
+//
+//func findMasterObjectClass(ctx *kotlin.ClassDeclarationContext, classInfo classInfoType) masterObjectInfoType {
+//	var masterObject masterObjectInfoType
+//	var parCtx interface{}
+//	parCtx = ctx.GetParent()
+//	if _, ok := parCtx.(*parser.TypeDeclarationContext); ok {
+//		if parCtx.(antlr.ParseTree).GetChildCount() >= 2 {
+//			if parCtx.(antlr.ParseTree).GetChild(1).GetChildCount() >= 2 {
+//				parClassName := parCtx.(antlr.ParseTree).GetChild(1).GetChild(1).(antlr.ParseTree).GetText()
+//				masterObject.ObjectName = parClassName
+//				masterObject.StartLine = parCtx.(*parser.TypeDeclarationContext).GetChild(1).(*ClassDeclarationContext).GetStart().GetLine()
+//			}
+//		}
+//	}
+//	return masterObject
+//}
+//
