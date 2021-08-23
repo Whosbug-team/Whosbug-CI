@@ -18,3 +18,9 @@ src/test.go
 /src/gopkg.in/
 /src/github.com/
 /src/anrlr4_ast/
+
+bin/*
+pkg/*
+
+.vscode/*
+.idea/*
