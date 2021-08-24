@@ -2,7 +2,6 @@ package whosbugPack
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"log"
 	"os"
 	"runtime"
@@ -12,6 +11,8 @@ import (
 	"whosbugPack/logpack"
 	"whosbugPack/uploadpack"
 	"whosbugPack/utility"
+
+	"github.com/pkg/errors"
 )
 
 // init
@@ -22,9 +23,9 @@ import (
 func init() {
 	log.SetOutput(os.Stdout)
 	global_type.Config = global_type.InputJson{
-		ProjectId:         "asssssssssssssssssssd",
+		ProjectId:         "kevinello_test1",
 		ReleaseVersion:    "1.0.0",
-		RepoPath:          "C:\\Users\\KevinMatt\\Desktop\\test\\java-design-patterns",
+		RepoPath:          "/Users/kevinello/QAPM",
 		BranchName:        "master",
 		WebServerHost:     "http://127.0.0.1:8081",
 		WebServerUserName: "user",
