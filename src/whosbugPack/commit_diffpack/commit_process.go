@@ -3,7 +3,6 @@ package commit_diffpack
 import (
 	"bufio"
 	"fmt"
-	"github.com/pkg/errors"
 	"io"
 	"log"
 	"os"
@@ -11,7 +10,9 @@ import (
 	"strings"
 	"whosbugPack/global_type"
 	"whosbugPack/uploadpack"
-	"whosbugPack/utility"
+	"whosbugPack/util"
+
+	"github.com/pkg/errors"
 )
 
 // MatchCommit
@@ -24,7 +25,7 @@ func MatchCommit(diffPath, commitPath string) {
 
 	err := uploadpack.PostCommitsInfo(commitPath)
 	if err != nil {
-		log.Println(utility.ErrorStack(err))
+		log.Println(util.ErrorStack(err))
 	}
 
 	commitFd, err := os.Open(commitPath)
@@ -56,11 +57,11 @@ func MatchCommit(diffPath, commitPath string) {
 
 			var commitInfo global_type.CommitInfoType
 
-			commitInfo = utility.GetCommitInfo(string(commitLine))
+			commitInfo = util.GetCommitInfo(string(commitLine))
 			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
 			fullCommit, err := getFullCommit(patCommit, lineReaderDiff)
 			if err != nil {
-				fmt.Println(utility.ErrorStack(err))
+				fmt.Println(util.ErrorStack(err))
 			}
 
 			// 获取单次commit中的每一次diff，并处理diff，送进协程

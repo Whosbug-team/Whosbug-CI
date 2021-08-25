@@ -1,14 +1,15 @@
 package antlrpack
 
 import (
-	"github.com/antlr/antlr4/runtime/Go/antlr"
 	cpp "whosbugPack/antlrpack/cpp_lib"
 	golang "whosbugPack/antlrpack/go_lib"
 	javaparser "whosbugPack/antlrpack/java_lib"
 	javascript "whosbugPack/antlrpack/js_lib"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
 	"whosbugPack/global_type"
-	"whosbugPack/utility"
+	"whosbugPack/util"
+
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
 // AnalyzeCommitDiff
@@ -156,7 +157,7 @@ func ExecuteJavaScript(diffText string) AnalysisInfoType {
 }
 
 func ExecutePython(diffText string) AnalysisInfoType {
-	utility.ForDebug(diffText)
+	util.ForDebug(diffText)
 	return AnalysisInfoType{}
 }
 
@@ -240,10 +241,10 @@ func addObjectFromChangeLineNumber(commitDiff global_type.DiffParsedType, change
 	//	TODO Ready for newMethod
 	var newObject global_type.ObjectInfoType
 	newObject = global_type.ObjectInfoType{
-		CommitHash:   commitDiff.CommitHash, //utility.Base64Encrypt(commitDiff.CommitHash)
+		CommitHash:   commitDiff.CommitHash, //util.Base64Encrypt(commitDiff.CommitHash)
 		Id:           changeMethod.MasterObject.ObjectName + "." + changeMethod.MethodName,
 		OldId:        "",
-		FilePath:     utility.Base64Encrypt(commitDiff.CommitHash),
+		FilePath:     util.Base64Encrypt(commitDiff.CommitHash),
 		OldLineCount: changeMethod.EndLine - changeMethod.StartLine,
 		NewLineCount: commitDiff.NewLineCount,
 		Calling:      changeMethod.CallMethods,

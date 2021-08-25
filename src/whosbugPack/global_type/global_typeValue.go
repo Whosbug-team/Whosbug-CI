@@ -47,15 +47,14 @@ func (s *ObjectInfoType) Equals(b ObjectInfoType) bool {
 
 // InputJson 存储从input.json读取到的配置信息
 type InputJson struct {
-	ProjectId         string   `json:"__PROJECT_ID"`
-	ReleaseVersion    string   `json:"__RELEASE_VERSION"`
-	RepoPath          string   `json:"__PROJECT_URL"`
-	BranchName        string   `json:"__BRANCH_NAME"`
-	LanguageSupport   []string `json:"__LAN_SUPPORT"`
-	WebServerHost     string   `json:"__WEB_SRV_HOST"`
-	WebServerUserName string   `json:"__WEB_SRV_USERNAME__"`
-	WebserverKey      string   `json:"__WEB_SRV_KEY__"`
-	CryptoKey         string   `json:"__ENCRYPT_SECRET__"`
+	ProjectId         string `json:"__PROJECT_ID"`
+	ReleaseVersion    string `json:"__RELEASE_VERSION"`
+	RepoPath          string `json:"__PROJECT_URL"`
+	BranchName        string `json:"__BRANCH_NAME"`
+	WebServerHost     string `json:"__WEB_SRV_HOST"`
+	WebServerUserName string `json:"__WEB_SRV_USERNAME__"`
+	WebserverKey      string `json:"__WEB_SRV_KEY__"`
+	CryptoKey         string `json:"__ENCRYPT_SECRET__"`
 }
 
 // 全局变量，存储config信息

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-	"whosbugPack/utility"
+	"whosbugPack/util"
 )
 
 func TestQuatoToNum(t *testing.T) {
@@ -19,7 +19,7 @@ func TestReplaceLines(t *testing.T) {
 	lines := strings.Split(text, "\n")
 	replaceLines(lines)
 	temp := strings.Join(lines, "\n")
-	utility.ForDebug(temp)
+	util.ForDebug(temp)
 	if strings.Join(lines, "\n") != expected {
 		t.Errorf("Not Pass")
 	}

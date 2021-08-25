@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
-	"whosbugPack/utility"
+	"whosbugPack/util"
 )
 
 func TestExecuteJava(t *testing.T) {
@@ -53,7 +53,7 @@ func TestExecuteKotlin(t *testing.T) {
 	input, _ := os.Open("D:\\Desktop\\Whosbug_antlr_go\\antlr4_kotlin\\testfiles\\test.kt")
 	text, _ := ioutil.ReadAll(input)
 	rest := ExecuteKotlin(string(text))
-	utility.ForDebug(rest)
+	util.ForDebug(rest)
 	for _, item := range rest.AstInfoList.Classes {
 		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName, "\tMasterObject: ", item.MasterObject)
 	}
@@ -68,7 +68,7 @@ func TestExecuteJavaScript(t *testing.T) {
 	input, _ := os.Open("D:\\Desktop\\Whosbug_antlr_go\\antlr4_js\\testfiles\\test.js")
 	text, _ := ioutil.ReadAll(input)
 	rest := ExecuteJavaScript(string(text))
-	utility.ForDebug(rest)
+	util.ForDebug(rest)
 	for _, item := range rest.AstInfoList.Classes {
 		fmt.Println("StartLine: ", item.StartLine, "\tEndLine: ", item.EndLine, "\tClassName: ", item.ClassName)
 	}

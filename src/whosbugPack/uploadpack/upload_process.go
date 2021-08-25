@@ -3,8 +3,6 @@ package uploadpack
 import (
 	"bufio"
 	"bytes"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
 	"log"
@@ -12,7 +10,10 @@ import (
 	"os"
 	"whosbugPack/global_type"
 	"whosbugPack/logpack"
-	"whosbugPack/utility"
+	"whosbugPack/util"
+
+	jsoniter "github.com/json-iterator/go"
+	"github.com/pkg/errors"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -76,7 +77,7 @@ func processUpload(objects []global_type.ObjectInfoType) {
 //	@author KevinMatt 2021-08-10 13:02:37
 //	@function_mark PASS
 func PostObjects(objects []global_type.ObjectInfoType) error {
-	token, err := utility.GenToken()
+	token, err := util.GenToken()
 	if err != nil {
 		log.Println(err)
 		return err
@@ -86,9 +87,9 @@ func PostObjects(objects []global_type.ObjectInfoType) error {
 	dataForPost := postDataPool.Get().(*postData)
 	defer postDataPool.Put(dataForPost)
 	dataForPost.PostCommitInfo = postProjectInfo
-	//dataForPost.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
-	//dataForPost.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)
-	//dataForPost.Release.CommitHash = utility.Base64Encrypt(global_type.LatestCommitHash)
+	//dataForPost.Project.Pid = util.Base64Encrypt(global_type.Config.ProjectId)
+	//dataForPost.Release.Release = util.Base64Encrypt(global_type.Config.ReleaseVersion)
+	//dataForPost.Release.CommitHash = util.Base64Encrypt(global_type.LatestCommitHash)
 	dataForPost.Objects = objects
 
 	data, err := json.MarshalToString(&dataForPost)
@@ -98,12 +99,12 @@ func PostObjects(objects []global_type.ObjectInfoType) error {
 	}
 
 	//准备发送
-	urlReq := utility.ConCatStrings(global_type.Config.WebServerHost, "/whosbug/commits/diffs/")
+	urlReq := util.ConCatStrings(global_type.Config.WebServerHost, "/whosbug/commits/diffs/")
 	method := "POST"
 
 	err = ReqWithToken(token, urlReq, method, data)
 	if err != nil {
-		log.Println(utility.ErrorMessage(err))
+		log.Println(util.ErrorMessage(err))
 	}
 	return err
 }
@@ -129,16 +130,16 @@ func PostCommitsInfo(commitPath string) error {
 		if err == io.EOF {
 			break
 		}
-		CommitInfo := utility.GetCommitInfo(string(line))
+		CommitInfo := util.GetCommitInfo(string(line))
 		FinMessage.Commit = append(FinMessage.Commit, CommitInfo)
 	}
 	commitFd.Close()
 	data, err := json.MarshalToString(&FinMessage)
-	token, err := utility.GenToken()
+	token, err := util.GenToken()
 	url := global_type.Config.WebServerHost + "/whosbug/commits/commits-info/"
 	err = ReqWithToken(token, url, "POST", data)
 	if err != nil {
-		log.Println(utility.ErrorMessage(err))
+		log.Println(util.ErrorMessage(err))
 	}
 	return err
 }
@@ -158,7 +159,7 @@ func ReqWithToken(token, url, method, data string) error {
 	if err != nil {
 		return errors.Wrapf(err, "Create Request with method: %s Fails \n With data: %s", method, data)
 	}
-	req.Header.Add("Authorization", utility.ConCatStrings("Token ", token))
+	req.Header.Add("Authorization", util.ConCatStrings("Token ", token))
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := client.Do(req)
@@ -178,7 +179,7 @@ func ReqWithToken(token, url, method, data string) error {
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		temp := string(body)
-		utility.ForDebug(temp)
+		util.ForDebug(temp)
 		if err != nil {
 			return errors.WithMessage(err, "Read Body Fail")
 		}
@@ -201,7 +202,7 @@ func PostReleaseInfo(address string) error {
 	if err != nil {
 		return errors.Wrap(err, "json MarshalToString Fail")
 	}
-	token, err := utility.GenToken()
+	token, err := util.GenToken()
 	if err != nil {
 		return errors.Wrap(err, "GenToken Fail")
 	}
@@ -217,8 +218,8 @@ func PostReleaseInfo(address string) error {
 //	@author KevinMatt 2021-08-10 12:40:28
 //	@function_mark PASS
 func InitTheProjectStruct() {
-	postProjectInfo.Project.Pid = utility.Base64Encrypt(global_type.Config.ProjectId)
-	postProjectInfo.Release.Release = utility.Base64Encrypt(global_type.Config.ReleaseVersion)
-	postProjectInfo.Release.CommitHash = utility.Base64Encrypt(global_type.LocalHashLatest)
+	postProjectInfo.Project.Pid = util.Base64Encrypt(global_type.Config.ProjectId)
+	postProjectInfo.Release.Release = util.Base64Encrypt(global_type.Config.ReleaseVersion)
+	postProjectInfo.Release.CommitHash = util.Base64Encrypt(global_type.LocalHashLatest)
 	isInitial = false
 }

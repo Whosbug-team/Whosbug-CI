@@ -3,35 +3,36 @@ package logpack
 import (
 	"bytes"
 	"fmt"
-	"github.com/pkg/errors"
 	"log"
 	"os"
 	"os/exec"
 	"whosbugPack/global_type"
-	"whosbugPack/utility"
+	"whosbugPack/util"
+
+	"github.com/pkg/errors"
 )
 
-//	GetLogInfo
+// GetLogInfo
 //	@Description: 获取所有的git commit记录和所有的commit+diff，并返回存储的文件目录
 //	@return string 所有diff信息的目录
 //	@return string 所有commit信息的目录
 //	@author KevinMatt 2021-07-29 17:25:39
 //	@function_mark PASS
-func GetLogInfo() (string, string) {
+func GetGitLogInfo() (string, string) {
 	// 切换到仓库目录
 	err := os.Chdir(global_type.Config.RepoPath)
 	if err != nil {
 		log.Println(err)
+		os.Exit(-1)
 	}
 	fmt.Println("Work Path In ", global_type.WorkPath)
 
 	global_type.LocalHashLatest = ExecCommandOutput("git", "rev-parse", "HEAD")
 
-	cloudHashLatest, err := utility.GetLatestRelease(global_type.Config.ProjectId)
+	cloudHashLatest, err := util.GetLatestRelease(global_type.Config.ProjectId)
 	if err != nil {
-		fmt.Println(utility.ErrorMessage(errors.WithStack(err)))
+		fmt.Println(util.ErrorMessage(errors.WithStack(err)))
 	}
-	//cloudHashLatest := ""
 	fmt.Println("Head Got!")
 	global_type.LatestCommitHash = cloudHashLatest
 	if cloudHashLatest == global_type.LocalHashLatest {
@@ -42,27 +43,27 @@ func GetLogInfo() (string, string) {
 			fmt.Println("Start Get log")
 			err := ExecRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd")
 			if err != nil {
-				fmt.Println(utility.ErrorStack(err))
+				fmt.Println(util.ErrorStack(err))
 			}
 			err = ExecRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw")
 			if err != nil {
-				fmt.Println(utility.ErrorStack(err))
+				fmt.Println(util.ErrorStack(err))
 			}
 		} else {
 			err := ExecRedirectToFile("commitInfo.out", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
 			if err != nil {
-				fmt.Println(utility.ErrorStack(err))
+				fmt.Println(util.ErrorStack(err))
 			}
 			err = ExecRedirectToFile("allDiffs.out", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", fmt.Sprintf("%s...%s", global_type.LocalHashLatest, cloudHashLatest))
 			if err != nil {
-				fmt.Println(utility.ErrorStack(err))
+				fmt.Println(util.ErrorStack(err))
 			}
 		}
 	}
-	return utility.ConCatStrings(global_type.WorkPath, "/allDiffs.out"), utility.ConCatStrings(global_type.WorkPath, "/commitInfo.out")
+	return util.ConCatStrings(global_type.WorkPath, "/allDiffs.out"), util.ConCatStrings(global_type.WorkPath, "/commitInfo.out")
 }
 
-//	ExecCommandOutput
+// ExecCommandOutput
 //	@Description: 执行命令并获取输出
 //	@param command 命令
 //	@param args 命令参数

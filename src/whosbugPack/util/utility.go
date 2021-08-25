@@ -1,4 +1,4 @@
-package utility
+package util
 
 import (
 	"crypto/aes"
@@ -8,8 +8,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,6 +15,9 @@ import (
 	"os"
 	"strings"
 	"whosbugPack/global_type"
+
+	jsoniter "github.com/json-iterator/go"
+	"github.com/pkg/errors"
 )
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary

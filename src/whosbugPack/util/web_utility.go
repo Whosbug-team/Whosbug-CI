@@ -1,12 +1,13 @@
-package utility
+package util
 
 import (
 	"bytes"
 	"encoding/base64"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"whosbugPack/global_type"
+
+	"github.com/pkg/errors"
 )
 
 // GetLatestRelease

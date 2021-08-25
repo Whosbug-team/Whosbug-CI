@@ -1,13 +1,14 @@
 package commit_diffpack
 
 import (
-	"github.com/pkg/errors"
 	"log"
 	"path"
 	"strconv"
 	"strings"
 	"whosbugPack/global_type"
-	"whosbugPack/utility"
+	"whosbugPack/util"
+
+	"github.com/pkg/errors"
 )
 
 // ParseDiff
@@ -79,7 +80,7 @@ func ParseDiff(data string, commitInfo global_type.CommitInfoType) {
 			//go func() {
 			err := Pool.Invoke(diffParsed)
 			if err != nil {
-				log.Println(utility.ErrorStack(errors.WithStack(err)))
+				log.Println(util.ErrorStack(errors.WithStack(err)))
 			}
 			//}()
 		}
@@ -128,7 +129,7 @@ func replaceLines(lines []string) {
 	for index := range lines {
 		if len(lines[index]) >= 1 {
 			if string(lines[index][0]) == "+" {
-				lines[index] = utility.ConCatStrings("", lines[index][1:])
+				lines[index] = util.ConCatStrings("", lines[index][1:])
 			} else if string(lines[index][0]) == "-" || lines[index] == "\\ No newline at end of file" {
 				lines[index] = ""
 			}

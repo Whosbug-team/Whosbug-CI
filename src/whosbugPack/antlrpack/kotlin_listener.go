@@ -3,10 +3,11 @@
 package antlrpack // KotlinParser
 
 import (
-	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"strings"
 	kotlin "whosbugPack/antlrpack/kotlin_lib"
-	"whosbugPack/utility"
+	"whosbugPack/util"
+
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
 var _ kotlin.KotlinParserListener = &KotlinTreeShapeListener{}
@@ -41,7 +42,7 @@ func (s *KotlinTreeShapeListener) EnterFunctionDeclaration(ctx *kotlin.FunctionD
 		}
 	}
 	s.MethodInfo.MasterObject = findKotlinMasterObject(ctx)
-	utility.ForDebug()
+	util.ForDebug()
 }
 
 // FindKotlinFuncCallIndex
@@ -73,7 +74,7 @@ func (s *KotlinTreeShapeListener) ExitFunctionDeclaration(ctx *kotlin.FunctionDe
 			s.MethodInfo.StartLine = item.(*kotlin.SimpleIdentifierContext).GetStart().GetLine()
 		}
 	}
-	utility.ForDebug()
+	util.ForDebug()
 }
 
 // findKotlinMasterObject

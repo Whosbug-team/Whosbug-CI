@@ -1,8 +1,8 @@
 package whosbugPack
 
 import (
-	"fmt"
-	"log"
+	"encoding/json"
+	"io/ioutil"
 	"os"
 	"runtime"
 	"time"
@@ -10,9 +10,7 @@ import (
 	"whosbugPack/global_type"
 	"whosbugPack/logpack"
 	"whosbugPack/uploadpack"
-	"whosbugPack/utility"
-
-	"github.com/pkg/errors"
+	"whosbugPack/util"
 )
 
 // init
@@ -21,41 +19,37 @@ import (
 //	@function_mark PASS
 //
 func init() {
-	log.SetOutput(os.Stdout)
-	global_type.Config = global_type.InputJson{
-		ProjectId:         "kevinello_test1",
-		ReleaseVersion:    "1.0.0",
-		RepoPath:          "/Users/kevinello/QAPM",
-		BranchName:        "master",
-		WebServerHost:     "http://127.0.0.1:8081",
-		WebServerUserName: "user",
-		WebserverKey:      "pwd",
-		CryptoKey:         "",
-	}
+	var (
+		err            error
+		inputJsonBytes []byte
+	)
+	util.GLogger.Info("Initing whosbug...")
 	// 工作目录存档
 	global_type.WorkPath, _ = os.Getwd()
-	//file, err := os.Open("input.json")
-	//if err != nil {
-	//	fmt.Println(utility.ErrorMessage(err))
-	//}
-	//decoder := json.NewDecoder(file)
-	//err = decoder.Decode(&global_type.Config)
-	//if err != nil {
-	//	log.Println(utility.ErrorMessage(err))
-	//} else {
-	//	fmt.Println("Get input-config succeed!")
-	//}
+	inputJsonBytes, err = ioutil.ReadFile("./input.json")
+	if err != nil {
+		util.GLogger.Emergency(err.Error())
+		os.Exit(-1)
+	}
+
+	err = json.Unmarshal(inputJsonBytes, &global_type.Config)
+	if err != nil {
+		util.GLogger.Emergency(err.Error())
+		os.Exit(-1)
+	} else {
+		util.GLogger.Info("Get input-config succeed!")
+	}
 
 	// 打印插件版本信息
-	fmt.Println("Version:\t", global_type.Config.ReleaseVersion, "\nProjectId:\t", global_type.Config.ProjectId, "\nBranchName:\t", global_type.Config.BranchName)
+	util.GLogger.Infof("\nVersion:\t%s\nProjectId:\t%s\nBranchName:\t%s", global_type.Config.ReleaseVersion, global_type.Config.ProjectId, global_type.Config.BranchName)
 
 	global_type.ObjectChan = make(chan global_type.ObjectInfoType, 10000)
 
-	_, err := os.Stat(global_type.WorkPath + "/allDiffs.out")
+	_, err = os.Stat(global_type.WorkPath + "/allDiffs.out")
 	if !os.IsNotExist(err) {
 		err = os.Remove(global_type.WorkPath + "/allDiffs.out")
 		if err != nil {
-			log.Println(utility.ErrorMessage(errors.WithStack(err)))
+			util.GLogger.Error(err.Error())
 		}
 	}
 
@@ -63,7 +57,7 @@ func init() {
 	if !os.IsNotExist(err) {
 		err = os.Remove(global_type.WorkPath + "/commitInfo.out")
 		if err != nil {
-			log.Println(utility.ErrorMessage(errors.WithStack(err)))
+			util.GLogger.Error(err.Error())
 		}
 	}
 
@@ -81,23 +75,23 @@ func Analysis() {
 	t := time.Now()
 
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
-	diffPath, commitPath := logpack.GetLogInfo()
-	fmt.Println(diffPath, commitPath)
+	diffPath, commitPath := logpack.GetGitLogInfo()
+	util.GLogger.Infof("diffPath: %s, commitPath: %s", diffPath, commitPath)
 	// 指示Webservice创建新的release
 	err := uploadpack.PostReleaseInfo("/whosbug/create-project-release/")
 	if err != nil {
-		log.Println(utility.ErrorStack(err))
+		util.GLogger.Error(err.Error())
 	}
 
-	fmt.Println("Get log cost: ", time.Since(t))
+	util.GLogger.Infof("Get log cost: %d", time.Since(t))
 	commit_diffpack.MatchCommit(diffPath, commitPath)
 
 	// 等待关闭pool和channel
 	for {
 		time.Sleep(time.Second / 10)
 		if commit_diffpack.Pool.Running() == 0 {
-			fmt.Println("Analyse cost: ", time.Since(t))
-			fmt.Println("Routines pool closed.")
+			util.GLogger.Infof("Analyse cost: %d", time.Since(t))
+			util.GLogger.Info("Routines pool closed.")
 			commit_diffpack.Pool.Release()
 			close(global_type.ObjectChan)
 			break
@@ -112,7 +106,7 @@ func Analysis() {
 	// 通知Webservice上传结束
 	err = uploadpack.PostReleaseInfo("/whosbug/commits/upload-done/")
 	if err != nil {
-		log.Println(utility.ErrorStack(err))
+		util.GLogger.Error(util.ErrorStack(err))
 	}
-	fmt.Println("Total cost: ", time.Since(t))
+	util.GLogger.Infof("Total cost: %d", time.Since(t))
 }

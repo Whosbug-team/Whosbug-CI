@@ -1,10 +1,11 @@
 package antlrpack
 
 import (
-	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"strings"
 	golang "whosbugPack/antlrpack/go_lib"
-	//"whosbugPack/utility"
+
+	"github.com/antlr/antlr4/runtime/Go/antlr"
+	//"whosbugPack/util"
 )
 
 //只能解析非struct方法
