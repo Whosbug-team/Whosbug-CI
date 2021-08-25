@@ -24,5 +24,6 @@ pkg/*
 
 .vscode/*
 .idea/*
+log.txt
 */log.txt
 input.json
