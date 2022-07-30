@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine
+FROM golang:1.18-alpine
 
 #COPY input.json /root
 COPY whosbug_linux_linux /root
