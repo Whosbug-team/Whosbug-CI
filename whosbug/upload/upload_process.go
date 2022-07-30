@@ -80,7 +80,7 @@ func processUpload(objects []config.ObjectInfoType) {
 //	@author KevinMatt 2021-08-10 13:02:37
 //	@function_mark PASS
 func PostObjects(objects []config.ObjectInfoType) error {
-	token, err := util.GenToken(config.DefaultExpire)
+	token, err := util.GenToken()
 	if err != nil {
 		log.Println(err)
 		return err
@@ -139,7 +139,7 @@ func PostCommitsInfo(commitPath string) error {
 	commitFd.Close()
 	data, _ := json.MarshalToString(&FinMessage)
 	util.WriteInfoFile("/data/workspace/whosbugGolang/commits.json", data)
-	token, _ := util.GenToken(config.DefaultExpire)
+	token, _ := util.GenToken()
 	url := config.WhosbugConfig.WebServerHost + "/whosbug/commits/commits-info/"
 	err = ReqWithToken(token, url, "POST", data)
 	if err != nil {
@@ -148,15 +148,13 @@ func PostCommitsInfo(commitPath string) error {
 	return err
 }
 
-// ReqWithToken
-//	@Description: 发起http请求
-//	@param token 生成的token
-//	@param url 请求的url
-//	@param method 请求方法
-//	@param data 请求带有的数据
-//	@return error 返回错误信息
-//	@author KevinMatt 2021-08-10 00:47:48
-//	@function_mark PASS
+// ReqWithToken 发起http请求
+//  @param token string
+//  @param url string
+//  @param method string
+//  @param data string
+//  @return error 返回错误信息
+//  @author: Kevineluo 2022-07-31 12:57:45
 func ReqWithToken(token, url, method, data string) error {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, bytes.NewBuffer([]byte(data)))
@@ -174,7 +172,7 @@ func ReqWithToken(token, url, method, data string) error {
 	defer func() {
 		err = res.Body.Close()
 		if err != nil {
-			log.Println(errors.WithMessage(err, "Res Body Close Fails!"))
+			log.Println(errors.WithMessage(err, "Res Body Close Fails"))
 		}
 	}()
 
@@ -206,7 +204,7 @@ func PostReleaseInfo(address string) error {
 	if err != nil {
 		return errors.Wrap(err, "json MarshalToString Fail")
 	}
-	token, err := util.GenToken(config.DefaultExpire)
+	token, err := util.GenToken()
 	if err != nil {
 		return errors.Wrap(err, "GenToken Fail")
 	}

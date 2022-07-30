@@ -8,16 +8,18 @@ import (
 	"crypto/md5"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/hex"
 	"fmt"
-	"math/rand"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
 	"os"
 	"strings"
-	"time"
 
 	"git.woa.com/bkdevops/whosbug/config"
 
 	jsoniter "github.com/json-iterator/go"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -109,30 +111,44 @@ func Decrypt(projectId, key, plainText string) string {
 	return string(dest)
 }
 
-// GenToken
-//	@Description: 生成Token
-//	@return string Token字符串
-//	@return error 错误信息
-//	@author KevinMatt 2021-08-08 21:35:26
-//	@function_mark PASS
-func GenToken(tokenExpireSec int) (token string, err error) {
-	var expireStamp = int(time.Now().Unix()) + tokenExpireSec
-	var randInt = rand.Intn(99999999-10000000) + 10000000
+// GenToken 生成Token
+//  @return string Token字符串
+//  @return error 错误信息
+//  @author: Kevineluo 2022-07-31 12:52:51
+func GenToken() (string, error) {
+	// 拼接字符串
+	var builder strings.Builder
+	builder.WriteString(config.WhosbugConfig.WebServerHost)
+	builder.WriteString("/api-token-auth/")
+	urls := builder.String()
 
-	h := md5.New()
-	h.Write([]byte(fmt.Sprintf("%s||%d%8d%s", "qapm", expireStamp, randInt, "3E5D4C94-A9FE-4690-BEF4-76C40EAE44AB")))
-	md5Value := hex.EncodeToString(h.Sum(nil))
-	raw := fmt.Sprintf("%s||%d%8d%s", "qapm", expireStamp, randInt, md5Value)
-	token = base64.StdEncoding.EncodeToString([]byte(raw))
-	return
+	res, err := http.PostForm(urls, url.Values{"username": []string{config.WhosbugConfig.WebServerUserName}, "password": []string{config.WhosbugConfig.WebServerKey}})
+	if err != nil {
+		fmt.Printf("%s", ErrorMessage(errors.Wrapf(err, "Generate Key Failure. Check the username&password or the status of the server")))
+		os.Exit(1)
+	}
+
+	defer func() {
+		err = res.Body.Close()
+		if err != nil {
+			log.Println(errors.WithMessage(err, "Res Body Close Fails"))
+		}
+	}()
+	if res.StatusCode == 200 {
+		resBody, _ := ioutil.ReadAll(res.Body)
+		tokenGot := strings.Split(string(resBody), "\"")[3]
+		return tokenGot, nil
+	} else {
+		resBody, _ := ioutil.ReadAll(res.Body)
+		println(string(resBody))
+		return "", errors.New(string(resBody))
+	}
 }
 
-// ConCatStrings
-//	@Description: 字符串高效拼接
-//	@param stringList
-//	@return string
-//	@author KevinMatt 2021-08-05 20:03:50
-//	@function_mark PASS
+// ConCatStrings 字符串高效拼接
+//  @param stringList ...string
+//  @return string
+//  @author: Kevineluo 2022-07-31 12:52:54
 func ConCatStrings(stringList ...string) string {
 	var builder strings.Builder
 	for index := range stringList {

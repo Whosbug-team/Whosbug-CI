@@ -63,9 +63,6 @@ type Config struct {
 	WebServerKey      string `json:"web_server_key"`
 }
 
-// TPS token默认过期时间
-var DefaultExpire = 3600 * 24 * 7
-
 // 全局变量，存储config信息
 var WhosbugConfig Config
 

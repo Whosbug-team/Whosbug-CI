@@ -57,7 +57,7 @@ func Analysis(whosbugConfig *config.Config) {
 	diffPath, commitPath := logging.GetGitLogInfo()
 	util.GLogger.Infof("diffPath: %s, commitPath: %s", diffPath, commitPath)
 	commit.ProcessBar = progressbar.Default(util.GetLineCount(), "Progress")
-	// 指示Webservice创建新的release
+	// 指示Web-service创建新的release
 	err := upload.PostReleaseInfo("/whosbug/create-project-release/")
 	if err != nil {
 		util.GLogger.Error(err.Error())
@@ -90,7 +90,7 @@ func Analysis(whosbugConfig *config.Config) {
 	// 回收所有内存，准备转入完成上传的FIN通知
 	runtime.GC()
 
-	// 通知Webservice上传结束
+	// 通知Web-service上传结束
 	err = upload.PostReleaseInfo("/whosbug/commits/upload-done/")
 	if err != nil {
 		util.GLogger.Error(util.ErrorStack(err))

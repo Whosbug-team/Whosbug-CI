@@ -30,9 +30,8 @@ func ParseDiff(data string, commitInfo config.CommitInfoType) {
 	for index, rawDiff := range rawDiffs {
 
 		// 如果非匹配的语言文件，直接跳过
-		// TODO: 还需要识别目标语言
-		support, targetLanguage := languageFilter(path.Base(rawDiff[2]))
-		if !support {
+		isSupportLanguage, targetLanguage := languageFilter(path.Base(rawDiff[2]))
+		if !isSupportLanguage {
 			runtime.GC()
 			continue
 		} else {
@@ -93,6 +92,10 @@ func ParseDiff(data string, commitInfo config.CommitInfoType) {
 	}
 }
 
+// QuatToNum
+//  @param text string
+//  @return sum int
+//  @author: Kevineluo 2022-07-31 12:24:09
 func QuatToNum(text string) (sum int) {
 	for index := 0; index < len(text); index++ {
 		if text[index] == ',' {

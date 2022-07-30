@@ -11,18 +11,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-// GetLatestRelease
-//	@Description:
-//	@param projectId 项目ID
-//	@return string Release信息
-//	@return error
-//	@author KevinMatt 2021-08-10 13:02:27
-//	@function_mark PASS
-func GetLatestRelease(projectId string) (string, error) {
+// GetLatestRelease 获取最新的release
+//  @param projectID string
+//  @return string Release信息
+//  @return error
+//  @author: Kevineluo 2022-07-31 01:03:27
+func GetLatestRelease(projectID string) (string, error) {
 	urlReq := ConCatStrings(config.WhosbugConfig.WebServerHost, "/whosbug/releases/last/")
 	method := "POST"
 
-	pid := base64.StdEncoding.EncodeToString([]byte(Encrypt(projectId, config.WhosbugConfig.CryptoKey, projectId)))
+	pid := base64.StdEncoding.EncodeToString([]byte(Encrypt(projectID, config.WhosbugConfig.CryptoKey, projectID)))
 	data := []byte("{\"pid\":\"" + pid + "\"}")
 
 	client := &http.Client{}
@@ -32,7 +30,7 @@ func GetLatestRelease(projectId string) (string, error) {
 		return "", errors.Wrapf(err, "GetLatestRelease->Sending NewRequest")
 	}
 
-	token, err := GenToken(config.DefaultExpire)
+	token, err := GenToken()
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
@@ -52,14 +50,14 @@ func GetLatestRelease(projectId string) (string, error) {
 		}
 		commitHash := Json.Get(body, "last_commit_hash").ToString()
 		commitHashByte, err := base64.StdEncoding.DecodeString(commitHash)
-		return Decrypt(projectId, config.WhosbugConfig.CryptoKey, string(commitHashByte)), nil
+		return Decrypt(projectID, config.WhosbugConfig.CryptoKey, string(commitHashByte)), nil
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			return "", errors.WithStack(err)
 		}
 		if res.StatusCode == 404 {
-			return "", errors.New("The Project Not Found. Get all commit to Initialize.")
+			return "", errors.New("The Project Not Found. Get all commit to Initialize")
 		}
 		return "", errors.New(string(body))
 	}
