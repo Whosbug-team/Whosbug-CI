@@ -10,7 +10,7 @@ import (
 
 func TestQuatoToNum(t *testing.T) {
 	text := "-1,20"
-	res := QuatToNum(text[1:])
+	res := util.QuatToNum(text[1:])
 	fmt.Println(res)
 }
 

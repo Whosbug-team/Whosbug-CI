@@ -16,14 +16,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-// MatchCommit
-//	@Description: 主体过程，最后直接生成结果集，位置在SourceCode下(此部分可做商榷)
+// MatchCommit 主体过程，最后直接生成结果集，位置在SourceCode下(此部分可做商榷)
 //	@param diffPath diff-commit文件目录
 //	@param commitPath commit-info文件目录
 //	@author KevinMatt 2021-07-29 17:37:10
 //	@function_mark PASS
 func MatchCommit(diffPath, commitPath string) {
-
 	err := upload.PostCommitsInfo(commitPath)
 	if err != nil {
 		log.Println(util.ErrorStack(err))
@@ -56,7 +54,7 @@ func MatchCommit(diffPath, commitPath string) {
 				break
 			}
 
-			commitInfo := util.GetCommitInfo(string(commitLine))
+			commitInfo := GetCommitInfo(string(commitLine))
 			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
 			fullCommit, err := getFullCommit(patCommit, lineReaderDiff)
 			if err != nil {

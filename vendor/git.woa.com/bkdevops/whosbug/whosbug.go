@@ -57,7 +57,7 @@ func Analysis(whosbugConfig *config.Config) {
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
 	diffPath, commitPath := logging.GetGitLogInfo()
 	zaplog.Logger.Info("got git log info", zaplog.String("diffPath", diffPath), zaplog.String("commitPath", commitPath))
-	commit.ProcessBar = progressbar.Default(util.GetLineCount(), "Progress")
+	commit.ProcessBar = progressbar.Default(util.GetLineCount(config.WorkPath+"/"+"commitInfo.out"), "Progress")
 	// 指示Web-service创建新的release
 	err := upload.PostReleaseInfo("/whosbug/create-project-release/")
 	if err != nil {

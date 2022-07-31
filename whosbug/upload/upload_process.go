@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"git.woa.com/bkdevops/whosbug/config"
+	"git.woa.com/bkdevops/whosbug/crypto"
+	"git.woa.com/bkdevops/whosbug/git"
 	"git.woa.com/bkdevops/whosbug/logging"
 	"git.woa.com/bkdevops/whosbug/util"
 
@@ -77,7 +79,7 @@ func processUpload(objects []config.ObjectInfoType) {
 //	@author KevinMatt 2021-08-10 13:02:37
 //	@function_mark PASS
 func PostObjects(objects []config.ObjectInfoType) error {
-	token, err := util.GenToken()
+	token, err := crypto.GenToken()
 	if err != nil {
 		log.Println(err)
 		return err
@@ -87,9 +89,9 @@ func PostObjects(objects []config.ObjectInfoType) error {
 	dataForPost := postDataPool.Get().(*postData)
 	defer postDataPool.Put(dataForPost)
 	dataForPost.PostCommitInfo = postProjectInfo
-	//dataForPost.Project.Pid = util.Base64Encrypt(config.Config.ProjectId)
-	//dataForPost.Release.Release = util.Base64Encrypt(config.Config.ReleaseVersion)
-	//dataForPost.Release.CommitHash = util.Base64Encrypt(config.LatestCommitHash)
+	//dataForPost.Project.Pid = crypto.Base64Encrypt(config.Config.ProjectId)
+	//dataForPost.Release.Release = crypto.Base64Encrypt(config.Config.ReleaseVersion)
+	//dataForPost.Release.CommitHash = crypto.Base64Encrypt(config.LatestCommitHash)
 	dataForPost.Objects = objects
 
 	data, err := json.MarshalToString(&dataForPost)
@@ -102,7 +104,7 @@ func PostObjects(objects []config.ObjectInfoType) error {
 	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/whosbug/commits/diffs/")
 	method := "POST"
 
-	err = util.ReqWithToken(token, urlReq, method, data)
+	err = crypto.ReqWithToken(token, urlReq, method, data)
 	if err != nil {
 		log.Println(util.ErrorMessage(err))
 	}
@@ -129,15 +131,15 @@ func PostCommitsInfo(commitPath string) error {
 		if err == io.EOF {
 			break
 		}
-		CommitInfo := util.GetCommitInfo(string(line))
+		CommitInfo := git.GetCommitInfo(string(line))
 		FinMessage.Commit = append(FinMessage.Commit, CommitInfo)
 	}
 	commitFd.Close()
 	data, _ := json.MarshalToString(&FinMessage)
 	util.WriteInfoFile("/data/workspace/whosbugGolang/commits.json", data)
-	token, _ := util.GenToken()
+	token, _ := crypto.GenToken()
 	url := config.WhosbugConfig.WebServerHost + "/whosbug/commits/commits-info/"
-	err = util.ReqWithToken(token, url, "POST", data)
+	err = crypto.ReqWithToken(token, url, "POST", data)
 	if err != nil {
 		log.Println(util.ErrorMessage(err))
 	}
@@ -158,24 +160,23 @@ func PostReleaseInfo(address string) error {
 	if err != nil {
 		return errors.Wrap(err, "json MarshalToString Fail")
 	}
-	token, err := util.GenToken()
+	token, err := crypto.GenToken()
 	if err != nil {
 		return errors.Wrap(err, "GenToken Fail")
 	}
-	err = util.ReqWithToken(token, url, "POST", data)
+	err = crypto.ReqWithToken(token, url, "POST", data)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// InitTheProjectStruct
-//	@Description: 初始化globalType
+// InitTheProjectStruct 初始化globalType
 //	@author KevinMatt 2021-08-10 12:40:28
 //	@function_mark PASS
 func InitTheProjectStruct() {
-	postProjectInfo.Project.Pid = util.Base64Encrypt(config.WhosbugConfig.ProjectId)
-	postProjectInfo.Release.Release = util.Base64Encrypt(config.WhosbugConfig.ReleaseVersion)
-	postProjectInfo.Release.CommitHash = util.Base64Encrypt(config.LocalHashLatest)
+	postProjectInfo.Project.Pid = crypto.Base64Encrypt(config.WhosbugConfig.ProjectID)
+	postProjectInfo.Release.Release = crypto.Base64Encrypt(config.WhosbugConfig.ReleaseVersion)
+	postProjectInfo.Release.CommitHash = crypto.Base64Encrypt(config.LocalHashLatest)
 	isInitial = false
 }

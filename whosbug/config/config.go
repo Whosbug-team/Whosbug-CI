@@ -1,9 +1,6 @@
 package config
 
-//避免循环import无法编译
-type ImportHelper interface {
-	Analysis()
-}
+import "errors"
 
 // DiffParsedType 解析后的diff信息
 type DiffParsedType struct {
@@ -29,8 +26,8 @@ type ChangeLineType struct {
 // ObjectInfoType Ready For New Changes
 type ObjectInfoType struct {
 	CommitHash string `json:"hash"`
-	Id         string `json:"object_id"`
-	OldId      string `json:"old_object_id"`
+	ID         string `json:"object_id"`
+	OldID      string `json:"old_object_id"`
 	FilePath   string `json:"path"`
 	Parameters string `json:"parameters"`
 
@@ -42,17 +39,23 @@ type ObjectInfoType struct {
 	AddedNewLineCount int `json:"added_new_line_count"`
 }
 
+// Equals 比较两个ObjectInfoType是否相等
+//  @receiver s *ObjectInfoType
+//  @param b ObjectInfoType
+//  @return bool
+//  @author: Kevineluo 2022-07-31 07:09:43
 func (s *ObjectInfoType) Equals(b ObjectInfoType) bool {
-	if s.CommitHash == b.CommitHash && s.Id == b.Id && s.FilePath == b.FilePath && s.StartLine == b.StartLine && s.EndLine == b.EndLine {
+	if s.CommitHash == b.CommitHash && s.ID == b.ID && s.FilePath == b.FilePath && s.StartLine == b.StartLine && s.EndLine == b.EndLine {
 		return true
 	}
 	return false
 }
 
-// InputJson 存储从input.json读取到的配置信息
+// Config 存储从input.json读取到的配置信息
+//  @author: Kevineluo 2022-07-31 07:09:27
 type Config struct {
-	ProjectUrl     string `json:"project_url"`
-	ProjectId      string `json:"project_id"`
+	ProjectURL     string `json:"project_url"`
+	ProjectID      string `json:"project_id"`
 	ReleaseVersion string `json:"release_version"`
 	CryptoKey      string `json:"crypto_key"`
 
@@ -108,5 +111,5 @@ type CommitInfoType struct {
 
 var (
 	// AlreadyExistsError release已存在，且lastest-commit未更新
-	AlreadyExistsError = "The Project and Release already exist"
+	AlreadyExistsError = errors.New("The Project and Release already exist")
 )

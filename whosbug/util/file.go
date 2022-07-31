@@ -238,3 +238,23 @@ func WriteInfoFile(filepath, data string) (err error) {
 	fd.WriteString(data)
 	return
 }
+
+// GetLineCount 获取文件行数
+//  @return count
+//  @return err
+func GetLineCount(path string) (count int64) {
+	file, err := os.Open(path)
+	if err != nil {
+		zaplog.Logger.Error(err.Error())
+	}
+	defer file.Close()
+	fd := bufio.NewReader(file)
+	for {
+		_, err := fd.ReadString('\n')
+		if err != nil {
+			break
+		}
+		count++
+	}
+	return
+}

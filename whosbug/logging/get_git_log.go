@@ -3,26 +3,33 @@ package logging
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 
 	"git.woa.com/bkdevops/whosbug/config"
+	"git.woa.com/bkdevops/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug/util"
 	"git.woa.com/bkdevops/whosbug/zaplog"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 )
 
-// GetLogInfo
-//	@Description: 获取所有的git commit记录和所有的commit+diff，并返回存储的文件目录
+var (
+	json = jsoniter.ConfigCompatibleWithStandardLibrary
+)
+
+// GetGitLogInfo 获取所有的git commit记录和所有的commit+diff，并返回存储的文件目录
 //	@return string 所有diff信息的目录
 //	@return string 所有commit信息的目录
 //	@author KevinMatt 2021-07-29 17:25:39
 //	@function_mark PASS
 func GetGitLogInfo() (string, string) {
 	// 切换到仓库目录
-	err := os.Chdir(config.WhosbugConfig.ProjectUrl)
+	err := os.Chdir(config.WhosbugConfig.ProjectURL)
 	if err != nil {
 		log.Println(err)
 		os.Exit(-1)
@@ -31,7 +38,7 @@ func GetGitLogInfo() (string, string) {
 
 	config.LocalHashLatest = ExecCommandOutput("git", "rev-parse", "HEAD")
 	config.LocalHashLatest = config.LocalHashLatest[0 : len(config.LocalHashLatest)-1]
-	cloudHashLatest, err := util.GetLatestRelease(config.WhosbugConfig.ProjectId)
+	cloudHashLatest, err := GetLatestRelease(config.WhosbugConfig.ProjectID)
 	if err != nil {
 		zaplog.Logger.Error(util.ErrorMessage(errors.WithStack(err)))
 	}
@@ -65,8 +72,7 @@ func GetGitLogInfo() (string, string) {
 	return util.ConCatStrings(config.WorkPath, "/allDiffs.out"), util.ConCatStrings(config.WorkPath, "/commitInfo.out")
 }
 
-// ExecCommandOutput
-//	@Description: 执行命令并获取输出
+// ExecCommandOutput 执行命令并获取输出
 //	@param command 命令
 //	@param args 命令参数
 //	@return string 命令输出
@@ -92,8 +98,7 @@ func ExecCommandOutput(command string, args ...string) string {
 	return out.String()
 }
 
-// ExecRedirectToFile
-//	@Description: 执行命令并将输出流重定向到目标文件中
+// ExecRedirectToFile 执行命令并将输出流重定向到目标文件中
 //	@param fileName 目标文件目录
 //	@param command 执行的指令头
 //	@param args 执行指令的参数
@@ -118,4 +123,59 @@ func ExecRedirectToFile(fileName string, command string, args ...string) error {
 		return errors.Wrap(err, "cmd Wait Fails.")
 	}
 	return err
+}
+
+// GetLatestRelease 获取最新的release
+//  @param projectID string
+//  @return string Release信息
+//  @return error
+//  @author: Kevineluo 2022-07-31 01:03:27
+func GetLatestRelease(projectID string) (string, error) {
+	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/whosbug/releases/last/")
+	method := "POST"
+
+	pid := crypto.Base64Encrypt(projectID)
+	data := []byte("{\"pid\":\"" + pid + "\"}")
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, urlReq, bytes.NewBuffer(data))
+
+	if err != nil {
+		return "", errors.Wrapf(err, "GetLatestRelease->Sending NewRequest")
+	}
+
+	token, err := crypto.GenToken()
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("Token %s", token))
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := client.Do(req)
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode == 200 {
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return "", errors.WithStack(err)
+		}
+		encryptedCommitHash := json.Get(body, "last_commit_hash").ToString()
+		commitHash, err := crypto.Base64Decrypt(encryptedCommitHash)
+		if err != nil {
+			return "", errors.WithStack(err)
+		}
+		return commitHash, nil
+	} else {
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return "", errors.WithStack(err)
+		}
+		if res.StatusCode == 404 {
+			return "", errors.New("The Project Not Found. Get all commit to Initialize")
+		}
+		return "", errors.New(string(body))
+	}
 }

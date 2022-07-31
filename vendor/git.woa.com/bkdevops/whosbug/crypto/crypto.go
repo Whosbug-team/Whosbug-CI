@@ -1,7 +1,6 @@
-package util
+package crypto
 
 import (
-	"bufio"
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
@@ -18,42 +17,10 @@ import (
 	"strings"
 
 	"git.woa.com/bkdevops/whosbug/config"
+	"git.woa.com/bkdevops/whosbug/util"
 	"git.woa.com/bkdevops/whosbug/zaplog"
-
-	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 )
-
-var (
-	json = jsoniter.ConfigCompatibleWithStandardLibrary
-)
-
-// 月份转换Map
-var monthCorrespond = map[string]string{
-	"Jan": "01",
-	"Feb": "02",
-	"Mar": "03",
-	"Apr": "04",
-	"May": "05",
-	"Jun": "06",
-	"Jul": "07",
-	"Aug": "08",
-	"Sep": "09",
-	"Oct": "10",
-	"Nov": "11",
-	"Dec": "12",
-}
-
-// ToIso8601
-//	@Description: 时间戳转换
-//	@param timeList
-//	@return string
-//	@author KevinMatt 2021-07-25 13:42:29
-//	@function_mark PASS
-func ToIso8601(timeList []string) string {
-	temp := fmt.Sprintf("%s-%s-%sT%s+%s:%s", timeList[3], monthCorrespond[timeList[0]], timeList[1], timeList[2], timeList[4][1:3], timeList[4][3:])
-	return temp
-}
 
 // GenerateKIV
 //	@Description: 		生成AES-CFB需要的Key和IV
@@ -126,7 +93,7 @@ func GenToken() (string, error) {
 
 	res, err := http.PostForm(urls, url.Values{"username": []string{config.WhosbugConfig.WebServerUserName}, "password": []string{config.WhosbugConfig.WebServerKey}})
 	if err != nil {
-		fmt.Printf("%s", ErrorMessage(errors.Wrapf(err, "Generate Key Failure. Check the username&password or the status of the server")))
+		fmt.Printf("%s", util.ErrorMessage(errors.Wrapf(err, "Generate Key Failure. Check the username&password or the status of the server")))
 		os.Exit(1)
 	}
 
@@ -161,7 +128,7 @@ func ReqWithToken(token, url, method, data string) error {
 	if err != nil {
 		return errors.Wrapf(err, "Create Request with method: %s Fails \n With data: %s", method, data)
 	}
-	req.Header.Add("Token", token)
+	req.Header.Add("Authorization", fmt.Sprintf("Token %s", token))
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := client.Do(req)
@@ -181,55 +148,12 @@ func ReqWithToken(token, url, method, data string) error {
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		temp := string(body)
-		ForDebug(temp)
+		util.ForDebug(temp)
 		if err != nil {
 			return errors.WithMessage(err, "Read Body Fail")
 		}
 		return errors.New(string(body))
 	}
-}
-
-// ConCatStrings 字符串高效拼接
-//  @param stringList ...string
-//  @return string
-//  @author: Kevineluo 2022-07-31 12:52:54
-func ConCatStrings(stringList ...string) string {
-	var builder strings.Builder
-	for index := range stringList {
-		builder.WriteString(stringList[index])
-	}
-	return builder.String()
-}
-
-// ErrorMessage
-//	@Description: 只打印错误信息，不打印堆栈
-//	@param err
-//	@return string
-//	@author KevinMatt 2021-08-08 16:14:42
-//	@function_mark PASS
-func ErrorMessage(err error) string {
-	return err.Error()
-}
-
-// ErrorStack
-//	@Description: 打印含堆栈的错误信息
-//	@param err 错误
-//	@return string 字符串
-//	@author KevinMatt 2021-08-08 16:13:58
-//	@function_mark PASS
-func ErrorStack(err error) string {
-	errMsg := fmt.Sprintf("%+v", err)
-	return CleanPath(errMsg)
-}
-
-// CleanPath
-//	@Description: 信息脱敏
-//	@param s 传入信息
-//	@return string 返回脱敏字符串
-//	@author KevinMatt 2021-08-08 16:03:40
-//	@function_mark PASS
-func CleanPath(s string) string {
-	return strings.ReplaceAll(s, strings.ReplaceAll(config.WorkPath, "\\", "/")+"/", "")
 }
 
 // var Base64Encrypt = func
@@ -243,57 +167,4 @@ var Base64Encrypt = func(text string) string {
 		return text
 	}
 	return base64.StdEncoding.EncodeToString([]byte(Encrypt(config.WhosbugConfig.ProjectId, config.WhosbugConfig.CryptoKey, text)))
-}
-
-// ForDebug
-//	@Description: 断点小帮手
-//	@param any
-//	@author KevinMatt 2021-08-10 01:32:22
-//	@function_mark PASS
-func ForDebug(any ...interface{}) interface{} {
-	return nil
-}
-
-//	GetCommitInfo
-//	@Description: 获取commit信息
-//	@param line commitInfo行
-//	@return config.CommitInfoType 返回结构体
-//	@author KevinMatt 2021-08-10 01:04:21
-//	@function_mark PASS
-func GetCommitInfo(line string) config.CommitInfoType {
-	infoList := strings.Split(line, ",")
-	var tempCommitInfo = config.CommitInfoType{
-		CommitHash:     Base64Encrypt(infoList[0]),
-		CommitterEmail: Base64Encrypt(infoList[1]),
-		CommitTime:     Base64Encrypt(ToIso8601(strings.Split(infoList[len(infoList)-1][4:], " "))),
-	}
-	// 赋值commitAuthor(考虑多个Author的可能)
-	for index := 2; index < len(infoList)-1; index++ {
-		tempCommitInfo.CommitAuthor += infoList[index]
-		if index != len(infoList)-2 {
-			tempCommitInfo.CommitAuthor = ConCatStrings(tempCommitInfo.CommitAuthor, ",")
-		}
-	}
-	tempCommitInfo.CommitAuthor = Base64Encrypt(tempCommitInfo.CommitAuthor)
-	return tempCommitInfo
-}
-
-// GetLineCount
-//  @return count
-//  @return err
-func GetLineCount() (count int64) {
-	file, err := os.Open(config.WorkPath + "/" + "commitInfo.out")
-	if err != nil {
-		zaplog.Logger.Error(err.Error())
-	}
-	defer file.Close()
-	fd := bufio.NewReader(file)
-	for {
-		_, err := fd.ReadString('\n')
-		if err != nil {
-			break
-		}
-		count++
-	}
-	return
 }

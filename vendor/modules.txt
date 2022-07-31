@@ -9,6 +9,7 @@ git.woa.com/bkdevops/whosbug/antlr/jsLib
 git.woa.com/bkdevops/whosbug/antlr/kotlinLib
 git.woa.com/bkdevops/whosbug/commit
 git.woa.com/bkdevops/whosbug/config
+git.woa.com/bkdevops/whosbug/crypto
 git.woa.com/bkdevops/whosbug/env
 git.woa.com/bkdevops/whosbug/logging
 git.woa.com/bkdevops/whosbug/upload
