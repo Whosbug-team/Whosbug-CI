@@ -12,6 +12,7 @@ import (
 	"git.woa.com/bkdevops/whosbug/logging"
 	"git.woa.com/bkdevops/whosbug/upload"
 	"git.woa.com/bkdevops/whosbug/util"
+	"git.woa.com/bkdevops/whosbug/zaplog"
 	"github.com/schollz/progressbar/v3"
 )
 
@@ -28,7 +29,7 @@ func init() {
 	if !os.IsNotExist(err) {
 		err = os.Remove(config.WorkPath + "/allDiffs.out")
 		if err != nil {
-			util.GLogger.Error(err.Error())
+			zaplog.Logger.Error(err.Error())
 		}
 	}
 
@@ -36,7 +37,7 @@ func init() {
 	if !os.IsNotExist(err) {
 		err = os.Remove(config.WorkPath + "/commitInfo.out")
 		if err != nil {
-			util.GLogger.Error(err.Error())
+			zaplog.Logger.Error(err.Error())
 		}
 	}
 
@@ -55,14 +56,14 @@ func Analysis(whosbugConfig *config.Config) {
 
 	// 获取git log命令得到的commit列表和完整的commit-diff信息存储的文件目录
 	diffPath, commitPath := logging.GetGitLogInfo()
-	util.GLogger.Infof("diffPath: %s, commitPath: %s", diffPath, commitPath)
+	zaplog.Logger.Info("got git log info", zaplog.String("diffPath", diffPath), zaplog.String("commitPath", commitPath))
 	commit.ProcessBar = progressbar.Default(util.GetLineCount(), "Progress")
 	// 指示Web-service创建新的release
 	err := upload.PostReleaseInfo("/whosbug/create-project-release/")
 	if err != nil {
-		util.GLogger.Error(err.Error())
+		zaplog.Logger.Error(err.Error())
 		if strings.Contains(err.Error(), config.AlreadyExistsError) {
-			util.GLogger.Info("The Release is already exists and has the same latest commit to your repo.")
+			zaplog.Logger.Info("The Release is already exists and has the same latest commit to your repo.")
 			os.Exit(0)
 		}
 		if os.Getenv("IS_DEBUG") == "" {
@@ -70,15 +71,15 @@ func Analysis(whosbugConfig *config.Config) {
 		}
 	}
 
-	util.GLogger.Infof("Get git log cost: %v", time.Since(t).String())
+	zaplog.Logger.Info("Get git log", zaplog.String("time", time.Since(t).String()))
 	commit.MatchCommit(diffPath, commitPath)
 
 	// 等待关闭pool和channel
 	for {
 		time.Sleep(time.Second / 10)
 		if commit.AntlrAnalysisPool.Running() == 0 {
-			util.GLogger.Infof("Analyse cost: %v", time.Since(t).String())
-			util.GLogger.Info("Routines pool closed.")
+			zaplog.Logger.Info("AntlrAnalysisPool is empty", zaplog.String("cost", time.Since(t).String()))
+			zaplog.Logger.Info("Routines pool closed.")
 			commit.AntlrAnalysisPool.Release()
 			close(config.ObjectChan)
 			break
@@ -93,13 +94,13 @@ func Analysis(whosbugConfig *config.Config) {
 	// 通知Web-service上传结束
 	err = upload.PostReleaseInfo("/whosbug/commits/upload-done/")
 	if err != nil {
-		util.GLogger.Error(util.ErrorStack(err))
+		zaplog.Logger.Error(util.ErrorStack(err))
 	}
 	err = upload.PostReleaseInfo("/whosbug/commits/delete_uncalculate/")
 	if err != nil {
-		util.GLogger.Error(util.ErrorStack(err))
+		zaplog.Logger.Error(util.ErrorStack(err))
 	}
-	util.GLogger.Infof("Total cost: %v", time.Since(t).String())
+	zaplog.Logger.Info("Analysis all done", zaplog.String("cost", time.Since(t).String()))
 
 	fmt.Println("Your ProjectName is", whosbugConfig.ProjectId, "You'll need this to en/decrypt your data")
 }

@@ -2,6 +2,7 @@ package util
 
 import (
 	"bufio"
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hmac"
@@ -17,13 +18,14 @@ import (
 	"strings"
 
 	"git.woa.com/bkdevops/whosbug/config"
+	"git.woa.com/bkdevops/whosbug/zaplog"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 )
 
 var (
-	Json = jsoniter.ConfigCompatibleWithStandardLibrary
+	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 // 月份转换Map
@@ -82,7 +84,7 @@ func Encrypt(projectId, key, plainText string) string {
 	K, IV := GenerateKIV([]byte(projectId), []byte(key))
 	aesBlockEncryptor, err := aes.NewCipher(K)
 	if err != nil {
-		GLogger.Error(err.Error())
+		zaplog.Logger.Error(err.Error())
 	}
 	var dest = []byte(plainText)
 	aesEncryptor := cipher.NewCFBEncrypter(aesBlockEncryptor, IV)
@@ -103,7 +105,7 @@ func Decrypt(projectId, key, plainText string) string {
 	K, IV := GenerateKIV([]byte(projectId), []byte(key))
 	aesBlockDescriptor, err := aes.NewCipher(K)
 	if err != nil {
-		GLogger.Error(err.Error())
+		zaplog.Logger.Error(err.Error())
 	}
 	var dest = []byte(plainText)
 	aesDescriptor := cipher.NewCFBDecrypter(aesBlockDescriptor, IV)
@@ -136,12 +138,54 @@ func GenToken() (string, error) {
 	}()
 	if res.StatusCode == 200 {
 		resBody, _ := ioutil.ReadAll(res.Body)
-		tokenGot := strings.Split(string(resBody), "\"")[3]
+		res := string(resBody)
+		tokenGot := strings.Split(res, "\"")[3]
 		return tokenGot, nil
 	} else {
 		resBody, _ := ioutil.ReadAll(res.Body)
 		println(string(resBody))
 		return "", errors.New(string(resBody))
+	}
+}
+
+// ReqWithToken 发起http请求
+//  @param token string
+//  @param url string
+//  @param method string
+//  @param data string
+//  @return error 返回错误信息
+//  @author: Kevineluo 2022-07-31 12:57:45
+func ReqWithToken(token, url, method, data string) error {
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, bytes.NewBuffer([]byte(data)))
+	if err != nil {
+		return errors.Wrapf(err, "Create Request with method: %s Fails \n With data: %s", method, data)
+	}
+	req.Header.Add("Token", token)
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := client.Do(req)
+
+	if err != nil {
+		return errors.Wrapf(err, "Sending Request with method: %s Fails\n With data: %s", method, data)
+	}
+	defer func() {
+		err = res.Body.Close()
+		if err != nil {
+			log.Println(errors.WithMessage(err, "Res Body Close Fails"))
+		}
+	}()
+
+	if res.StatusCode == 201 || res.StatusCode == 200 {
+		return nil
+	} else {
+		body, err := ioutil.ReadAll(res.Body)
+		temp := string(body)
+		ForDebug(temp)
+		if err != nil {
+			return errors.WithMessage(err, "Read Body Fail")
+		}
+		return errors.New(string(body))
 	}
 }
 
@@ -240,7 +284,7 @@ func GetCommitInfo(line string) config.CommitInfoType {
 func GetLineCount() (count int64) {
 	file, err := os.Open(config.WorkPath + "/" + "commitInfo.out")
 	if err != nil {
-		GLogger.Error(err.Error())
+		zaplog.Logger.Error(err.Error())
 	}
 	defer file.Close()
 	fd := bufio.NewReader(file)

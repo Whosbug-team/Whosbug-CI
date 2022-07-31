@@ -2,23 +2,19 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"runtime"
 
-	"git.woa.com/bkdevops/golang-atom-sdk/api"
-	"git.woa.com/bkdevops/golang-atom-sdk/log"
 	"git.woa.com/bkdevops/whosbug"
 	"git.woa.com/bkdevops/whosbug/config"
-	"git.woa.com/bkdevops/whosbug/util"
+	"git.woa.com/bkdevops/whosbug/zaplog"
 )
 
 func main() {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Error("panic: ", err)
-			api.FinishBuild(api.StatusError, "panic occurs")
+			zaplog.Logger.Error("panic in main", zaplog.Any("error", err))
 		}
 	}()
 
@@ -26,7 +22,7 @@ func main() {
 
 	// 插件输入参数
 	_config := initConfig()
-	util.GLogger.Infof(fmt.Sprintf("Whosbug config:\n%+v", _config))
+	zaplog.Logger.Info("get whosbug config", zaplog.Any("config", _config))
 
 	whosbug.Analysis(_config)
 }
@@ -39,20 +35,20 @@ func initConfig() (whosbugConfig *config.Config) {
 		err            error
 		inputJSONBytes []byte
 	)
-	util.GLogger.Info("Init whosbug...")
+	zaplog.Logger.Info("Init whosbug...")
 
 	inputJSONBytes, err = ioutil.ReadFile("./input.json")
 	if err != nil {
-		util.GLogger.Emergency(err.Error())
+		zaplog.Logger.Emergency(err.Error())
 		os.Exit(-1)
 	}
 
 	err = json.Unmarshal(inputJSONBytes, &whosbugConfig)
 	if err != nil {
-		util.GLogger.Emergency(err.Error())
+		zaplog.Logger.Emergency(err.Error())
 		os.Exit(-1)
 	} else {
-		util.GLogger.Info("Get input-config succeed!")
+		zaplog.Logger.Info("Get input-config succeed!")
 	}
 	return
 }

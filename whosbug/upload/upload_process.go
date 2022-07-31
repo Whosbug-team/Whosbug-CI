@@ -2,11 +2,8 @@ package upload
 
 import (
 	"bufio"
-	"bytes"
 	"io"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
@@ -105,15 +102,14 @@ func PostObjects(objects []config.ObjectInfoType) error {
 	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/whosbug/commits/diffs/")
 	method := "POST"
 
-	err = ReqWithToken(token, urlReq, method, data)
+	err = util.ReqWithToken(token, urlReq, method, data)
 	if err != nil {
 		log.Println(util.ErrorMessage(err))
 	}
 	return err
 }
 
-// PostCommitsInfo
-//	@Description: 发送结束信息
+// PostCommitsInfo 发送结束信息
 //	@param commitPath commit文件的目录
 //	@return error 返回错误
 //	@author KevinMatt 2021-08-10 01:06:05
@@ -141,56 +137,14 @@ func PostCommitsInfo(commitPath string) error {
 	util.WriteInfoFile("/data/workspace/whosbugGolang/commits.json", data)
 	token, _ := util.GenToken()
 	url := config.WhosbugConfig.WebServerHost + "/whosbug/commits/commits-info/"
-	err = ReqWithToken(token, url, "POST", data)
+	err = util.ReqWithToken(token, url, "POST", data)
 	if err != nil {
 		log.Println(util.ErrorMessage(err))
 	}
 	return err
 }
 
-// ReqWithToken 发起http请求
-//  @param token string
-//  @param url string
-//  @param method string
-//  @param data string
-//  @return error 返回错误信息
-//  @author: Kevineluo 2022-07-31 12:57:45
-func ReqWithToken(token, url, method, data string) error {
-	client := &http.Client{}
-	req, err := http.NewRequest(method, url, bytes.NewBuffer([]byte(data)))
-	if err != nil {
-		return errors.Wrapf(err, "Create Request with method: %s Fails \n With data: %s", method, data)
-	}
-	req.Header.Add("TOKEN", token)
-	req.Header.Set("Content-Type", "application/json")
-
-	res, err := client.Do(req)
-
-	if err != nil {
-		return errors.Wrapf(err, "Sending Request with method: %s Fails\n With data: %s", method, data)
-	}
-	defer func() {
-		err = res.Body.Close()
-		if err != nil {
-			log.Println(errors.WithMessage(err, "Res Body Close Fails"))
-		}
-	}()
-
-	if res.StatusCode == 201 || res.StatusCode == 200 {
-		return nil
-	} else {
-		body, err := ioutil.ReadAll(res.Body)
-		temp := string(body)
-		util.ForDebug(temp)
-		if err != nil {
-			return errors.WithMessage(err, "Read Body Fail")
-		}
-		return errors.New(string(body))
-	}
-}
-
-// PostReleaseInfo
-//	@Description: 发送Release信息
+// PostReleaseInfo 发送Release信息
 //	@return error 错误信息
 //	@author KevinMatt 2021-08-10 12:29:35
 //	@function_mark PASS
@@ -208,7 +162,7 @@ func PostReleaseInfo(address string) error {
 	if err != nil {
 		return errors.Wrap(err, "GenToken Fail")
 	}
-	err = ReqWithToken(token, url, "POST", data)
+	err = util.ReqWithToken(token, url, "POST", data)
 	if err != nil {
 		return err
 	}

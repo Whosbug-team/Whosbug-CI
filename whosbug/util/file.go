@@ -8,6 +8,8 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+
+	"git.woa.com/bkdevops/whosbug/zaplog"
 )
 
 type FileList []os.FileInfo
@@ -76,7 +78,7 @@ func WriteLines(lines []string, path string) (err error) {
 	for _, elem := range lines {
 		_, err := file.WriteString(strings.TrimSpace(elem) + "\n")
 		if err != nil {
-			GLogger.Error(err.Error())
+			zaplog.Logger.Error(err.Error())
 			break
 		}
 	}
@@ -195,7 +197,7 @@ func RemoveFileList(files []string) (isOK bool) {
 		fileName := v
 		go func() {
 			if err := os.Remove(fileName); err != nil {
-				GLogger.Errorf("RemoveFileList error, err is %s", err.Error())
+				zaplog.Logger.Error("RemoveFileList error", zaplog.Error(err))
 				isOK = false
 			}
 			done <- 1
@@ -204,7 +206,7 @@ func RemoveFileList(files []string) (isOK bool) {
 	for i := 0; i < filesNum; i++ {
 		<-done
 	}
-	GLogger.Infof("RemoveFileList finish!, %d files remove", filesNum)
+	zaplog.Logger.Info("RemoveFileList finish", zaplog.Int("filesNum", filesNum))
 	return true
 }
 

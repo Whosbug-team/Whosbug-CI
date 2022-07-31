@@ -11,6 +11,7 @@ import (
 
 	"git.woa.com/bkdevops/whosbug/upload"
 	"git.woa.com/bkdevops/whosbug/util"
+	"git.woa.com/bkdevops/whosbug/zaplog"
 
 	"github.com/pkg/errors"
 )
@@ -59,7 +60,7 @@ func MatchCommit(diffPath, commitPath string) {
 			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
 			fullCommit, err := getFullCommit(patCommit, lineReaderDiff)
 			if err != nil {
-				util.GLogger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error(util.ErrorStack(err))
 			}
 
 			// 获取单次commit中的每一次diff，并处理diff，送进协程

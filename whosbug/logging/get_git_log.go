@@ -9,6 +9,7 @@ import (
 
 	"git.woa.com/bkdevops/whosbug/config"
 	"git.woa.com/bkdevops/whosbug/util"
+	"git.woa.com/bkdevops/whosbug/zaplog"
 
 	"github.com/pkg/errors"
 )
@@ -26,38 +27,38 @@ func GetGitLogInfo() (string, string) {
 		log.Println(err)
 		os.Exit(-1)
 	}
-	util.GLogger.Infof("Work Path In %v", config.WorkPath)
+	zaplog.Logger.Info("cd to work path", zaplog.String("workPath", config.WorkPath))
 
 	config.LocalHashLatest = ExecCommandOutput("git", "rev-parse", "HEAD")
 	config.LocalHashLatest = config.LocalHashLatest[0 : len(config.LocalHashLatest)-1]
 	cloudHashLatest, err := util.GetLatestRelease(config.WhosbugConfig.ProjectId)
 	if err != nil {
-		util.GLogger.Error(util.ErrorMessage(errors.WithStack(err)))
+		zaplog.Logger.Error(util.ErrorMessage(errors.WithStack(err)))
 	}
-	util.GLogger.Info("Head Got!")
+	zaplog.Logger.Info("Head Got!")
 	config.LatestCommitHash = cloudHashLatest
 	if cloudHashLatest == config.LocalHashLatest {
-		util.GLogger.Info("The server commit list is up-to-date.")
+		zaplog.Logger.Info("The server commit list is up-to-date.")
 		os.Exit(0)
 	} else {
 		if cloudHashLatest == "" {
-			util.GLogger.Info("Start Getting log")
+			zaplog.Logger.Info("Start Getting log")
 			err := ExecRedirectToFile("", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", "-n 10000", fmt.Sprint("--output=", config.WorkPath, "/commitInfo.out"))
 			if err != nil {
-				util.GLogger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error(util.ErrorStack(err))
 			}
 			err = ExecRedirectToFile("", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", "-n 10000", fmt.Sprint("--output=", config.WorkPath, "/allDiffs.out"))
 			if err != nil {
-				util.GLogger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error(util.ErrorStack(err))
 			}
 		} else {
 			err := ExecRedirectToFile("", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", "-n 10000", fmt.Sprintf("%s...%s", config.LocalHashLatest, cloudHashLatest), fmt.Sprint("--output=", config.WorkPath, "/commitInfo.out"))
 			if err != nil {
-				util.GLogger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error(util.ErrorStack(err))
 			}
 			err = ExecRedirectToFile("", "git", "log", "--full-diff", "-p", "-U10000", "-n 10000", "--pretty=raw", fmt.Sprintf("%s...%s", config.LocalHashLatest, cloudHashLatest), fmt.Sprint("--output=", config.WorkPath, "/allDiffs.out"))
 			if err != nil {
-				util.GLogger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error(util.ErrorStack(err))
 			}
 		}
 	}
@@ -80,12 +81,12 @@ func ExecCommandOutput(command string, args ...string) string {
 	cmd.Stderr = os.Stderr
 	err := cmd.Start()
 	if err != nil {
-		util.GLogger.Error(err.Error())
+		zaplog.Logger.Error(err.Error())
 		log.Println(err)
 	}
 	err = cmd.Wait()
 	if err != nil {
-		util.GLogger.Error(err.Error())
+		zaplog.Logger.Error(err.Error())
 		log.Println(err)
 	}
 	return out.String()

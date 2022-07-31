@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"git.woa.com/bkdevops/whosbug/util"
+	"git.woa.com/bkdevops/whosbug/zaplog"
 )
 
 func TestExecuteJava(t *testing.T) {
@@ -15,11 +16,11 @@ func TestExecuteJava(t *testing.T) {
 	rest := ExecuteJava(string(text))
 	util.ForDebug(rest)
 	// for _, item := range rest.AstInfoList.Classes {
-	// 	util.GLogger.Infof("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
+	// 	zaplog.Logger.Info("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
 	// }
 	// for _, item := range rest.AstInfoList.Methods {
 	// 	if item.CallMethods != nil {
-	// 		util.GLogger.Infof("Methods: %v", item.CallMethods)
+	// 		zaplog.Logger.Info("Methods: %v", item.CallMethods)
 	// 	}
 	// }
 }
@@ -36,11 +37,11 @@ func TestExecuteCpp(t *testing.T) {
 	}
 	util.ForDebug()
 	// for _, item := range rest.AstInfoList.Classes {
-	// 	util.GLogger.Infof("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
+	// 	zaplog.Logger.Info("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
 	// }
 	// for _, item := range rest.AstInfoList.Methods {
 	// 	if item.CallMethods != nil {
-	// 		util.GLogger.Infof("Methods:%s,Calling:%s\n ", item.MethodName, item.CallMethods)
+	// 		zaplog.Logger.Info("Methods:%s,Calling:%s\n ", item.MethodName, item.CallMethods)
 	// 	}
 	// }
 }
@@ -51,11 +52,11 @@ func TestExecuteGolang(t *testing.T) {
 	rest := ExecuteGolang(string(text))
 	util.ForDebug(rest)
 	// for _, item := range rest.AstInfoList.Classes {
-	// 	util.GLogger.Infof("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
+	// 	zaplog.Logger.Info("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
 	// }
 	// for _, item := range rest.AstInfoList.Methods {
 	// 	if item.CallMethods != nil {
-	// 		util.GLogger.Infof("Methods:%s,Calling:%s\n ", item.MethodName, item.CallMethods)
+	// 		zaplog.Logger.Info("Methods:%s,Calling:%s\n ", item.MethodName, item.CallMethods)
 	// 	}
 	// }
 }
@@ -66,11 +67,11 @@ func TestExecuteKotlin(t *testing.T) {
 	rest := ExecuteKotlin(string(text))
 	util.ForDebug(rest)
 	// for _, item := range rest.AstInfoList.Classes {
-	// 	util.GLogger.Infof("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
+	// 	zaplog.Logger.Info("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
 	// }
 	// for _, item := range rest.AstInfoList.Methods {
 	// 	if item.CallMethods != nil {
-	// 		util.GLogger.Infof("Methods: %v, Calling: %v", item.MethodName, item.CallMethods)
+	// 		zaplog.Logger.Info("Methods: %v, Calling: %v", item.MethodName, item.CallMethods)
 	// 	}
 	// }
 }
@@ -94,6 +95,6 @@ func TestRemoveRep(t *testing.T) {
 	input := []string{"a", "b", "a", "b"}
 	res := RemoveRep(input)
 	for _, item := range res {
-		util.GLogger.Infof(item)
+		zaplog.Logger.Info(item)
 	}
 }

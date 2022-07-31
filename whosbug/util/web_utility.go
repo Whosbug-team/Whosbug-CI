@@ -34,8 +34,8 @@ func GetLatestRelease(projectID string) (string, error) {
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-	req.Header.Add("TOKEN", token)
-	req.Header.Set("Content-Type", "application/Json")
+	req.Header.Add("Token", token)
+	req.Header.Set("Content-Type", "application/json")
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -48,7 +48,7 @@ func GetLatestRelease(projectID string) (string, error) {
 		if err != nil {
 			return "", errors.WithStack(err)
 		}
-		commitHash := Json.Get(body, "last_commit_hash").ToString()
+		commitHash := json.Get(body, "last_commit_hash").ToString()
 		commitHashByte, err := base64.StdEncoding.DecodeString(commitHash)
 		return Decrypt(projectID, config.WhosbugConfig.CryptoKey, string(commitHashByte)), nil
 	} else {
