@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"git.woa.com/bkdevops/whosbug/commit"
 	"git.woa.com/bkdevops/whosbug/config"
 	"git.woa.com/bkdevops/whosbug/crypto"
+	"git.woa.com/bkdevops/whosbug/git"
 	"git.woa.com/bkdevops/whosbug/logging"
 	"git.woa.com/bkdevops/whosbug/util"
 
@@ -89,9 +89,9 @@ func PostObjects(objects []config.ObjectInfoType) error {
 	dataForPost := postDataPool.Get().(*postData)
 	defer postDataPool.Put(dataForPost)
 	dataForPost.PostCommitInfo = postProjectInfo
-	//dataForPost.Project.Pid = util.Base64Encrypt(config.Config.ProjectId)
-	//dataForPost.Release.Release = util.Base64Encrypt(config.Config.ReleaseVersion)
-	//dataForPost.Release.CommitHash = util.Base64Encrypt(config.LatestCommitHash)
+	//dataForPost.Project.Pid = crypto.Base64Encrypt(config.Config.ProjectId)
+	//dataForPost.Release.Release = crypto.Base64Encrypt(config.Config.ReleaseVersion)
+	//dataForPost.Release.CommitHash = crypto.Base64Encrypt(config.LatestCommitHash)
 	dataForPost.Objects = objects
 
 	data, err := json.MarshalToString(&dataForPost)
@@ -131,7 +131,7 @@ func PostCommitsInfo(commitPath string) error {
 		if err == io.EOF {
 			break
 		}
-		CommitInfo := commit.GetCommitInfo(string(line))
+		CommitInfo := git.GetCommitInfo(string(line))
 		FinMessage.Commit = append(FinMessage.Commit, CommitInfo)
 	}
 	commitFd.Close()
@@ -175,7 +175,7 @@ func PostReleaseInfo(address string) error {
 //	@author KevinMatt 2021-08-10 12:40:28
 //	@function_mark PASS
 func InitTheProjectStruct() {
-	postProjectInfo.Project.Pid = crypto.Base64Encrypt(config.WhosbugConfig.ProjectId)
+	postProjectInfo.Project.Pid = crypto.Base64Encrypt(config.WhosbugConfig.ProjectID)
 	postProjectInfo.Release.Release = crypto.Base64Encrypt(config.WhosbugConfig.ReleaseVersion)
 	postProjectInfo.Release.CommitHash = crypto.Base64Encrypt(config.LocalHashLatest)
 	isInitial = false

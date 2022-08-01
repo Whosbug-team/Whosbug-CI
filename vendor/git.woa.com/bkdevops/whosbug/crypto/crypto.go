@@ -22,33 +22,31 @@ import (
 	"github.com/pkg/errors"
 )
 
-// GenerateKIV
-//	@Description: 		生成AES-CFB需要的Key和IV
-//	@param projectId 	项目ID
+// GenerateKIV 生成AES-CFB需要的Key和IV
+//	@param projectID 	项目ID
 //	@param key 			加密密钥
 //	@return []byte 		K密钥
 //	@return []byte 		IV偏移密钥
 //	@author KevinMatt 2021-07-25 20:07:20
 //	@function_mark PASS
-func GenerateKIV(projectId, key []byte) ([]byte, []byte) {
+func GenerateKIV(projectID, key []byte) ([]byte, []byte) {
 	hK := hmac.New(sha256.New, key)
 	hIV := hmac.New(md5.New, key)
-	hK.Write(projectId)
-	hIV.Write(projectId)
+	hK.Write(projectID)
+	hIV.Write(projectID)
 	return hK.Sum(nil), hIV.Sum(nil)
 }
 
-// Encrypt
-//	@Description: 		AES-CFB加密
-//	@param projectId 	项目ID
+// Encrypt AES-CFB加密
+//	@param projectID 	项目ID
 //	@param Dest 			输出的加密后字符串
 //	@param key 			加密密钥
 //	@param plainText 	需要加密的文本
 //	@return error 		错误抛出
 //	@author KevinMatt 2021-07-25 13:34:09
 //	@function_mark PASS
-func Encrypt(projectId, key, plainText string) string {
-	K, IV := GenerateKIV([]byte(projectId), []byte(key))
+func Encrypt(projectID, key, plainText string) string {
+	K, IV := GenerateKIV([]byte(projectID), []byte(key))
 	aesBlockEncryptor, err := aes.NewCipher(K)
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
@@ -59,17 +57,16 @@ func Encrypt(projectId, key, plainText string) string {
 	return string(dest)
 }
 
-// Decrypt
-//	@Description: 		AES-CFB解密
-//	@param projectId 	项目ID
+// Decrypt AES-CFB解密
+//	@param projectID 	项目ID
 //	@param Dest 			解密完成的字符串
 //	@param key 			解密密钥
 //	@param plainText 	需要解密的文本
 //	@return error 		错误抛出
 //	@author KevinMatt 2021-07-25 13:35:15
 //	@function_mark PASS
-func Decrypt(projectId, key, plainText string) string {
-	K, IV := GenerateKIV([]byte(projectId), []byte(key))
+func Decrypt(projectID, key, plainText string) string {
+	K, IV := GenerateKIV([]byte(projectID), []byte(key))
 	aesBlockDescriptor, err := aes.NewCipher(K)
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
@@ -78,6 +75,29 @@ func Decrypt(projectId, key, plainText string) string {
 	aesDescriptor := cipher.NewCFBDecrypter(aesBlockDescriptor, IV)
 	aesDescriptor.XORKeyStream(dest, []byte(plainText))
 	return string(dest)
+}
+
+// Base64Encrypt 输出base64编码的加密内容
+//	@Description:
+//	@param text 要加密的文本
+//	@return string 加密的文本
+//	@author KevinMatt 2021-08-10 01:07:41
+//	@function_mark PASS
+func Base64Encrypt(text string) string {
+	return base64.StdEncoding.EncodeToString([]byte(Encrypt(config.WhosbugConfig.ProjectID, config.WhosbugConfig.CryptoKey, text)))
+}
+
+// Base64Decrypt 输出base64解码后的解密内容
+//  @param text string
+//  @return string
+//  @return error
+//  @author: Kevineluo 2022-07-31 07:29:37
+func Base64Decrypt(text string) (string, error) {
+	decodedBytes, err := base64.StdEncoding.DecodeString(text)
+	if err != nil {
+		return "", err
+	}
+	return Decrypt(config.WhosbugConfig.ProjectID, config.WhosbugConfig.CryptoKey, string(decodedBytes)), nil
 }
 
 // GenToken 生成Token
@@ -154,17 +174,4 @@ func ReqWithToken(token, url, method, data string) error {
 		}
 		return errors.New(string(body))
 	}
-}
-
-// var Base64Encrypt = func
-//	@Description: 为原始的加密内容添加Base64编码
-//	@param text 要加密的文本
-//	@return string 加密的文本
-//	@author KevinMatt 2021-08-10 01:07:41
-//	@function_mark PASS
-var Base64Encrypt = func(text string) string {
-	if config.WhosbugConfig.CryptoKey == "DEBUG" {
-		return text
-	}
-	return base64.StdEncoding.EncodeToString([]byte(Encrypt(config.WhosbugConfig.ProjectId, config.WhosbugConfig.CryptoKey, text)))
 }

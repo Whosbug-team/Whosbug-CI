@@ -2,7 +2,6 @@ package logging
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -23,15 +22,14 @@ var (
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
-// GetLogInfo
-//	@Description: 获取所有的git commit记录和所有的commit+diff，并返回存储的文件目录
+// GetGitLogInfo 获取所有的git commit记录和所有的commit+diff，并返回存储的文件目录
 //	@return string 所有diff信息的目录
 //	@return string 所有commit信息的目录
 //	@author KevinMatt 2021-07-29 17:25:39
 //	@function_mark PASS
 func GetGitLogInfo() (string, string) {
 	// 切换到仓库目录
-	err := os.Chdir(config.WhosbugConfig.ProjectUrl)
+	err := os.Chdir(config.WhosbugConfig.ProjectURL)
 	if err != nil {
 		log.Println(err)
 		os.Exit(-1)
@@ -40,7 +38,7 @@ func GetGitLogInfo() (string, string) {
 
 	config.LocalHashLatest = ExecCommandOutput("git", "rev-parse", "HEAD")
 	config.LocalHashLatest = config.LocalHashLatest[0 : len(config.LocalHashLatest)-1]
-	cloudHashLatest, err := GetLatestRelease(config.WhosbugConfig.ProjectId)
+	cloudHashLatest, err := GetLatestRelease(config.WhosbugConfig.ProjectID)
 	if err != nil {
 		zaplog.Logger.Error(util.ErrorMessage(errors.WithStack(err)))
 	}
@@ -74,8 +72,7 @@ func GetGitLogInfo() (string, string) {
 	return util.ConCatStrings(config.WorkPath, "/allDiffs.out"), util.ConCatStrings(config.WorkPath, "/commitInfo.out")
 }
 
-// ExecCommandOutput
-//	@Description: 执行命令并获取输出
+// ExecCommandOutput 执行命令并获取输出
 //	@param command 命令
 //	@param args 命令参数
 //	@return string 命令输出
@@ -101,8 +98,7 @@ func ExecCommandOutput(command string, args ...string) string {
 	return out.String()
 }
 
-// ExecRedirectToFile
-//	@Description: 执行命令并将输出流重定向到目标文件中
+// ExecRedirectToFile 执行命令并将输出流重定向到目标文件中
 //	@param fileName 目标文件目录
 //	@param command 执行的指令头
 //	@param args 执行指令的参数
@@ -138,7 +134,7 @@ func GetLatestRelease(projectID string) (string, error) {
 	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/whosbug/releases/last/")
 	method := "POST"
 
-	pid := base64.StdEncoding.EncodeToString([]byte(crypto.Encrypt(projectID, config.WhosbugConfig.CryptoKey, projectID)))
+	pid := crypto.Base64Encrypt(projectID)
 	data := []byte("{\"pid\":\"" + pid + "\"}")
 
 	client := &http.Client{}
@@ -166,9 +162,12 @@ func GetLatestRelease(projectID string) (string, error) {
 		if err != nil {
 			return "", errors.WithStack(err)
 		}
-		commitHash := json.Get(body, "last_commit_hash").ToString()
-		commitHashByte, err := base64.StdEncoding.DecodeString(commitHash)
-		return crypto.Decrypt(projectID, config.WhosbugConfig.CryptoKey, string(commitHashByte)), nil
+		encryptedCommitHash := json.Get(body, "last_commit_hash").ToString()
+		commitHash, err := crypto.Base64Decrypt(encryptedCommitHash)
+		if err != nil {
+			return "", errors.WithStack(err)
+		}
+		return commitHash, nil
 	} else {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {

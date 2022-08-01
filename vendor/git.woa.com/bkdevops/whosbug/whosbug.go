@@ -1,10 +1,10 @@
 package whosbug
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
-	"strings"
 	"time"
 
 	"git.woa.com/bkdevops/whosbug/commit"
@@ -62,7 +62,7 @@ func Analysis(whosbugConfig *config.Config) {
 	err := upload.PostReleaseInfo("/whosbug/create-project-release/")
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
-		if strings.Contains(err.Error(), config.AlreadyExistsError) {
+		if errors.Is(err, config.AlreadyExistsError) {
 			zaplog.Logger.Info("The Release is already exists and has the same latest commit to your repo.")
 			os.Exit(0)
 		}
@@ -102,5 +102,5 @@ func Analysis(whosbugConfig *config.Config) {
 	}
 	zaplog.Logger.Info("Analysis all done", zaplog.String("cost", time.Since(t).String()))
 
-	fmt.Println("Your ProjectName is", whosbugConfig.ProjectId, "You'll need this to en/decrypt your data")
+	fmt.Println("Your ProjectName is", whosbugConfig.ProjectID, "You'll need this to en/decrypt your data")
 }

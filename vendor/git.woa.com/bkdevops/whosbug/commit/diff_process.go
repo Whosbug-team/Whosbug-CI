@@ -4,7 +4,6 @@ import (
 	"log"
 	"path"
 	"runtime"
-	"strconv"
 	"strings"
 
 	"git.woa.com/bkdevops/whosbug/config"
@@ -56,8 +55,8 @@ func ParseDiff(data string, commitInfo config.CommitInfoType) {
 				continue
 			}
 			temp := strings.Split(diffPartsContent[rightDiffHeadIndex[4]:rightDiffHeadIndex[5]], " ")
-			OldLineCount := QuatToNum(temp[0][1:])
-			NewlineCount := QuatToNum(temp[1][1:])
+			OldLineCount := util.QuatToNum(temp[0][1:])
+			NewlineCount := util.QuatToNum(temp[1][1:])
 
 			// 获取所有行，并按"\n"切分，略去第一行(@@行)
 			lines := (strings.Split(diffPartsContent[rightDiffHeadIndex[1]:][0:], "\n"))[1:]
@@ -90,21 +89,6 @@ func ParseDiff(data string, commitInfo config.CommitInfoType) {
 			//}()
 		}
 	}
-}
-
-// QuatToNum
-//  @param text string
-//  @return sum int
-//  @author: Kevineluo 2022-07-31 12:24:09
-func QuatToNum(text string) (sum int) {
-	for index := 0; index < len(text); index++ {
-		if text[index] == ',' {
-			continue
-		}
-		temp, _ := strconv.Atoi(string(text[index]))
-		sum = sum*10 + temp
-	}
-	return
 }
 
 // findAllChangedLineNumbers

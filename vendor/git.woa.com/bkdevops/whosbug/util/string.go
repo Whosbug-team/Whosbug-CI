@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"git.woa.com/bkdevops/whosbug/config"
@@ -52,4 +53,19 @@ func ConCatStrings(stringList ...string) string {
 //	@function_mark PASS
 func CleanPath(s string) string {
 	return strings.ReplaceAll(s, strings.ReplaceAll(config.WorkPath, "\\", "/")+"/", "")
+}
+
+// QuatToNum
+//  @param text string
+//  @return sum int
+//  @author: Kevineluo 2022-07-31 12:24:09
+func QuatToNum(text string) (sum int) {
+	for index := 0; index < len(text); index++ {
+		if text[index] == ',' {
+			continue
+		}
+		temp, _ := strconv.Atoi(string(text[index]))
+		sum = sum*10 + temp
+	}
+	return
 }

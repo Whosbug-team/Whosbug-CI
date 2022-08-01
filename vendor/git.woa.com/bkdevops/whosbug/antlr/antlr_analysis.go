@@ -7,6 +7,7 @@ import (
 	js "git.woa.com/bkdevops/whosbug/antlr/jsLib"
 	kt "git.woa.com/bkdevops/whosbug/antlr/kotlinLib"
 	"git.woa.com/bkdevops/whosbug/config"
+	"git.woa.com/bkdevops/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug/util"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
@@ -273,11 +274,11 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 
 	//	TODO Ready for newMethod
 	newObject = config.ObjectInfoType{
-		CommitHash:       commitDiff.CommitHash, //util.Base64Encrypt(commitDiff.CommitHash)
-		Id:               util.Base64Encrypt(changeMethod.MethodName),
-		OldId:            "",
-		FilePath:         util.Base64Encrypt(commitDiff.DiffFileName),
-		Parameters:       util.Base64Encrypt(changeMethod.Parameters),
+		CommitHash:       commitDiff.CommitHash, //crypto.Base64Encrypt(commitDiff.CommitHash)
+		ID:               crypto.Base64Encrypt(changeMethod.MethodName),
+		OldID:            "",
+		FilePath:         crypto.Base64Encrypt(commitDiff.DiffFileName),
+		Parameters:       crypto.Base64Encrypt(changeMethod.Parameters),
 		OldLineCount:     0,
 		CurrentLineCount: changeMethod.EndLine - changeMethod.StartLine + 1,
 		StartLine:        changeMethod.StartLine,

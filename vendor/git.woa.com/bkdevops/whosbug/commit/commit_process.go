@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"strings"
 
+	"git.woa.com/bkdevops/whosbug/git"
 	"git.woa.com/bkdevops/whosbug/upload"
 	"git.woa.com/bkdevops/whosbug/util"
 	"git.woa.com/bkdevops/whosbug/zaplog"
@@ -54,7 +55,7 @@ func MatchCommit(diffPath, commitPath string) {
 				break
 			}
 
-			commitInfo := GetCommitInfo(string(commitLine))
+			commitInfo := git.GetCommitInfo(string(commitLine))
 			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
 			fullCommit, err := getFullCommit(patCommit, lineReaderDiff)
 			if err != nil {
