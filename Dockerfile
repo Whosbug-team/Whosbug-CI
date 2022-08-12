@@ -18,4 +18,4 @@ RUN apk update && apk add git
 
 WORKDIR /root/workspace
 
-CMD ["./whosbug-CI"]
+CMD ["/root/workspace/whosbug-CI"]
