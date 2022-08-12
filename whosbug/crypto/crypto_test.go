@@ -1,14 +1,52 @@
 package crypto
 
 import (
+	"fmt"
 	"testing"
+
+	"git.woa.com/bkdevops/whosbug/config"
 )
 
-func TestEncrypt(t *testing.T) {
+func TestBase64Decrypt(t *testing.T) {
 	type args struct {
-		projectID string
-		key       string
-		plainText string
+		text string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "test-decrypt",
+			args:    args{text: "+9MI3HCSnUgg0Q=="},
+			want:    "to_encrypt",
+			wantErr: false,
+		},
+	}
+
+	config.WhosbugConfig.ProjectID = "test-project"
+	config.WhosbugConfig.CryptoKey = ""
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := Base64Decrypt(tt.args.text)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Base64Decrypt() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Base64Decrypt() = %v, want %v", got, tt.want)
+			} else {
+				fmt.Println(fmt.Sprintf("Base64Decrypt() = %v, want %v", got, tt.want))
+			}
+		})
+	}
+}
+
+func TestBase64Encrypt(t *testing.T) {
+	type args struct {
+		text string
 	}
 	tests := []struct {
 		name string
@@ -16,41 +54,21 @@ func TestEncrypt(t *testing.T) {
 		want string
 	}{
 		{
-			name: "test1",
-			args: args{
-				projectID: "whosbug_test",
-				key:       "local-key",
-				plainText: "whosbug_test",
-			},
-			want: "",
+			name: "test-encrypt",
+			args: args{text: "to_encrypt"},
+			want: "+9MI3HCSnUgg0Q==",
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := Encrypt(tt.args.projectID, tt.args.key, tt.args.plainText); got != tt.want {
-				t.Errorf("Encrypt() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
-func TestDecrypt(t *testing.T) {
-	type args struct {
-		projectID string
-		key       string
-		plainText string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-	}
+	config.WhosbugConfig.ProjectID = "test-project"
+	config.WhosbugConfig.CryptoKey = ""
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Decrypt(tt.args.projectID, tt.args.key, tt.args.plainText); got != tt.want {
-				t.Errorf("Decrypt() = %v, want %v", got, tt.want)
+			if got := Base64Encrypt(tt.args.text); got != tt.want {
+				t.Errorf("Base64Encrypt() = %v, want %v", got, tt.want)
+			} else {
+				fmt.Println(fmt.Sprintf("Base64Encrypt() = %v, want %v", got, tt.want))
 			}
 		})
 	}
