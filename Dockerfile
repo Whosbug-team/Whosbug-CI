@@ -13,9 +13,9 @@ RUN ls
 
 FROM golang:1.18-alpine as runner
 
-COPY --from=builder /root/whosbug-CI/whosbug-CI /root/workspace/whosbug-CI
+COPY --from=builder /root/whosbug-CI/whosbug-CI /root/whosbug-CI
 RUN apk update && apk add git
 
 WORKDIR /root/workspace
 
-CMD ["/root/workspace/whosbug-CI"]
+CMD ["/root/whosbug-CI"]
