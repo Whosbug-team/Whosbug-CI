@@ -40,7 +40,11 @@ func GetGitLogInfo() (string, string) {
 	config.LocalHashLatest = config.LocalHashLatest[0 : len(config.LocalHashLatest)-1]
 	cloudHashLatest, err := GetLatestRelease(config.WhosbugConfig.ProjectID)
 	if err != nil {
-		zaplog.Logger.Error(util.ErrorMessage(errors.WithStack(err)))
+		if util.ErrorMessage(errors.WithStack(err)) == "404" {
+			zaplog.Logger.Warn("The Project Not Found. Get all commit to Initialize")
+		} else {
+			zaplog.Logger.Error(util.ErrorMessage(errors.WithStack(err)))
+		}
 	}
 	zaplog.Logger.Info("Head Got!")
 	config.LatestCommitHash = cloudHashLatest
@@ -131,7 +135,7 @@ func ExecRedirectToFile(fileName string, command string, args ...string) error {
 //  @return error
 //  @author: Kevineluo 2022-07-31 01:03:27
 func GetLatestRelease(projectID string) (string, error) {
-	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/whosbug/releases/last/")
+	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/v1/releases/last")
 	method := "POST"
 
 	pid := crypto.Base64Encrypt(projectID)
@@ -174,7 +178,7 @@ func GetLatestRelease(projectID string) (string, error) {
 			return "", errors.WithStack(err)
 		}
 		if res.StatusCode == 404 {
-			return "", errors.New("The Project Not Found. Get all commit to Initialize")
+			return "", errors.New("404")
 		}
 		return "", errors.New(string(body))
 	}

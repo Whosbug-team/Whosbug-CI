@@ -209,8 +209,8 @@ func NewLogger() (zapLogger *ZapLogger) {
 		Compress:   false,
 	})
 	// 重定向Stderr到Panic日志
-	panicLog, _ := os.OpenFile(logBasePath+"_panic.log", os.O_RDWR|os.O_CREATE, 0666)
-	setDup(int(panicLog.Fd()), int(os.Stderr.Fd()))
+	// panicLog, _ := os.OpenFile(logBasePath+"_panic.log", os.O_RDWR|os.O_CREATE, 0666)
+	// setDup(int(panicLog.Fd()), int(os.Stderr.Fd()))
 	if logLevel == DebugLevel {
 		cfg = zap.NewDevelopmentConfig()
 	} else {
