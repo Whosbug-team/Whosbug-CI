@@ -1,6 +1,8 @@
 package antlr
 
 import (
+	"strings"
+
 	c "git.woa.com/bkdevops/whosbug/antlr/cLib"
 	cpp "git.woa.com/bkdevops/whosbug/antlr/cppLib"
 	golang "git.woa.com/bkdevops/whosbug/antlr/goLib"
@@ -306,12 +308,17 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 	if changeMethod.MethodName == "" {
 		return
 	}
+	oldMethodName := ""
+	oldMethodNameIdx := strings.LastIndex(changeMethod.MethodName, "")
+	if oldMethodNameIdx != -1 {
+		oldMethodName = changeMethod.MethodName[:oldMethodNameIdx]
+	}
 
 	//	TODO Ready for newMethod
 	newObject = config.ObjectInfoType{
 		CommitHash:       commitDiff.CommitHash, //crypto.Base64Encrypt(commitDiff.CommitHash)
 		ID:               crypto.Base64Encrypt(changeMethod.MethodName),
-		OldID:            "",
+		OldID:            crypto.Base64Encrypt(oldMethodName),
 		FilePath:         crypto.Base64Encrypt(commitDiff.DiffFileName),
 		Parameters:       crypto.Base64Encrypt(changeMethod.Parameters),
 		OldLineCount:     0,
