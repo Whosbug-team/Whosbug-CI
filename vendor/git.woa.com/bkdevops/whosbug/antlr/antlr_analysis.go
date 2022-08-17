@@ -54,6 +54,9 @@ func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
 				util.ForDebug()
 			}
 			if prevObject.AddedNewLineCount != 0 || prevObject.RemovedLineCount != 0 {
+				if prevObject.OldID != "" {
+					addClass(commitDiff, prevObject.ID, antlrAnalyzeRes)
+				}
 				// 送入channel
 				config.ObjectChan <- prevObject
 			}
@@ -309,9 +312,6 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 		return
 	}
 	oldMethodName := findFather(changeMethod.MethodName)
-	if oldMethodName != "" {
-		addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
-	}
 
 	//	TODO Ready for newMethod
 	newObject = config.ObjectInfoType{
@@ -365,17 +365,17 @@ func addClass(commitDiff config.DiffParsedType, preMethodName string, antlrAnaly
 	}
 	if resIndex > -1 {
 		oldMethodName := findFather(methodName)
-		if oldMethodName != "" {
-			addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
-		}
 		newObj.CommitHash = commitDiff.CommitHash
 		newObj.ID = crypto.Base64Encrypt(methodName)
 		newObj.OldID = crypto.Base64Encrypt(oldMethodName)
 		newObj.FilePath = crypto.Base64Encrypt(commitDiff.DiffFileName)
 		newObj.StartLine = antlrAnalyzeRes.Classes[resIndex].StartLine
 		newObj.EndLine = antlrAnalyzeRes.Classes[resIndex].EndLine
+		config.ObjectChan <- newObj
+		if oldMethodName != "" {
+			addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
+		}
 	}
-	config.ObjectChan <- newObj
 }
 
 // findChangedMethod
