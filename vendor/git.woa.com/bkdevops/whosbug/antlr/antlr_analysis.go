@@ -312,6 +312,7 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 	oldMethodNameIdx := strings.LastIndex(changeMethod.MethodName, "")
 	if oldMethodNameIdx != -1 {
 		oldMethodName = changeMethod.MethodName[:oldMethodNameIdx]
+		// oldMethod := findClass()
 	}
 
 	//	TODO Ready for newMethod
@@ -325,6 +326,30 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 		CurrentLineCount: changeMethod.EndLine - changeMethod.StartLine + 1,
 		StartLine:        changeMethod.StartLine,
 		EndLine:          changeMethod.EndLine,
+	}
+	return
+}
+
+// findClass
+//	@Description: 寻找类的起始行
+//	@param changeLineNumber 变动行
+//	@param antlrAnalyzeRes antlr分析结果
+//	@return changeMethodInfo 类信息
+//	@author Psy 2022-08-17 15:33:33
+func findClass(changeLineNumber config.ChangeLineType, antlrAnalyzeRes astResType) (changeClassInfo ClassInfoType) {
+	var lineRangeList []LineRangeType
+	// 遍历匹配到的类列表，存储其首行
+	for index := range antlrAnalyzeRes.Classes {
+		lineRangeList = append(lineRangeList, LineRangeType{
+			StartLine: antlrAnalyzeRes.Classes[index].StartLine,
+			EndLine:   antlrAnalyzeRes.Classes[index].EndLine,
+		})
+	}
+	//	寻找类行所在的范围位置
+	resIndex := FindIntervalIndex(lineRangeList, changeLineNumber.LineNumber)
+	//	判断是否有位置插入
+	if resIndex > -1 {
+		changeClassInfo = antlrAnalyzeRes.Classes[resIndex]
 	}
 	return
 }

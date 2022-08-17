@@ -101,7 +101,7 @@ func PostObjects(objects []config.ObjectInfoType) error {
 	util.WriteInfoFile("/data/workspace/whosbugGolang/diffs.json", data)
 
 	//准备发送
-	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/whosbug/commits/diffs/")
+	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/v1/commits/diffs")
 	method := "POST"
 
 	err = crypto.ReqWithToken(token, urlReq, method, data)
@@ -138,7 +138,7 @@ func PostCommitsInfo(commitPath string) error {
 	data, _ := json.MarshalToString(&FinMessage)
 	util.WriteInfoFile("/data/workspace/whosbugGolang/commits.json", data)
 	token, _ := crypto.GenToken()
-	url := config.WhosbugConfig.WebServerHost + "/whosbug/commits/commits-info/"
+	url := config.WhosbugConfig.WebServerHost + "/v1/commits/commits-info"
 	err = crypto.ReqWithToken(token, url, "POST", data)
 	if err != nil {
 		log.Println(util.ErrorMessage(err))

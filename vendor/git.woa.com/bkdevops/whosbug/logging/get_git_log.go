@@ -8,11 +8,13 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 
 	"git.woa.com/bkdevops/whosbug/config"
 	"git.woa.com/bkdevops/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug/util"
 	"git.woa.com/bkdevops/whosbug/zaplog"
+	"github.com/go-git/go-git/v5"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
@@ -28,16 +30,18 @@ var (
 //	@author KevinMatt 2021-07-29 17:25:39
 //	@function_mark PASS
 func GetGitLogInfo() (string, string) {
-	// 切换到仓库目录
-	err := os.Chdir(config.WhosbugConfig.ProjectURL)
+	// 使用 go-git 获取本地仓库的 git 提交信息
+	r, err := git.PlainOpen(config.WhosbugConfig.ProjectURL)
 	if err != nil {
-		log.Println(err)
-		os.Exit(-1)
+		zaplog.Logger.Error(err.Error())
 	}
-	zaplog.Logger.Info("cd to work path", zaplog.String("workPath", config.WorkPath))
-
-	config.LocalHashLatest = ExecCommandOutput("git", "rev-parse", "HEAD")
-	config.LocalHashLatest = config.LocalHashLatest[0 : len(config.LocalHashLatest)-1]
+	rHead, err := r.Head()
+	if err != nil {
+		zaplog.Logger.Error(err.Error())
+	}
+	rHeadStr := rHead.String()
+	rHeadIdx := strings.Index(rHeadStr, " ")
+	config.LocalHashLatest = rHeadStr[:rHeadIdx]
 	cloudHashLatest, err := GetLatestRelease(config.WhosbugConfig.ProjectID)
 	if err != nil {
 		if util.ErrorMessage(errors.WithStack(err)) == "404" {

@@ -1,6 +1,9 @@
 package antlr
 
 import (
+	"strings"
+
+	c "git.woa.com/bkdevops/whosbug/antlr/cLib"
 	cpp "git.woa.com/bkdevops/whosbug/antlr/cppLib"
 	golang "git.woa.com/bkdevops/whosbug/antlr/goLib"
 	java "git.woa.com/bkdevops/whosbug/antlr/javaLib"
@@ -71,6 +74,8 @@ func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
 //	@function_mark  PASS
 func antlrAnalysis(diffText string, langMode string) (result astResType) {
 	switch langMode {
+	case "c":
+		result = ExecuteC(diffText)
 	case "java":
 		result = ExecuteJava(diffText)
 	case "python":
@@ -90,6 +95,38 @@ func antlrAnalysis(diffText string, langMode string) (result astResType) {
 		break
 	}
 	return
+}
+
+// 进行 C 语言语法解析，获取函数相关信息
+func ExecuteC(text string) astResType {
+	//	截取目标文本的输入流
+	input := antlr.NewInputStream(text)
+	//	初始化 lexer
+	lexer := cLexerPool.Get().(*c.CLexer)
+	defer cLexerPool.Put(lexer)
+	lexer.SetInputStream(input)
+	lexer.RemoveErrorListeners()
+	//	初始化 Token 流
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//	初始化 Parser
+	p := cParserPool.Get().(*c.CParser)
+	defer cParserPool.Put(p)
+	p.SetTokenStream(stream)
+	//	构建语法解析树
+	p.BuildParseTrees = true
+	//	启用 SLL 两阶段加速解析模式
+	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+	p.RemoveErrorListeners()
+	//	解析模式 -> 每个编译单位
+	tree := p.TranslationUnit()
+	//	创建 listener
+	listener := newCTreeShapeListenerPool.Get().(*CTreeShapeListener)
+	defer newCTreeShapeListenerPool.Put(listener)
+	//	初始化置空
+	listener.AstInfoList = astResType{}
+	//	执行分析
+	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+	return listener.AstInfoList
 }
 
 func ExecuteGolang(diffText string) astResType {
@@ -271,12 +308,17 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 	if changeMethod.MethodName == "" {
 		return
 	}
+	oldMethodName := ""
+	oldMethodNameIdx := strings.LastIndex(changeMethod.MethodName, "")
+	if oldMethodNameIdx != -1 {
+		oldMethodName = changeMethod.MethodName[:oldMethodNameIdx]
+	}
 
 	//	TODO Ready for newMethod
 	newObject = config.ObjectInfoType{
 		CommitHash:       commitDiff.CommitHash, //crypto.Base64Encrypt(commitDiff.CommitHash)
 		ID:               crypto.Base64Encrypt(changeMethod.MethodName),
-		OldID:            "",
+		OldID:            crypto.Base64Encrypt(oldMethodName),
 		FilePath:         crypto.Base64Encrypt(commitDiff.DiffFileName),
 		Parameters:       crypto.Base64Encrypt(changeMethod.Parameters),
 		OldLineCount:     0,
