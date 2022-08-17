@@ -308,10 +308,9 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 	if changeMethod.MethodName == "" {
 		return
 	}
-	oldMethodName := ""
-	oldMethodNameIdx := strings.LastIndex(changeMethod.MethodName, "")
-	if oldMethodNameIdx != -1 {
-		oldMethodName = changeMethod.MethodName[:oldMethodNameIdx]
+	oldMethodName := findFather(changeMethod.MethodName)
+	if oldMethodName != "" {
+		addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
 	}
 
 	//	TODO Ready for newMethod
@@ -327,6 +326,56 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 		EndLine:          changeMethod.EndLine,
 	}
 	return
+}
+
+// findFather
+//	@Description: 寻找定义链的上端
+//	@param methodName 定义链末尾的名字
+//	@return oldMethodName 定义链上端的名字
+//	@author Psy 2022-08-17 20:23:21
+func findFather(methodName string) (oldMethodName string) {
+	oldMethodName = ""
+	oldMethodNameIdx := strings.LastIndex(methodName, ".")
+	if oldMethodNameIdx != -1 {
+		oldMethodName = methodName[:oldMethodNameIdx]
+	}
+	return
+}
+
+// adddClass
+//	@Description: 寻找类的起始行
+//	@param oldMethodName 类的定义链
+//	@param antlrAnalyzeRes antlr分析结果
+//	@return changeMethodInfo 类信息
+//	@author Psy 2022-08-17 15:33:33
+func addClass(commitDiff config.DiffParsedType, preMethodName string, antlrAnalyzeRes astResType) {
+	idx := strings.LastIndex(preMethodName, ".")
+	if idx == -1 {
+		return
+	}
+	newObj := config.ObjectInfoType{}
+	methodName := preMethodName[:idx]
+
+	resIndex := -1
+	for index := range antlrAnalyzeRes.Classes {
+		if antlrAnalyzeRes.Classes[index].ClassName == methodName {
+			resIndex = index
+			break
+		}
+	}
+	if resIndex > -1 {
+		oldMethodName := findFather(methodName)
+		if oldMethodName != "" {
+			addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
+		}
+		newObj.CommitHash = commitDiff.CommitHash
+		newObj.ID = crypto.Base64Encrypt(methodName)
+		newObj.OldID = crypto.Base64Encrypt(oldMethodName)
+		newObj.FilePath = crypto.Base64Encrypt(commitDiff.DiffFileName)
+		newObj.StartLine = antlrAnalyzeRes.Classes[resIndex].StartLine
+		newObj.EndLine = antlrAnalyzeRes.Classes[resIndex].EndLine
+	}
+	config.ObjectChan <- newObj
 }
 
 // findChangedMethod

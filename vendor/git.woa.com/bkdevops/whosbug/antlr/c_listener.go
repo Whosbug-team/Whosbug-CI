@@ -8,7 +8,11 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
-// Get the name of function.
+//	@Description: 获取 C 语言函数的方法名
+//	@param *c.FunctionDefinitionContext c 语言函数的上下文
+//	@return methodName 函数的名字
+//	@author Psy 2022-08-15 14:14:22
+//	@function_mark PASS
 func matchCMethodName(ctx *c.FunctionDefinitionContext) (methodName string) {
 	if ctx.Declarator() != nil {
 		functionDefineStr := ctx.Declarator().GetText()
@@ -25,7 +29,11 @@ func matchCMethodName(ctx *c.FunctionDefinitionContext) (methodName string) {
 	return
 }
 
-// Get the params of function.
+//	@Description: 获取 C 语言函数的参数
+//	@param *c.FunctionDefinitionContext c 语言函数的上下文
+//	@return params 函数的参数
+//	@author Psy 2022-08-15 14:17:21
+//	@function_mark PASS
 func matchCMethodParams(ctx *c.FunctionDefinitionContext) (params string) {
 	if ctx.Declarator() != nil {
 		functionDefineStr := ctx.Declarator().GetText()

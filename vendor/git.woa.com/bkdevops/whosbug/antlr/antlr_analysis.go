@@ -308,11 +308,9 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 	if changeMethod.MethodName == "" {
 		return
 	}
-	oldMethodName := ""
-	oldMethodNameIdx := strings.LastIndex(changeMethod.MethodName, "")
-	if oldMethodNameIdx != -1 {
-		oldMethodName = changeMethod.MethodName[:oldMethodNameIdx]
-		// oldMethod := findClass()
+	oldMethodName := findFather(changeMethod.MethodName)
+	if oldMethodName != "" {
+		addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
 	}
 
 	//	TODO Ready for newMethod
@@ -330,28 +328,54 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 	return
 }
 
-// findClass
+// findFather
+//	@Description: 寻找定义链的上端
+//	@param methodName 定义链末尾的名字
+//	@return oldMethodName 定义链上端的名字
+//	@author Psy 2022-08-17 20:23:21
+func findFather(methodName string) (oldMethodName string) {
+	oldMethodName = ""
+	oldMethodNameIdx := strings.LastIndex(methodName, ".")
+	if oldMethodNameIdx != -1 {
+		oldMethodName = methodName[:oldMethodNameIdx]
+	}
+	return
+}
+
+// adddClass
 //	@Description: 寻找类的起始行
-//	@param changeLineNumber 变动行
+//	@param oldMethodName 类的定义链
 //	@param antlrAnalyzeRes antlr分析结果
 //	@return changeMethodInfo 类信息
 //	@author Psy 2022-08-17 15:33:33
-func findClass(changeLineNumber config.ChangeLineType, antlrAnalyzeRes astResType) (changeClassInfo ClassInfoType) {
-	var lineRangeList []LineRangeType
-	// 遍历匹配到的类列表，存储其首行
+func addClass(commitDiff config.DiffParsedType, preMethodName string, antlrAnalyzeRes astResType) {
+	idx := strings.LastIndex(preMethodName, ".")
+	if idx == -1 {
+		return
+	}
+	newObj := config.ObjectInfoType{}
+	methodName := preMethodName[:idx]
+
+	resIndex := -1
 	for index := range antlrAnalyzeRes.Classes {
-		lineRangeList = append(lineRangeList, LineRangeType{
-			StartLine: antlrAnalyzeRes.Classes[index].StartLine,
-			EndLine:   antlrAnalyzeRes.Classes[index].EndLine,
-		})
+		if antlrAnalyzeRes.Classes[index].ClassName == methodName {
+			resIndex = index
+			break
+		}
 	}
-	//	寻找类行所在的范围位置
-	resIndex := FindIntervalIndex(lineRangeList, changeLineNumber.LineNumber)
-	//	判断是否有位置插入
 	if resIndex > -1 {
-		changeClassInfo = antlrAnalyzeRes.Classes[resIndex]
+		oldMethodName := findFather(methodName)
+		if oldMethodName != "" {
+			addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
+		}
+		newObj.CommitHash = commitDiff.CommitHash
+		newObj.ID = crypto.Base64Encrypt(methodName)
+		newObj.OldID = crypto.Base64Encrypt(oldMethodName)
+		newObj.FilePath = crypto.Base64Encrypt(commitDiff.DiffFileName)
+		newObj.StartLine = antlrAnalyzeRes.Classes[resIndex].StartLine
+		newObj.EndLine = antlrAnalyzeRes.Classes[resIndex].EndLine
 	}
-	return
+	config.ObjectChan <- newObj
 }
 
 // findChangedMethod
