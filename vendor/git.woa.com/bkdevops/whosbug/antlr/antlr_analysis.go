@@ -1,8 +1,11 @@
 package antlr
 
 import (
+	"fmt"
+	"runtime/debug"
 	"strings"
 
+	"git.woa.com/bkdevops/Whosbug-CI/vendor/git.woa.com/bkdevops/whosbug/zaplog"
 	c "git.woa.com/bkdevops/whosbug/antlr/cLib"
 	cpp "git.woa.com/bkdevops/whosbug/antlr/cppLib"
 	golang "git.woa.com/bkdevops/whosbug/antlr/goLib"
@@ -65,6 +68,14 @@ func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
 	}
 }
 
+// 防止语法分析识别出错时，程序终止
+func myRecover() {
+	if err := recover(); err != nil {
+		errMsg := fmt.Sprintf("======== Panic ========\nPanic: %v\nTraceBack:\n%s\n======== Panic ========", err, string(debug.Stack()))
+		zaplog.Logger.DPanic(errMsg)
+	}
+}
+
 // antlrAnalysis
 //	@Description: antlr分析过程
 //	@param targetFilePath 分析的目标文件
@@ -73,6 +84,7 @@ func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
 //	@author KevinMatt 2021-07-29 19:49:37
 //	@function_mark  PASS
 func antlrAnalysis(diffText string, langMode string) (result astResType) {
+	defer myRecover()
 	switch langMode {
 	case "c":
 		result = ExecuteC(diffText)

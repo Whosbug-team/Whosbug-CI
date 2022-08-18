@@ -35,10 +35,7 @@ func GetGitLogInfo() (string, string) {
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
 	}
-	rHead, err := r.Head()
-	if err != nil {
-		zaplog.Logger.Error(err.Error())
-	}
+	rHead, _ := r.Head()
 	rHeadStr := rHead.String()
 	rHeadIdx := strings.Index(rHeadStr, " ")
 	config.LocalHashLatest = rHeadStr[:rHeadIdx]
