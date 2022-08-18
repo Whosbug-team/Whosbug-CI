@@ -5,7 +5,6 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"git.woa.com/bkdevops/Whosbug-CI/vendor/git.woa.com/bkdevops/whosbug/zaplog"
 	c "git.woa.com/bkdevops/whosbug/antlr/cLib"
 	cpp "git.woa.com/bkdevops/whosbug/antlr/cppLib"
 	golang "git.woa.com/bkdevops/whosbug/antlr/goLib"
@@ -15,6 +14,7 @@ import (
 	"git.woa.com/bkdevops/whosbug/config"
 	"git.woa.com/bkdevops/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug/util"
+	"git.woa.com/bkdevops/whosbug/zaplog"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
