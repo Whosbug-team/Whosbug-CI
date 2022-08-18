@@ -54,9 +54,6 @@ func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
 				util.ForDebug()
 			}
 			if prevObject.AddedNewLineCount != 0 || prevObject.RemovedLineCount != 0 {
-				if prevObject.OldID != "" {
-					addClass(commitDiff, prevObject.ID, antlrAnalyzeRes)
-				}
 				// 送入channel
 				config.ObjectChan <- prevObject
 			}
@@ -312,6 +309,9 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 		return
 	}
 	oldMethodName := findFather(changeMethod.MethodName)
+	if oldMethodName != "" {
+		addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
+	}
 
 	//	TODO Ready for newMethod
 	newObject = config.ObjectInfoType{

@@ -365,17 +365,17 @@ func addClass(commitDiff config.DiffParsedType, preMethodName string, antlrAnaly
 	}
 	if resIndex > -1 {
 		oldMethodName := findFather(methodName)
-		if oldMethodName != "" {
-			addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
-		}
 		newObj.CommitHash = commitDiff.CommitHash
 		newObj.ID = crypto.Base64Encrypt(methodName)
 		newObj.OldID = crypto.Base64Encrypt(oldMethodName)
 		newObj.FilePath = crypto.Base64Encrypt(commitDiff.DiffFileName)
 		newObj.StartLine = antlrAnalyzeRes.Classes[resIndex].StartLine
 		newObj.EndLine = antlrAnalyzeRes.Classes[resIndex].EndLine
+		config.ObjectChan <- newObj
+		if oldMethodName != "" {
+			addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
+		}
 	}
-	config.ObjectChan <- newObj
 }
 
 // findChangedMethod
