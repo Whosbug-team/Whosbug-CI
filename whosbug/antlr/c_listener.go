@@ -18,7 +18,9 @@ func matchCMethodName(ctx *c.FunctionDefinitionContext) (methodName string) {
 		functionDefineStr := ctx.Declarator().GetText()
 		rightIndex := strings.Index(functionDefineStr, "(")
 		if rightIndex != -1 {
-			spIndex := strings.Index(functionDefineStr, "&")
+			if spIndex == -1 {
+				spIndex = strings.Index(functionDefineStr, "*")
+			}
 			if spIndex != -1 && spIndex < rightIndex {
 				methodName = functionDefineStr[spIndex+1 : rightIndex]
 			} else {
