@@ -102,7 +102,7 @@ func initConfig() (whosbugConfig *config.Config) {
 		whosbugConfig.CryptoKey = ""
 		whosbugConfig.BranchName = os.Getenv("BRANCH_NAME")
 		whosbugConfig.ProjectID = os.Getenv("GIT_HTTP_URL")
-		whosbugConfig.ProjectURL = os.Getenv("DEPOT_NAME")
+		whosbugConfig.ProjectURL = "/root/workspace/"
 		whosbugConfig.ReleaseVersion = os.Getenv("GIT_COMMIT")
 
 	}
