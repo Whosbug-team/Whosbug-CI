@@ -12,6 +12,7 @@ import (
 
 	"git.woa.com/bkdevops/whosbug/config"
 	"git.woa.com/bkdevops/whosbug/crypto"
+	. "git.woa.com/bkdevops/whosbug/env"
 	"git.woa.com/bkdevops/whosbug/util"
 	"git.woa.com/bkdevops/whosbug/zaplog"
 	"github.com/go-git/go-git/v5"
@@ -54,12 +55,15 @@ func GetGitLogInfo() (string, string) {
 		os.Exit(0)
 	} else {
 		// 切换到仓库目录
-		err := os.Chdir(config.WhosbugConfig.ProjectURL)
-		if err != nil {
-			log.Println(err)
-			os.Exit(-1)
+		if !TestFlag {
+			err := os.Chdir(config.WhosbugConfig.ProjectURL)
+			if err != nil {
+				log.Println(err)
+				os.Exit(-1)
+			}
+			zaplog.Logger.Info("cd to work path", zaplog.String("workPath", config.WorkPath))
 		}
-		zaplog.Logger.Info("cd to work path", zaplog.String("workPath", config.WorkPath))
+
 		if cloudHashLatest == "" {
 			zaplog.Logger.Info("Start Getting log")
 			err := ExecRedirectToFile("", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", "-n 10000", fmt.Sprint("--output=", config.WorkPath, "/commitInfo.out"))
