@@ -147,7 +147,7 @@ func ExecRedirectToFile(fileName string, command string, args ...string) error {
 //  @return error
 //  @author: Kevineluo 2022-07-31 01:03:27
 func GetLatestRelease(projectID string) (string, error) {
-	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/v1/releases/last")
+	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/v1/last_releases")
 	method := "POST"
 
 	pid := crypto.Base64Encrypt(projectID)

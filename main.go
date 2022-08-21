@@ -96,7 +96,7 @@ func initConfig() (whosbugConfig *config.Config) {
 		zaplog.Logger.Info("no dev env")
 		whosbugConfig = new(config.Config)
 
-		whosbugConfig.WebServerHost = "http://106.55.69.91:8081"
+		whosbugConfig.WebServerHost = "http://119.29.46.189:8083"
 		whosbugConfig.WebServerKey = "whosbug2022"
 		whosbugConfig.WebServerUserName = "admin"
 		whosbugConfig.CryptoKey = ""

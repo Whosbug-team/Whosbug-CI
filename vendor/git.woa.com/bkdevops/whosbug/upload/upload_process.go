@@ -138,7 +138,7 @@ func PostCommitsInfo(commitPath string) error {
 	data, _ := json.MarshalToString(&FinMessage)
 	util.WriteInfoFile("/data/workspace/whosbugGolang/commits.json", data)
 	token, _ := crypto.GenToken()
-	url := config.WhosbugConfig.WebServerHost + "/v1/commits/commits-info"
+	url := config.WhosbugConfig.WebServerHost + "/v1/commits/commits_info"
 	err = crypto.ReqWithToken(token, url, "POST", data)
 	if err != nil {
 		log.Println(util.ErrorMessage(err))
