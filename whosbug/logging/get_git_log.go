@@ -8,11 +8,14 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 
 	"git.woa.com/bkdevops/whosbug/config"
 	"git.woa.com/bkdevops/whosbug/crypto"
+	. "git.woa.com/bkdevops/whosbug/env"
 	"git.woa.com/bkdevops/whosbug/util"
 	"git.woa.com/bkdevops/whosbug/zaplog"
+	"github.com/go-git/go-git/v5"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
@@ -28,19 +31,22 @@ var (
 //	@author KevinMatt 2021-07-29 17:25:39
 //	@function_mark PASS
 func GetGitLogInfo() (string, string) {
-	// 切换到仓库目录
-	err := os.Chdir(config.WhosbugConfig.ProjectURL)
+	// 使用 go-git 获取本地仓库的 git 提交信息
+	r, err := git.PlainOpen(config.WhosbugConfig.ProjectURL)
 	if err != nil {
-		log.Println(err)
-		os.Exit(-1)
+		zaplog.Logger.Error(err.Error())
 	}
-	zaplog.Logger.Info("cd to work path", zaplog.String("workPath", config.WorkPath))
-
-	config.LocalHashLatest = ExecCommandOutput("git", "rev-parse", "HEAD")
-	config.LocalHashLatest = config.LocalHashLatest[0 : len(config.LocalHashLatest)-1]
+	rHead, _ := r.Head()
+	rHeadStr := rHead.String()
+	rHeadIdx := strings.Index(rHeadStr, " ")
+	config.LocalHashLatest = rHeadStr[:rHeadIdx]
 	cloudHashLatest, err := GetLatestRelease(config.WhosbugConfig.ProjectID)
 	if err != nil {
-		zaplog.Logger.Error(util.ErrorMessage(errors.WithStack(err)))
+		if util.ErrorMessage(errors.WithStack(err)) == "404" {
+			zaplog.Logger.Warn("The Project Not Found. Get all commit to Initialize")
+		} else {
+			zaplog.Logger.Error(util.ErrorMessage(errors.WithStack(err)))
+		}
 	}
 	zaplog.Logger.Info("Head Got!")
 	config.LatestCommitHash = cloudHashLatest
@@ -48,6 +54,16 @@ func GetGitLogInfo() (string, string) {
 		zaplog.Logger.Info("The server commit list is up-to-date.")
 		os.Exit(0)
 	} else {
+		// 切换到仓库目录
+		if !TestFlag {
+			err := os.Chdir(config.WhosbugConfig.ProjectURL)
+			if err != nil {
+				log.Println(err)
+				os.Exit(-1)
+			}
+			zaplog.Logger.Info("cd to work path", zaplog.String("workPath", config.WorkPath))
+		}
+
 		if cloudHashLatest == "" {
 			zaplog.Logger.Info("Start Getting log")
 			err := ExecRedirectToFile("", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", "-n 10000", fmt.Sprint("--output=", config.WorkPath, "/commitInfo.out"))
@@ -131,7 +147,7 @@ func ExecRedirectToFile(fileName string, command string, args ...string) error {
 //  @return error
 //  @author: Kevineluo 2022-07-31 01:03:27
 func GetLatestRelease(projectID string) (string, error) {
-	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/whosbug/releases/last/")
+	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/v1/releases/last")
 	method := "POST"
 
 	pid := crypto.Base64Encrypt(projectID)
@@ -174,7 +190,7 @@ func GetLatestRelease(projectID string) (string, error) {
 			return "", errors.WithStack(err)
 		}
 		if res.StatusCode == 404 {
-			return "", errors.New("The Project Not Found. Get all commit to Initialize")
+			return "", errors.New("404")
 		}
 		return "", errors.New(string(body))
 	}

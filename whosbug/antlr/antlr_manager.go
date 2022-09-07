@@ -3,6 +3,7 @@ package antlr
 import (
 	"sync"
 
+	c "git.woa.com/bkdevops/whosbug/antlr/cLib"
 	cpp "git.woa.com/bkdevops/whosbug/antlr/cppLib"
 	golang "git.woa.com/bkdevops/whosbug/antlr/goLib"
 	java "git.woa.com/bkdevops/whosbug/antlr/javaLib"
@@ -11,6 +12,13 @@ import (
 )
 
 var (
+	cLexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+		return c.NewCLexer(nil)
+	}}
+	cParserPool *sync.Pool = &sync.Pool{New: func() interface{} {
+		return c.NewCParser(nil)
+	}}
+
 	javaLexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
 		return java.NewJavaLexer(nil)
 	}}
@@ -46,6 +54,9 @@ var (
 		return js.NewJavaScriptParser(nil)
 	}}
 
+	newCTreeShapeListenerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+		return new(CTreeShapeListener)
+	}}
 	newJavaTreeShapeListenerPool *sync.Pool = &sync.Pool{New: func() interface{} {
 		return new(JavaTreeShapeListener)
 	}}

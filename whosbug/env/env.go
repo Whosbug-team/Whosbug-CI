@@ -12,7 +12,10 @@ var (
 	ServiceName = strings.Split(ModuleName, "-")[0]
 
 	// DevFlag 是否是开发模式
-	DevFlag = GetEnv("IS_DEV", "") == "yes"
+	DevFlag = GetEnv("IS_DEV", "yes") == "yes"
+
+	// DevFlag 是否是开发模式
+	TestFlag = GetEnv("IS_TEST", "") == "yes"
 )
 
 // GetEnv 获取环境变量，获取不到则使用默认值

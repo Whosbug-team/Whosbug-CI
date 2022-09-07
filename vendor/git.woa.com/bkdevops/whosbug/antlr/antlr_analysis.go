@@ -1,6 +1,11 @@
 package antlr
 
 import (
+	"fmt"
+	"runtime/debug"
+	"strings"
+
+	c "git.woa.com/bkdevops/whosbug/antlr/cLib"
 	cpp "git.woa.com/bkdevops/whosbug/antlr/cppLib"
 	golang "git.woa.com/bkdevops/whosbug/antlr/goLib"
 	java "git.woa.com/bkdevops/whosbug/antlr/javaLib"
@@ -9,6 +14,7 @@ import (
 	"git.woa.com/bkdevops/whosbug/config"
 	"git.woa.com/bkdevops/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug/util"
+	"git.woa.com/bkdevops/whosbug/zaplog"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -62,6 +68,14 @@ func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
 	}
 }
 
+// 防止语法分析识别出错时，程序终止
+func myRecover() {
+	if err := recover(); err != nil {
+		errMsg := fmt.Sprintf("======== Panic ========\nPanic: %v\nTraceBack:\n%s\n======== Panic ========", err, string(debug.Stack()))
+		zaplog.Logger.DPanic(errMsg)
+	}
+}
+
 // antlrAnalysis
 //	@Description: antlr分析过程
 //	@param targetFilePath 分析的目标文件
@@ -70,7 +84,10 @@ func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
 //	@author KevinMatt 2021-07-29 19:49:37
 //	@function_mark  PASS
 func antlrAnalysis(diffText string, langMode string) (result astResType) {
+	defer myRecover()
 	switch langMode {
+	case "c":
+		result = ExecuteC(diffText)
 	case "java":
 		result = ExecuteJava(diffText)
 	case "python":
@@ -90,6 +107,38 @@ func antlrAnalysis(diffText string, langMode string) (result astResType) {
 		break
 	}
 	return
+}
+
+// 进行 C 语言语法解析，获取函数相关信息
+func ExecuteC(text string) astResType {
+	//	截取目标文本的输入流
+	input := antlr.NewInputStream(text)
+	//	初始化 lexer
+	lexer := cLexerPool.Get().(*c.CLexer)
+	defer cLexerPool.Put(lexer)
+	lexer.SetInputStream(input)
+	lexer.RemoveErrorListeners()
+	//	初始化 Token 流
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//	初始化 Parser
+	p := cParserPool.Get().(*c.CParser)
+	defer cParserPool.Put(p)
+	p.SetTokenStream(stream)
+	//	构建语法解析树
+	p.BuildParseTrees = true
+	//	启用 SLL 两阶段加速解析模式
+	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+	p.RemoveErrorListeners()
+	//	解析模式 -> 每个编译单位
+	tree := p.TranslationUnit()
+	//	创建 listener
+	listener := newCTreeShapeListenerPool.Get().(*CTreeShapeListener)
+	defer newCTreeShapeListenerPool.Put(listener)
+	//	初始化置空
+	listener.AstInfoList = astResType{}
+	//	执行分析
+	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+	return listener.AstInfoList
 }
 
 func ExecuteGolang(diffText string) astResType {
@@ -271,12 +320,16 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 	if changeMethod.MethodName == "" {
 		return
 	}
+	oldMethodName := findFather(changeMethod.MethodName)
+	if oldMethodName != "" {
+		addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
+	}
 
 	//	TODO Ready for newMethod
 	newObject = config.ObjectInfoType{
 		CommitHash:       commitDiff.CommitHash, //crypto.Base64Encrypt(commitDiff.CommitHash)
 		ID:               crypto.Base64Encrypt(changeMethod.MethodName),
-		OldID:            "",
+		OldID:            crypto.Base64Encrypt(oldMethodName),
 		FilePath:         crypto.Base64Encrypt(commitDiff.DiffFileName),
 		Parameters:       crypto.Base64Encrypt(changeMethod.Parameters),
 		OldLineCount:     0,
@@ -285,6 +338,56 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 		EndLine:          changeMethod.EndLine,
 	}
 	return
+}
+
+// findFather
+//	@Description: 寻找定义链的上端
+//	@param methodName 定义链末尾的名字
+//	@return oldMethodName 定义链上端的名字
+//	@author Psy 2022-08-17 20:23:21
+func findFather(methodName string) (oldMethodName string) {
+	oldMethodName = ""
+	oldMethodNameIdx := strings.LastIndex(methodName, ".")
+	if oldMethodNameIdx != -1 {
+		oldMethodName = methodName[:oldMethodNameIdx]
+	}
+	return
+}
+
+// adddClass
+//	@Description: 寻找类的起始行
+//	@param oldMethodName 类的定义链
+//	@param antlrAnalyzeRes antlr分析结果
+//	@return changeMethodInfo 类信息
+//	@author Psy 2022-08-17 15:33:33
+func addClass(commitDiff config.DiffParsedType, preMethodName string, antlrAnalyzeRes astResType) {
+	idx := strings.LastIndex(preMethodName, ".")
+	if idx == -1 {
+		return
+	}
+	newObj := config.ObjectInfoType{}
+	methodName := preMethodName[:idx]
+
+	resIndex := -1
+	for index := range antlrAnalyzeRes.Classes {
+		if antlrAnalyzeRes.Classes[index].ClassName == methodName {
+			resIndex = index
+			break
+		}
+	}
+	if resIndex > -1 {
+		oldMethodName := findFather(methodName)
+		newObj.CommitHash = commitDiff.CommitHash
+		newObj.ID = crypto.Base64Encrypt(methodName)
+		newObj.OldID = crypto.Base64Encrypt(oldMethodName)
+		newObj.FilePath = crypto.Base64Encrypt(commitDiff.DiffFileName)
+		newObj.StartLine = antlrAnalyzeRes.Classes[resIndex].StartLine
+		newObj.EndLine = antlrAnalyzeRes.Classes[resIndex].EndLine
+		config.ObjectChan <- newObj
+		if oldMethodName != "" {
+			addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
+		}
+	}
 }
 
 // findChangedMethod

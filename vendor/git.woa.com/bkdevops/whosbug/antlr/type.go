@@ -1,5 +1,9 @@
 package antlr
 
+type CTreeShapeListener struct {
+	AstInfoList astResType
+}
+
 type JavaTreeShapeListener struct {
 	AstInfoList astResType
 }

@@ -83,11 +83,13 @@ var ObjectChan chan ObjectInfoType
 
 // SupportLanguagesMap 支持的语言源码文件后缀到语言名的映射
 var SupportLanguagesMap = map[string]string{
+	// C源码后缀
+	".C": "c",
+	".c": "c",
 	// C++源码后缀
 	".cpp": "cpp",
 	".cc":  "cpp",
 	".cxx": "cpp",
-	".C":   "cpp",
 	".hh":  "cpp",
 	// Golang源码后缀
 	".go": "golang",
