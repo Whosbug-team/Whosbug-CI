@@ -59,7 +59,7 @@ func Analysis(whosbugConfig *config.Config) {
 	zaplog.Logger.Info("got git log info", zaplog.String("diffPath", diffPath), zaplog.String("commitPath", commitPath))
 	commit.ProcessBar = progressbar.Default(util.GetLineCount(config.WorkPath+"/"+"commitInfo.out"), "Progress")
 	// 指示Web-service创建新的release
-	err := upload.PostReleaseInfo("/v1/project_release_create")
+	err := upload.PostReleaseInfo("/v1/create-project-release")
 	if err != nil {
 		zaplog.Logger.Error(err.Error())
 		if errors.Is(err, config.AlreadyExistsError) {
@@ -92,11 +92,11 @@ func Analysis(whosbugConfig *config.Config) {
 	runtime.GC()
 
 	// 通知Web-service上传结束
-	err = upload.PostReleaseInfo("/v1/commits/nodes_create")
+	err = upload.PostReleaseInfo("/v1/commits/upload-done")
 	if err != nil {
 		zaplog.Logger.Error(util.ErrorStack(err))
 	}
-	err = upload.PostReleaseInfo("/v1/commits/uncalculate_delete")
+	err = upload.PostReleaseInfo("/v1/commits/delete_uncalculate")
 	if err != nil {
 		zaplog.Logger.Error(util.ErrorStack(err))
 	}

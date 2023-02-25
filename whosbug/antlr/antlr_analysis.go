@@ -5,7 +5,6 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"git.woa.com/bkdevops/Whosbug-CI/vendor/git.woa.com/bkdevops/whosbug/zaplog"
 	c "git.woa.com/bkdevops/whosbug/antlr/cLib"
 	cpp "git.woa.com/bkdevops/whosbug/antlr/cppLib"
 	golang "git.woa.com/bkdevops/whosbug/antlr/goLib"
@@ -15,11 +14,13 @@ import (
 	"git.woa.com/bkdevops/whosbug/config"
 	"git.woa.com/bkdevops/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug/util"
+	"git.woa.com/bkdevops/whosbug/zaplog"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
 // AnalyzeCommitDiff
+//
 //	@Description: 使用antlr分析commitDiff信息
 //	@param commitDiff diff信息(path)
 //	@author KevinMatt 2021-08-03 21:41:08
@@ -77,6 +78,7 @@ func myRecover() {
 }
 
 // antlrAnalysis
+//
 //	@Description: antlr分析过程
 //	@param targetFilePath 分析的目标文件
 //	@param langMode 分析的语言模式
@@ -270,6 +272,7 @@ func ExecuteJava(diffText string) astResType {
 }
 
 // ExecuteKotlin
+//
 //	@Description: 执行java分析
 //	@param targetFilePath 分析目标路径
 //	@return javaparser.AnalysisInfoType 返回分析结果结构体
@@ -307,6 +310,7 @@ func ExecuteKotlin(diffText string) astResType {
 }
 
 // addObjectFromChangeLineNumber
+//
 //	@Description: 传入的参数较多，大致功能是构建object的map
 //	@param commitDiff
 //	@param changeLineNumber 行号变动
@@ -341,6 +345,7 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 }
 
 // findFather
+//
 //	@Description: 寻找定义链的上端
 //	@param methodName 定义链末尾的名字
 //	@return oldMethodName 定义链上端的名字
@@ -355,6 +360,7 @@ func findFather(methodName string) (oldMethodName string) {
 }
 
 // adddClass
+//
 //	@Description: 寻找类的起始行
 //	@param oldMethodName 类的定义链
 //	@param antlrAnalyzeRes antlr分析结果
@@ -391,6 +397,7 @@ func addClass(commitDiff config.DiffParsedType, preMethodName string, antlrAnaly
 }
 
 // findChangedMethod
+//
 //	@Description: 寻找变动了的方法
 //	@param changeLineNumber 变动行
 //	@param antlrAnalyzeRes antlr分析结果
@@ -416,6 +423,7 @@ func findChangedMethod(changeLineNumber config.ChangeLineType, antlrAnalyzeRes a
 }
 
 // FindIntervalIndex
+//
 //	@Description: 寻找可插入位置
 //	@param nums 传入的行号切片
 //	@param target 要插入的目标行号

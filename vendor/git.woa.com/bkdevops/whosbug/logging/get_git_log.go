@@ -26,6 +26,7 @@ var (
 )
 
 // GetGitLogInfo 获取所有的git commit记录和所有的commit+diff，并返回存储的文件目录
+//
 //	@return string 所有diff信息的目录
 //	@return string 所有commit信息的目录
 //	@author KevinMatt 2021-07-29 17:25:39
@@ -55,7 +56,7 @@ func GetGitLogInfo() (string, string) {
 		os.Exit(0)
 	} else {
 		// 切换到仓库目录
-		if !TestFlag {
+		if !DevFlag {
 			err := os.Chdir(config.WhosbugConfig.ProjectURL)
 			if err != nil {
 				log.Println(err)
@@ -89,6 +90,7 @@ func GetGitLogInfo() (string, string) {
 }
 
 // ExecCommandOutput 执行命令并获取输出
+//
 //	@param command 命令
 //	@param args 命令参数
 //	@return string 命令输出
@@ -115,6 +117,7 @@ func ExecCommandOutput(command string, args ...string) string {
 }
 
 // ExecRedirectToFile 执行命令并将输出流重定向到目标文件中
+//
 //	@param fileName 目标文件目录
 //	@param command 执行的指令头
 //	@param args 执行指令的参数
@@ -142,12 +145,13 @@ func ExecRedirectToFile(fileName string, command string, args ...string) error {
 }
 
 // GetLatestRelease 获取最新的release
-//  @param projectID string
-//  @return string Release信息
-//  @return error
-//  @author: Kevineluo 2022-07-31 01:03:27
+//
+//	@param projectID string
+//	@return string Release信息
+//	@return error
+//	@author: Kevineluo 2022-07-31 01:03:27
 func GetLatestRelease(projectID string) (string, error) {
-	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/v1/last_releases")
+	urlReq := util.ConCatStrings(config.WhosbugConfig.WebServerHost, "/v1/releases/last")
 	method := "POST"
 
 	pid := crypto.Base64Encrypt(projectID)
