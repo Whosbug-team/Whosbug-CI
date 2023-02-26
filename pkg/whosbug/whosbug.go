@@ -7,12 +7,12 @@ import (
 	"runtime"
 	"time"
 
+	"git.woa.com/bkdevops/whosbug-ci/internal/util"
+	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/commit"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/logging"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/upload"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/zaplog"
 	"github.com/schollz/progressbar/v3"
 )
 
@@ -76,6 +76,7 @@ func Analysis(whosbugConfig *config.Config) {
 	commit.MatchCommit(diffPath, commitPath)
 
 	// 等待关闭pool和channel
+	// TODO: 优化为协程传输信号
 	for {
 		time.Sleep(time.Second / 10)
 		if commit.AntlrAnalysisPool.Running() == 0 {
@@ -95,11 +96,11 @@ func Analysis(whosbugConfig *config.Config) {
 	// 通知Web-service上传结束
 	err = upload.PostReleaseInfo("/v1/commits/upload-done")
 	if err != nil {
-		zaplog.Logger.Error(util.ErrorStack(err))
+		return
 	}
 	err = upload.PostReleaseInfo("/v1/commits/delete_uncalculate")
 	if err != nil {
-		zaplog.Logger.Error(util.ErrorStack(err))
+		return
 	}
 	zaplog.Logger.Info("Analysis all done", zaplog.String("cost", time.Since(t).String()))
 

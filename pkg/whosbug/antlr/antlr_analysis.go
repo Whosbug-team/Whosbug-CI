@@ -5,6 +5,8 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"git.woa.com/bkdevops/whosbug-ci/internal/util"
+	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
 	c "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/cLib"
 	cpp "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/cppLib"
 	golang "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/goLib"
@@ -13,18 +15,15 @@ import (
 	kt "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/kotlinLib"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/zaplog"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
-// AnalyzeCommitDiff
+// AnalyzeCommitDiff //	@Description: 使用antlr分析commitDiff信息
 //
-//	@Description: 使用antlr分析commitDiff信息
-//	@param commitDiff diff信息(path)
-//	@author KevinMatt 2021-08-03 21:41:08
-//	@function_mark PASS
+//	@param commitDiff config.DiffParsedType
+//	@author kevineluo
+//	@update 2023-02-25 04:23:05
 func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
 	//	获取antlr分析结果
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, commitDiff.TargetLanguage)

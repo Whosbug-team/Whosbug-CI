@@ -7,11 +7,11 @@ import (
 	"os"
 	"time"
 
+	"git.woa.com/bkdevops/whosbug-ci/internal/util"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/git"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/logging"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
@@ -108,9 +108,6 @@ func PostObjects(objects []config.ObjectInfoType) error {
 	method := "POST"
 
 	err = crypto.ReqWithToken(token, urlReq, method, data)
-	if err != nil {
-		log.Println(util.ErrorMessage(err))
-	}
 	return err
 }
 
@@ -124,7 +121,7 @@ func PostCommitsInfo(commitPath string) error {
 	InitTheProjectStruct()
 	commitFd, err := os.Open(commitPath)
 	if err != nil {
-		return errors.Wrap(err, "Open commitPath to Post FIN fails:")
+		return errors.Wrap(err, "open commitPath to Post FIN fails")
 	}
 	lineReaderCommit := bufio.NewReader(commitFd)
 	var FinMessage = postCommits{
@@ -144,9 +141,6 @@ func PostCommitsInfo(commitPath string) error {
 	token, _ := crypto.GenToken()
 	url := config.WhosbugConfig.WebServerHost + "/v1/commits/commits-info"
 	err = crypto.ReqWithToken(token, url, "POST", data)
-	if err != nil {
-		log.Println(util.ErrorMessage(err))
-	}
 	return err
 }
 

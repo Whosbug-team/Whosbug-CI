@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/zaplog"
+	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
 )
 
 type FileList []os.FileInfo

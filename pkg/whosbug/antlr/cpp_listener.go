@@ -3,8 +3,8 @@ package antlr
 import (
 	"strings"
 
+	"git.woa.com/bkdevops/whosbug-ci/internal/util"
 	cpp "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/cppLib"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 

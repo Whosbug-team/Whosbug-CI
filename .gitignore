@@ -20,8 +20,6 @@ src/test.go
 /src/anrlr4_ast/
 
 bin/*
-pkg/*
-
 .vscode/*
 .idea/*
 log.txt

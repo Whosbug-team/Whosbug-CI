@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 )
 
 // 月份转换Map
@@ -46,16 +44,6 @@ func ConCatStrings(stringList ...string) string {
 		builder.WriteString(stringList[index])
 	}
 	return builder.String()
-}
-
-// CleanPath 信息脱敏
-//
-//	@param s 传入信息
-//	@return string 返回脱敏字符串
-//	@author KevinMatt 2021-08-08 16:03:40
-//	@function_mark PASS
-func CleanPath(s string) string {
-	return strings.ReplaceAll(s, strings.ReplaceAll(config.WorkPath, "\\", "/")+"/", "")
 }
 
 // QuatToNum

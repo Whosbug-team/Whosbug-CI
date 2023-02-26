@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/env"
+	"git.woa.com/bkdevops/whosbug-ci/internal/env"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"

@@ -10,11 +10,11 @@ import (
 	"os/exec"
 	"strings"
 
+	"git.woa.com/bkdevops/whosbug-ci/internal/env"
+	"git.woa.com/bkdevops/whosbug-ci/internal/util"
+	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto"
-	. "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/env"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/zaplog"
 	"github.com/go-git/go-git/v5"
 
 	jsoniter "github.com/json-iterator/go"
@@ -43,10 +43,10 @@ func GetGitLogInfo() (string, string) {
 	config.LocalHashLatest = rHeadStr[:rHeadIdx]
 	cloudHashLatest, err := GetLatestRelease(config.WhosbugConfig.ProjectID)
 	if err != nil {
-		if util.ErrorMessage(errors.WithStack(err)) == "404" {
+		if err.Error() == "404" {
 			zaplog.Logger.Warn("The Project Not Found. Get all commit to Initialize")
 		} else {
-			zaplog.Logger.Error(util.ErrorMessage(errors.WithStack(err)))
+			zaplog.Logger.Error("")
 		}
 	}
 	zaplog.Logger.Info("Head Got!")
@@ -56,7 +56,7 @@ func GetGitLogInfo() (string, string) {
 		os.Exit(0)
 	} else {
 		// 切换到仓库目录
-		if !DevFlag {
+		if !env.DevFlag {
 			err := os.Chdir(config.WhosbugConfig.ProjectURL)
 			if err != nil {
 				log.Println(err)
@@ -65,24 +65,25 @@ func GetGitLogInfo() (string, string) {
 			zaplog.Logger.Info("cd to work path", zaplog.String("workPath", config.WorkPath))
 		}
 
+		// TODO: 这里也可以使用go-git的
 		if cloudHashLatest == "" {
 			zaplog.Logger.Info("Start Getting log")
 			err := ExecRedirectToFile("", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", "-n 10000", fmt.Sprint("--output=", config.WorkPath, "/commitInfo.out"))
 			if err != nil {
-				zaplog.Logger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error("[GetGitLogInfo] error when get git log", zaplog.Error(err))
 			}
 			err = ExecRedirectToFile("", "git", "log", "--full-diff", "-p", "-U10000", "--pretty=raw", "-n 10000", fmt.Sprint("--output=", config.WorkPath, "/allDiffs.out"))
 			if err != nil {
-				zaplog.Logger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error("[GetGitLogInfo] error when get git log", zaplog.Error(err))
 			}
 		} else {
 			err := ExecRedirectToFile("", "git", "log", "--pretty=format:%H,%ce,%cn,%cd", "-n 10000", fmt.Sprintf("%s...%s", config.LocalHashLatest, cloudHashLatest), fmt.Sprint("--output=", config.WorkPath, "/commitInfo.out"))
 			if err != nil {
-				zaplog.Logger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error("[GetGitLogInfo] error when get git log", zaplog.Error(err))
 			}
 			err = ExecRedirectToFile("", "git", "log", "--full-diff", "-p", "-U10000", "-n 10000", "--pretty=raw", fmt.Sprintf("%s...%s", config.LocalHashLatest, cloudHashLatest), fmt.Sprint("--output=", config.WorkPath, "/allDiffs.out"))
 			if err != nil {
-				zaplog.Logger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error("[GetGitLogInfo] error when get git log", zaplog.Error(err))
 			}
 		}
 	}

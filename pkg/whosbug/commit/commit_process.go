@@ -9,10 +9,9 @@ import (
 	"runtime"
 	"strings"
 
+	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/git"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/upload"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/zaplog"
 
 	"github.com/pkg/errors"
 )
@@ -26,7 +25,7 @@ import (
 func MatchCommit(diffPath, commitPath string) {
 	err := upload.PostCommitsInfo(commitPath)
 	if err != nil {
-		log.Println(util.ErrorStack(err))
+		zaplog.Logger.Error("[MatchCommit] error when post commits info", zaplog.Error(err))
 	}
 
 	commitFd, err := os.Open(commitPath)
@@ -60,7 +59,7 @@ func MatchCommit(diffPath, commitPath string) {
 			// 获取一次完整的commit，使用循环交错读取的方法避免跳过commit
 			fullCommit, err := getFullCommit(patCommit, lineReaderDiff)
 			if err != nil {
-				zaplog.Logger.Error(util.ErrorStack(err))
+				zaplog.Logger.Error("[MatchCommit] error when parse full commit", zaplog.Error(err))
 			}
 
 			// 获取单次commit中的每一次diff，并处理diff，送进协程

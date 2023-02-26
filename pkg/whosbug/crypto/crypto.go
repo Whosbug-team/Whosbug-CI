@@ -16,9 +16,9 @@ import (
 	"os"
 	"strings"
 
+	"git.woa.com/bkdevops/whosbug-ci/internal/util"
+	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/zaplog"
 	"github.com/pkg/errors"
 )
 
@@ -119,7 +119,7 @@ func GenToken() (string, error) {
 
 	res, err := http.PostForm(urls, url.Values{"username": []string{config.WhosbugConfig.WebServerUserName}, "password": []string{config.WhosbugConfig.WebServerKey}})
 	if err != nil {
-		fmt.Printf("%s", util.ErrorMessage(errors.Wrapf(err, "Generate Key Failure. Check the username&password or the status of the server")))
+		zaplog.Logger.Error("Generate Key Failure. Check the username&password or the status of the server", zaplog.Error(err))
 		os.Exit(1)
 	}
 

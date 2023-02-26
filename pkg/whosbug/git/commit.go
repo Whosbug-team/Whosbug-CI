@@ -3,9 +3,9 @@ package git
 import (
 	"strings"
 
+	"git.woa.com/bkdevops/whosbug-ci/internal/util"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util"
 )
 
 // GetCommitInfo 获取commit信息

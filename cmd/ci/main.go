@@ -5,13 +5,12 @@ import (
 	"io/ioutil"
 	"os"
 	"runtime"
-
 	"runtime/pprof"
 
-	"git.woa.com/bkdevops/whosbug"
-	"git.woa.com/bkdevops/whosbug/config"
-	"git.woa.com/bkdevops/whosbug/env"
-	"git.woa.com/bkdevops/whosbug/zaplog"
+	"git.woa.com/bkdevops/whosbug-ci/internal/env"
+	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
+	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug"
+	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 )
 
 func main() {
@@ -26,17 +25,17 @@ func main() {
 
 	if env.DevFlag {
 		zaplog.Logger.Info("is test env")
-		cpufile, _ := os.Create("./cpufile.prof")
-		heapfile, _ := os.Create("./heapfile.prof")
+		cpuFile, _ := os.Create("./cpu.prof")
+		heapFile, _ := os.Create("./heap.prof")
+
+		defer cpuFile.Close()
+		defer heapFile.Close()
+		defer pprof.StopCPUProfile()
 
 		go func() {
-			pprof.StartCPUProfile(cpufile)
-			pprof.WriteHeapProfile(heapfile)
+			pprof.StartCPUProfile(cpuFile)
+			pprof.WriteHeapProfile(heapFile)
 		}()
-
-		defer cpufile.Close()
-		defer heapfile.Close()
-		defer pprof.StopCPUProfile()
 	}
 
 	// 插件输入参数
@@ -56,10 +55,11 @@ func initConfig() (whosbugConfig *config.Config) {
 		err            error
 		inputJSONBytes []byte
 	)
-	zaplog.Logger.Info("Init whosbug...")
+	whosbugConfig = new(config.Config)
+	zaplog.Logger.Info("[initConfig] init whosbug config")
 
 	if env.DevFlag {
-		zaplog.Logger.Info("is dev env")
+		zaplog.Logger.Info("[initConfig] we are in dev mode")
 		inputJSONBytes, err = ioutil.ReadFile("./input.json")
 		if err != nil {
 			zaplog.Logger.Fatal(err.Error())
@@ -67,23 +67,10 @@ func initConfig() (whosbugConfig *config.Config) {
 
 		err = json.Unmarshal(inputJSONBytes, &whosbugConfig)
 		if err != nil {
-			zaplog.Logger.Emergency(err.Error())
-			os.Exit(-1)
+			zaplog.Logger.Fatal(err.Error())
 		} else {
-			zaplog.Logger.Info("Get input-config succeed!")
+			zaplog.Logger.Info("[initConfig] get config from input.json succeed!")
 		}
-	} else {
-		zaplog.Logger.Info("no dev env")
-		whosbugConfig = new(config.Config)
-
-		whosbugConfig.WebServerHost = "http://119.29.46.189:8083"
-		whosbugConfig.WebServerKey = "whosbug2022"
-		whosbugConfig.WebServerUserName = "admin"
-		whosbugConfig.CryptoKey = ""
-		whosbugConfig.BranchName = os.Getenv("BRANCH_NAME")
-		whosbugConfig.ProjectID = os.Getenv("GIT_HTTP_URL")
-		whosbugConfig.ProjectURL = "/root/workspace/"
-		whosbugConfig.ReleaseVersion = os.Getenv("GIT_COMMIT")
 	}
 	return
 }
