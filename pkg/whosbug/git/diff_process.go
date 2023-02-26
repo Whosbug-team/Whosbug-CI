@@ -1,15 +1,13 @@
-package commit
+package git
 
 import (
-	"log"
 	"path"
 	"runtime"
 	"strings"
 
+	"git.woa.com/bkdevops/whosbug-ci/internal/util"
+	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util"
-
-	"github.com/pkg/errors"
 )
 
 // ParseDiff
@@ -82,12 +80,10 @@ func ParseDiff(data string, commitInfo config.CommitInfoType) {
 			}
 			diffParsed.ChangeLineNumbers = append(diffParsed.ChangeLineNumbers, changeLineNumbers...)
 			// 上传任务到Antlr解析协程池
-			//go func() {
 			err := AntlrAnalysisPool.Invoke(diffParsed)
 			if err != nil {
-				log.Println(util.ErrorStack(errors.WithStack(err)))
+				zaplog.Logger.Error("[ParseDiff] invoke antlr parse task error", zaplog.Error(err))
 			}
-			//}()
 		}
 	}
 }

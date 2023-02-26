@@ -1,22 +1,5 @@
-# git.woa.com/bkdevops/whosbug-ci/pkg/whosbug v0.0.0 => ./whosbug
-## explicit; go 1.18
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/cLib
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/cppLib
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/goLib
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/javaLib
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/jsLib
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/kotlinLib
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/commit
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/env
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/git
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/logging
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/upload
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/util
-git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/zaplog
+# github.com/BurntSushi/toml v1.2.1
+## explicit; go 1.16
 # github.com/Microsoft/go-winio v0.5.2
 ## explicit; go 1.13
 github.com/Microsoft/go-winio
@@ -232,4 +215,3 @@ gopkg.in/natefinch/lumberjack.v2
 # gopkg.in/warnings.v0 v0.1.2
 ## explicit
 gopkg.in/warnings.v0
-# git.woa.com/bkdevops/whosbug-ci/pkg/whosbug => ./whosbug
