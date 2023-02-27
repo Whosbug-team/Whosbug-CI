@@ -9,16 +9,9 @@ import (
 
 	"git.woa.com/bkdevops/whosbug-ci/internal/util"
 	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
-	c "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/cLib"
-	cpp "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/cppLib"
-	golang "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/goLib"
-	java "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/javaLib"
-	js "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/jsLib"
-	kt "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/kotlinLib"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/logging"
 
-	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/panjf2000/ants"
 )
 
@@ -104,228 +97,36 @@ func myRecover() {
 //	@return AstResType 返回分析信息结构体
 //	@author KevinMatt 2021-07-29 19:49:37
 //	@function_mark  PASS
-func antlrAnalysis(diffText string, langMode string) (result AstResType) {
+func antlrAnalysis(diffText string, langMode string) (result AstInfo) {
 	defer myRecover()
 	switch langMode {
 	case "c":
-		result = ExecuteC(diffText)
+		// TODO: C Unsupported
+		// result = ExecuteC(diffText)
 	case "java":
-		result = ExecuteJava(diffText)
+		// result = ExecuteJava(diffText)
 	case "python":
-		//	TODO: Python Unsupported
+		// TODO: Python Unsupported
 		// result = ExecutePython(diffText)
 	case "kotlin":
-		result = ExecuteKotlin(diffText)
+		// result = ExecuteKotlin(diffText)
 	case "golang":
-		result = ExecuteGolang(diffText)
+		// result = ExecuteGolang(diffText)
 	case "javascript":
-		// ! 暂时下线js解析
+		// TODO: Js Unsupported
 		// result = ExecuteJavaScript(diffText)
 	case "cpp":
-		// TODO Really Slow
-		result = ExecuteCpp(diffText)
+		// TODO: too Slow
+		// result = ExecuteCpp(diffText)
 	default:
 		break
 	}
 	return
 }
 
-// 进行 C 语言语法解析，获取函数相关信息
-func ExecuteC(text string) AstResType {
-	//	截取目标文本的输入流
-	input := antlr.NewInputStream(text)
-	//	初始化 lexer
-	lexer := cLexerPool.Get().(*c.CLexer)
-	defer cLexerPool.Put(lexer)
-	lexer.SetInputStream(input)
-	lexer.RemoveErrorListeners()
-	//	初始化 Token 流
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//	初始化 Parser
-	p := cParserPool.Get().(*c.CParser)
-	defer cParserPool.Put(p)
-	p.SetTokenStream(stream)
-	//	构建语法解析树
-	p.BuildParseTrees = true
-	//	启用 SLL 两阶段加速解析模式
-	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
-	p.RemoveErrorListeners()
-	//	解析模式 -> 每个编译单位
-	tree := p.TranslationUnit()
-	//	创建 listener
-	listener := newCTreeShapeListenerPool.Get().(*CTreeShapeListener)
-	defer newCTreeShapeListenerPool.Put(listener)
-	//	初始化置空
-	listener.AstInfoList = AstResType{}
-	//	执行分析
-	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.AstInfoList
-}
-
-func ExecuteGolang(diffText string) AstResType {
-	//	截取目标文本的输入流
-	input := antlr.NewInputStream(diffText)
-	//	初始化lexer
-	lexer := goLexerPool.Get().(*golang.GoLexer)
-	defer goLexerPool.Put(lexer)
-	lexer.SetInputStream(input)
-	lexer.RemoveErrorListeners()
-	//	初始化Token流
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//	初始化Parser
-	p := goParserPool.Get().(*golang.GoParser)
-	defer goParserPool.Put(p)
-	p.SetTokenStream(stream)
-	//	构建语法解析树
-	p.BuildParseTrees = true
-	//	启用SLL两阶段加速解析模式
-	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
-	p.RemoveErrorListeners()
-	//	解析模式->每个编译单位
-	tree := p.SourceFile()
-	//	创建listener
-	listener := newGoTreeShapeListenerPool.Get().(*GoTreeShapeListener)
-	defer newGoTreeShapeListenerPool.Put(listener)
-	// 初始化置空
-	listener.AstInfoList = AstResType{}
-	//	执行分析
-	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.AstInfoList
-}
-
-func ExecuteCpp(diffText string) AstResType {
-	//	截取目标文本的输入流
-	input := antlr.NewInputStream(diffText)
-	//	初始化lexer
-	lexer := cppLexerPool.Get().(*cpp.CPP14Lexer)
-	defer cppLexerPool.Put(lexer)
-	lexer.SetInputStream(input)
-	lexer.RemoveErrorListeners()
-	//	初始化Token流
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//	初始化Parser
-	p := cppParserPool.Get().(*cpp.CPP14Parser)
-	p.RemoveErrorListeners()
-	defer cppParserPool.Put(p)
-	p.SetTokenStream(stream)
-	//	构建语法解析树
-	p.BuildParseTrees = true
-	// //	启用SLL两阶段加速解析模式
-	// p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
-	//	解析模式->每个编译单位
-	tree := p.TranslationUnit()
-
-	//	创建listener
-	listener := newCppTreeShapeListenerPool.Get().(*CppTreeShapeListener)
-	defer newCppTreeShapeListenerPool.Put(listener)
-	// 初始化置空
-	listener.AstInfoList = AstResType{}
-	//	执行分析
-	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.AstInfoList
-}
-
-func ExecuteJavaScript(diffText string) AstResType {
-	//	截取目标文本的输入流
-	input := antlr.NewInputStream(diffText)
-	//	初始化lexer
-	lexer := javascriptLexerPool.Get().(*js.JavaScriptLexer)
-	defer javaLexerPool.Put(lexer)
-	lexer.SetInputStream(input)
-	lexer.RemoveErrorListeners()
-	//	初始化Token流
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//	初始化Parser
-	p := javascriptParserPool.Get().(*js.JavaScriptParser)
-	p.RemoveErrorListeners()
-	defer javascriptParserPool.Put(p)
-	p.SetTokenStream(stream)
-	//	构建语法解析树
-	p.BuildParseTrees = true
-	//	启用SLL两阶段加速解析模式
-	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
-	//	解析模式->每个编译单位
-	tree := p.Program()
-	//	创建listener
-	listener := newJavaScriptTreeShapeListenerPool.Get().(*JSTreeShapeListener)
-	defer newJavaScriptTreeShapeListenerPool.Put(listener)
-	//	执行分析
-	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.AstInfoList
-}
-
-func ExecutePython(diffText string) AnalysisInfoType {
+func ExecutePython(diffText string) AstInfo {
 	util.ForDebug(diffText)
-	return AnalysisInfoType{}
-}
-
-func ExecuteJava(diffText string) AstResType {
-	//	截取目标文本的输入流
-	input := antlr.NewInputStream(diffText)
-	//	初始化lexer
-	lexer := javaLexerPool.Get().(*java.JavaLexer)
-	defer javaLexerPool.Put(lexer)
-	lexer.SetInputStream(input)
-	lexer.RemoveErrorListeners()
-	//	初始化Token流
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//	初始化Parser
-	p := javaParserPool.Get().(*java.JavaParser)
-	p.RemoveErrorListeners()
-	defer javaParserPool.Put(p)
-	p.SetTokenStream(stream)
-	//	构建语法解析树
-	p.BuildParseTrees = true
-	//	启用SLL两阶段加速解析模式
-	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
-	//	解析模式->每个编译单位
-	tree := p.CompilationUnit()
-	//	创建listener
-	listener := newJavaTreeShapeListenerPool.Get().(*JavaTreeShapeListener)
-	defer newJavaTreeShapeListenerPool.Put(listener)
-	// 初始化置空
-	listener.AstInfoList = *new(AstResType)
-	//	执行分析
-	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.AstInfoList
-}
-
-// ExecuteKotlin
-//
-//	@Description: 执行java分析
-//	@param targetFilePath 分析目标路径
-//	@return javaparser.AnalysisInfoType 返回分析结果结构体
-//	@author KevinMatt 2021-07-29 19:51:16
-//	@function_mark PASS
-func ExecuteKotlin(diffText string) AstResType {
-	//	截取目标文本的输入流
-	input := antlr.NewInputStream(diffText)
-	//	初始化lexer
-	lexer := kotlinLexerPool.Get().(*kt.KotlinLexer)
-	defer kotlinLexerPool.Put(lexer)
-	lexer.SetInputStream(input)
-	lexer.RemoveErrorListeners()
-	//	初始化Token流
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//	初始化Parser
-	p := kotlinParserPool.Get().(*kt.KotlinParser)
-	p.RemoveErrorListeners()
-	defer kotlinParserPool.Put(p)
-	p.SetTokenStream(stream)
-	//	构建语法解析树
-	p.BuildParseTrees = true
-	//	启用SLL两阶段加速解析模式
-	p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
-	//	解析模式->每个编译单位
-	tree := p.KotlinFile()
-	//	创建listener
-	listener := newKotlinTreeShapeListenerPool.Get().(*KotlinTreeShapeListener)
-	defer newKotlinTreeShapeListenerPool.Put(listener)
-	// 初始化置空
-	listener.AstInfoList = AstResType{}
-	//	执行分析
-	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.AstInfoList
+	return AstInfo{}
 }
 
 // addObjectFromChangeLineNumber
@@ -337,13 +138,13 @@ func ExecuteKotlin(diffText string) AstResType {
 //	@return objectInfoType
 //	@author KevinMatt 2021-08-03 19:26:12
 //	@function_mark PASS
-func addObjectFromChangeLineNumber(commitDiff DiffParsedType, changeLineNumber ChangeLineType, antlrAnalyzeRes AstResType) (newObject ObjectInfoType) {
+func addObjectFromChangeLineNumber(commitDiff DiffParsedType, changeLineNumber ChangeLineType, antlrAnalyzeRes AstInfo) (newObject ObjectInfoType) {
 	//	寻找变动方法
 	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
-	if changeMethod.MethodName == "" {
+	if changeMethod.Name == "" {
 		return
 	}
-	oldMethodName := findFather(changeMethod.MethodName)
+	oldMethodName := findFather(changeMethod.Name)
 	if oldMethodName != "" {
 		addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
 	}
@@ -351,7 +152,7 @@ func addObjectFromChangeLineNumber(commitDiff DiffParsedType, changeLineNumber C
 	//	TODO Ready for newMethod
 	newObject = ObjectInfoType{
 		CommitHash:       commitDiff.CommitHash, //crypto.Base64Encrypt(commitDiff.CommitHash)
-		ID:               crypto.Base64Encrypt(changeMethod.MethodName),
+		ID:               crypto.Base64Encrypt(changeMethod.Name),
 		OldID:            crypto.Base64Encrypt(oldMethodName),
 		FilePath:         crypto.Base64Encrypt(commitDiff.DiffFileName),
 		Parameters:       crypto.Base64Encrypt(changeMethod.Parameters),
@@ -385,7 +186,7 @@ func findFather(methodName string) (oldMethodName string) {
 //	@param antlrAnalyzeRes antlr分析结果
 //	@return changeMethodInfo 类信息
 //	@author Psy 2022-08-17 15:33:33
-func addClass(commitDiff DiffParsedType, preMethodName string, antlrAnalyzeRes AstResType) {
+func addClass(commitDiff DiffParsedType, preMethodName string, antlrAnalyzeRes AstInfo) {
 	idx := strings.LastIndex(preMethodName, ".")
 	if idx == -1 {
 		return
@@ -395,7 +196,7 @@ func addClass(commitDiff DiffParsedType, preMethodName string, antlrAnalyzeRes A
 
 	resIndex := -1
 	for index := range antlrAnalyzeRes.Classes {
-		if antlrAnalyzeRes.Classes[index].ClassName == methodName {
+		if antlrAnalyzeRes.Classes[index].Name == methodName {
 			resIndex = index
 			break
 		}
@@ -423,11 +224,11 @@ func addClass(commitDiff DiffParsedType, preMethodName string, antlrAnalyzeRes A
 //	@return changeMethodInfo 变动方法信息
 //	@author KevinMatt 2021-07-29 19:38:19
 //	@function_mark PASS
-func findChangedMethod(changeLineNumber ChangeLineType, antlrAnalyzeRes AstResType) (changeMethodInfo MethodInfoType) {
-	var lineRangeList []LineRangeType
+func findChangedMethod(changeLineNumber ChangeLineType, antlrAnalyzeRes AstInfo) (changeMethodInfo Method) {
+	var lineRangeList []LineRange
 	//	遍历匹配到的方法列表，存储其首行
 	for index := range antlrAnalyzeRes.Methods {
-		lineRangeList = append(lineRangeList, LineRangeType{
+		lineRangeList = append(lineRangeList, LineRange{
 			StartLine: antlrAnalyzeRes.Methods[index].StartLine,
 			EndLine:   antlrAnalyzeRes.Methods[index].EndLine,
 		})
@@ -449,7 +250,7 @@ func findChangedMethod(changeLineNumber ChangeLineType, antlrAnalyzeRes AstResTy
 //	@return int 返回插入位置，-1代表无法插入
 //	@author KevinMatt 2021-07-29 19:42:18
 //	@function_mark PASS
-func FindIntervalIndex(lineRangeList []LineRangeType, target float64) int {
+func FindIntervalIndex(lineRangeList []LineRange, target float64) int {
 	if len(lineRangeList) == 0 {
 		return -1
 	}

@@ -13,7 +13,8 @@ import (
 func TestExecuteJava(t *testing.T) {
 	input, _ := os.Open("/root/whosbugGolang/AllInOne7.java")
 	text, _ := ioutil.ReadAll(input)
-	rest := ExecuteJava(string(text))
+	parser := javaParserPool.Get().(*JavaAstParser)
+	rest := parser.AstParse(string(text))
 	util.ForDebug(rest)
 	// for _, item := range rest.AstInfoList.Classes {
 	// 	zaplog.Logger.Info("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
@@ -28,11 +29,12 @@ func TestExecuteCpp(t *testing.T) {
 	files, _ := filepath.Glob("/root/example/CppPrimer/*/*.h")
 	file2, _ := filepath.Glob("/root/example/CppPrimer/*/*.cpp")
 	files = append(files, file2...)
+	parser := cppParserPool.Get().(*CppAstParser)
 	for _, f := range files {
 		input, _ := os.Open(f)
 		text, _ := ioutil.ReadAll(input)
 		input.Close()
-		rest := ExecuteCpp(string(text))
+		rest := parser.AstParse(string(text))
 		util.ForDebug(rest)
 	}
 	util.ForDebug()
@@ -49,7 +51,8 @@ func TestExecuteCpp(t *testing.T) {
 func TestExecuteGolang(t *testing.T) {
 	input, _ := os.Open("/root/example/struct_promotion.go")
 	text, _ := ioutil.ReadAll(input)
-	rest := ExecuteGolang(string(text))
+	parser := goParserPool.Get().(*GoAstParser)
+	rest := parser.AstParse(string(text))
 	util.ForDebug(rest)
 	// for _, item := range rest.AstInfoList.Classes {
 	// 	zaplog.Logger.Info("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
@@ -64,7 +67,8 @@ func TestExecuteGolang(t *testing.T) {
 func TestExecuteKotlin(t *testing.T) {
 	input, _ := os.Open("/root/example/Test.kt")
 	text, _ := ioutil.ReadAll(input)
-	rest := ExecuteKotlin(string(text))
+	parser := kotlinParserPool.Get().(*KotlinAstParser)
+	rest := parser.AstParse(string(text))
 	util.ForDebug(rest)
 	// for _, item := range rest.AstInfoList.Classes {
 	// 	zaplog.Logger.Info("StartLine: %v\tEndLine: %v\tClassName: %v\tMasterObject: %v", item.StartLine, item.EndLine, item.ClassName, item.MasterObject)
@@ -82,7 +86,8 @@ func TestExecuteJavaScript(t *testing.T) {
 		input, _ := os.Open(f)
 		text, _ := ioutil.ReadAll(input)
 		input.Close()
-		rest := ExecuteJavaScript(string(text))
+		parser := javascriptParserPool.Get().(*JavaAstParser)
+		rest := parser.AstParse(string(text))
 		if rest.Classes == nil && rest.Methods == nil {
 			continue
 		}
