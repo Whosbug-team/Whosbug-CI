@@ -8,6 +8,10 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
+type CTreeShapeListener struct {
+	AstInfoList AstResType
+}
+
 // @Description: 获取 C 语言函数的方法名
 // @param *c.FunctionDefinitionContext c 语言函数的上下文
 // @return methodName 函数的名字

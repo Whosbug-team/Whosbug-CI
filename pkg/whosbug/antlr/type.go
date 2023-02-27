@@ -1,34 +1,10 @@
 package antlr
 
-type CTreeShapeListener struct {
-	AstInfoList astResType
-}
-
-type JavaTreeShapeListener struct {
-	AstInfoList astResType
-}
-
-type KotlinTreeShapeListener struct {
-	AstInfoList astResType
-}
-
-type CppTreeShapeListener struct {
-	AstInfoList astResType
-}
-
-type GoTreeShapeListener struct {
-	AstInfoList astResType
-}
-
-type JSTreeShapeListener struct {
-	AstInfoList astResType
-}
-
 type AnalysisInfoType struct {
-	AstInfoList astResType
+	AstInfoList AstResType
 }
 
-type astResType struct {
+type AstResType struct {
 	Classes []ClassInfoType
 	Methods []MethodInfoType
 }

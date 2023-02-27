@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"git.woa.com/bkdevops/whosbug-ci/internal/util"
+	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/git"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/logging"
 
 	jsoniter "github.com/json-iterator/go"
@@ -30,9 +30,9 @@ const ObjectBufferQueueLength = 1000
 func ProcessObjectUpload() {
 	UploadWaitGroup.Add(1)
 	// object缓冲队列，满的时候再统一上传
-	var objects []config.ObjectInfoType
+	var objects []antlr.ObjectInfoType
 	// 在objectChan关闭且objectChan为空后会自然退出
-	for object := range config.ObjectChan {
+	for object := range antlr.ObjectChan {
 		if len(objects) > 0 && object.Equals(objects[len(objects)-1]) {
 			// 队列中没有新增，暂停100ms后维持循环
 			time.Sleep(time.Millisecond * 100)
@@ -61,7 +61,7 @@ func ProcessObjectUpload() {
 //	@param objects
 //	@author KevinMatt 2021-08-07 16:22:27
 //	@function_mark
-func processUpload(objects []config.ObjectInfoType) {
+func processUpload(objects []antlr.ObjectInfoType) {
 	err := PostObjects(objects)
 	sendCount++
 	if len(objects) > 0 {
@@ -81,7 +81,7 @@ func processUpload(objects []config.ObjectInfoType) {
 //	@return error 返回错误信息
 //	@author KevinMatt 2021-08-10 13:02:37
 //	@function_mark PASS
-func PostObjects(objects []config.ObjectInfoType) error {
+func PostObjects(objects []antlr.ObjectInfoType) error {
 	token, err := crypto.GenToken()
 	if err != nil {
 		log.Println(err)
@@ -132,7 +132,7 @@ func PostCommitsInfo(commitPath string) error {
 		if err == io.EOF {
 			break
 		}
-		CommitInfo := git.GetCommitInfo(string(line))
+		CommitInfo := antlr.GetCommitInfo(string(line))
 		FinMessage.Commit = append(FinMessage.Commit, CommitInfo)
 	}
 	commitFd.Close()

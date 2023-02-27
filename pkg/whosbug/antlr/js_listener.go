@@ -5,6 +5,10 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
+type JSTreeShapeListener struct {
+	AstInfoList AstResType
+}
+
 // EnterClassDeclaration is called when production classDeclaration is entered.
 func (s *JSTreeShapeListener) EnterClassDeclaration(ctx *javascript.ClassDeclarationContext) {
 	classInfo := ClassInfoType{

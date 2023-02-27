@@ -42,10 +42,10 @@
 
 ```go
 type JavaTreeShapeListener struct {
- 	AstInfoList astResType
+ 	AstInfoList AstResType
 }
 
-type astResType struct {
+type AstResType struct {
 	Classes []ClassInfoType
 	Methods []MethodInfoType
 }
@@ -129,10 +129,10 @@ func findJavaDeclarationChain(ctx antlr.ParseTree) (chainName string) {
 
 ```diff
 type GoTreeShapeListener struct {
-	AstInfoList astResType
+	AstInfoList AstResType
 }
 
-type astResType struct {
+type AstResType struct {
 	Classes []ClassInfoType
 	Methods []MethodInfoType
 }
@@ -206,10 +206,10 @@ func getRecvrTypes(ctx *golang.MethodDeclContext) (types []string) {
 
 ```go
 type KotlinTreeShapeListener struct {
-	AstInfoList astResType
+	AstInfoList AstResType
 }
 
-type astResType struct {
+type AstResType struct {
 	Classes []ClassInfoType
 	Methods []MethodInfoType
 }
@@ -280,10 +280,10 @@ func findKotlinDeclarationChain(ctx antlr.ParseTree) (chainName string) {
 
 ```go
 type CppTreeShapeListener struct {
-	AstInfoList astResType
+	AstInfoList AstResType
 }
 
-type astResType struct {
+type AstResType struct {
 	Classes []ClassInfoType
 	Methods []MethodInfoType
 }
@@ -384,10 +384,10 @@ func findJsDeclChain(ctx antlr.ParseTree) (chain string) {
 
 ```go
 type JavascriptTreeShapeListener struct {
-	AstInfoList astResType
+	AstInfoList AstResType
 }
 
-type astResType struct {
+type AstResType struct {
 	Classes []ClassInfoType
 	Methods []MethodInfoType
 }
@@ -411,10 +411,10 @@ type MethodInfoType struct {
 
 我们可以看到，经过改造后的几种语言的解析数据结构已经实际统一，我们可以对其进行改造， 共用同一个类型。
 
-改造嵌套类型，函数`antlrAnalysis(diffText string, langMode string) (result astResType)`直接返回`astResType`类型的结构体：
+改造嵌套类型，函数`antlrAnalysis(diffText string, langMode string) (result AstResType)`直接返回`AstResType`类型的结构体：
 
 ```go
-type astResType struct {
+type AstResType struct {
 	Classes []ClassInfoType
 	Methods []MethodInfoType
 }

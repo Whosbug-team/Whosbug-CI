@@ -1,19 +1,20 @@
+// Package upload 解析结果上报相关 package
+//
+//	@update 2023-02-27 11:16:53
 package upload
 
-import (
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
-)
+import "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr"
 
 // postData 存储要发送的json信息
 type postData struct {
 	PostCommitInfo
-	Objects []config.ObjectInfoType `json:"objects"`
+	Objects []antlr.ObjectInfoType `json:"objects"`
 }
 
 // postCommits 发送的commit信息
 type postCommits struct {
 	PostCommitInfo
-	Commit []config.CommitInfoType `json:"commits"`
+	Commit []antlr.CommitInfoType `json:"commits"`
 }
 
 // PostCommitInfo 发送完成的指示信息

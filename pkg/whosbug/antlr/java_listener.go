@@ -5,6 +5,10 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
+type JavaTreeShapeListener struct {
+	AstInfoList AstResType
+}
+
 // EnterClassDeclaration 获取类声明/定义链
 //
 //	@receiver s

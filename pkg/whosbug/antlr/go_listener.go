@@ -5,6 +5,10 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
+type GoTreeShapeListener struct {
+	AstInfoList AstResType
+}
+
 // EnterFunctionDecl 解析常规函数定义
 //
 //	@receiver s

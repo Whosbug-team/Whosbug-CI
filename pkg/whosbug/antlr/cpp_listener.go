@@ -8,6 +8,10 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
+type CppTreeShapeListener struct {
+	AstInfoList AstResType
+}
+
 // EnterClassSpecifier is called when production classSpecifier is entered.
 func (s *CppTreeShapeListener) EnterClassSpecifier(ctx *cpp.ClassSpecifierContext) {
 	if ctx.ClassHead() == nil {

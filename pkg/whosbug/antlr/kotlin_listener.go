@@ -8,6 +8,10 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
+type KotlinTreeShapeListener struct {
+	AstInfoList AstResType
+}
+
 var _ kotlin.KotlinParserListener = &KotlinTreeShapeListener{}
 
 // EnterFunctionDeclaration is called when production functionDeclaration is entered.

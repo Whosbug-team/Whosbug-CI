@@ -12,64 +12,64 @@ import (
 )
 
 var (
-	cLexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	cLexerPool = &sync.Pool{New: func() interface{} {
 		return c.NewCLexer(nil)
 	}}
-	cParserPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	cParserPool = &sync.Pool{New: func() interface{} {
 		return c.NewCParser(nil)
 	}}
 
-	javaLexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	javaLexerPool = &sync.Pool{New: func() interface{} {
 		return java.NewJavaLexer(nil)
 	}}
-	javaParserPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	javaParserPool = &sync.Pool{New: func() interface{} {
 		return java.NewJavaParser(nil)
 	}}
 
-	goLexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	goLexerPool = &sync.Pool{New: func() interface{} {
 		return golang.NewGoLexer(nil)
 	}}
-	goParserPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	goParserPool = &sync.Pool{New: func() interface{} {
 		return golang.NewGoParser(nil)
 	}}
 
-	kotlinLexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	kotlinLexerPool = &sync.Pool{New: func() interface{} {
 		return kt.NewKotlinLexer(nil)
 	}}
-	kotlinParserPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	kotlinParserPool = &sync.Pool{New: func() interface{} {
 		return kt.NewKotlinParser(nil)
 	}}
 
-	cppLexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	cppLexerPool = &sync.Pool{New: func() interface{} {
 		return cpp.NewCPP14Lexer(nil)
 	}}
-	cppParserPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	cppParserPool = &sync.Pool{New: func() interface{} {
 		return cpp.NewCPP14Parser(nil)
 	}}
 
-	javascriptLexerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	javascriptLexerPool = &sync.Pool{New: func() interface{} {
 		return js.NewJavaScriptLexer(nil)
 	}}
-	javascriptParserPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	javascriptParserPool = &sync.Pool{New: func() interface{} {
 		return js.NewJavaScriptParser(nil)
 	}}
 
-	newCTreeShapeListenerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	newCTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(CTreeShapeListener)
 	}}
-	newJavaTreeShapeListenerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	newJavaTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(JavaTreeShapeListener)
 	}}
-	newKotlinTreeShapeListenerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	newKotlinTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(KotlinTreeShapeListener)
 	}}
-	newGoTreeShapeListenerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	newGoTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(GoTreeShapeListener)
 	}}
-	newCppTreeShapeListenerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	newCppTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(CppTreeShapeListener)
 	}}
-	newJavaScriptTreeShapeListenerPool *sync.Pool = &sync.Pool{New: func() interface{} {
+	newJavaScriptTreeShapeListenerPool = &sync.Pool{New: func() interface{} {
 		return new(JSTreeShapeListener)
 	}}
 )

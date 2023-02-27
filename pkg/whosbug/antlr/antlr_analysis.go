@@ -2,6 +2,8 @@ package antlr
 
 import (
 	"fmt"
+	"log"
+	"runtime"
 	"runtime/debug"
 	"strings"
 
@@ -13,10 +15,27 @@ import (
 	java "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/javaLib"
 	js "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/jsLib"
 	kt "git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr/kotlinLib"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto"
+	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/logging"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/panjf2000/ants"
+)
+
+var (
+	// processDiffs 已处理的commit数
+	processDiffs int
+	// AntlrAnalysisPool 解析协程池
+	AntlrAnalysisPool, _ = ants.NewPoolWithFunc(runtime.NumCPU()/4, func(commitDiff interface{}) {
+		AnalyzeCommitDiff(commitDiff.(DiffParsedType))
+		// 指示已经处理的diff数量
+		processDiffs++
+		log.SetOutput(logging.LogFile)
+		log.Println("Diff No.", processDiffs, " From", commitDiff.(DiffParsedType).CommitHash, " Sent Into Channel.")
+		// if processDiffs%50 == 0 {
+		// runtime.GC()
+		// }
+	})
 )
 
 // AnalyzeCommitDiff //	@Description: 使用antlr分析commitDiff信息
@@ -24,19 +43,20 @@ import (
 //	@param commitDiff config.DiffParsedType
 //	@author kevineluo
 //	@update 2023-02-25 04:23:05
-func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
+func AnalyzeCommitDiff(commitDiff DiffParsedType) {
 	//	获取antlr分析结果
+	// TODO: 抽象ast analyzer interface
 	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, commitDiff.TargetLanguage)
 
-	var prevObject config.ObjectInfoType
-	var countMinus int = 0
-	var countPlus int = 0
+	var prevObject ObjectInfoType
+	var countMinus int
+	var countPlus int
 	for _, changeLineNumber := range commitDiff.ChangeLineNumbers {
 		currentObject := addObjectFromChangeLineNumber(commitDiff, changeLineNumber, antlrAnalyzeRes)
-		if currentObject.Equals(config.ObjectInfoType{}) {
+		if currentObject.Equals(ObjectInfoType{}) {
 			continue
 		}
-		if prevObject.Equals(config.ObjectInfoType{}) {
+		if prevObject.Equals(ObjectInfoType{}) {
 			prevObject = currentObject
 			continue
 		}
@@ -58,7 +78,7 @@ func AnalyzeCommitDiff(commitDiff config.DiffParsedType) {
 			}
 			if prevObject.AddedNewLineCount != 0 || prevObject.RemovedLineCount != 0 {
 				// 送入channel
-				config.ObjectChan <- prevObject
+				ObjectChan <- prevObject
 			}
 			countMinus = 0
 			countPlus = 0
@@ -81,10 +101,10 @@ func myRecover() {
 //	@Description: antlr分析过程
 //	@param targetFilePath 分析的目标文件
 //	@param langMode 分析的语言模式
-//	@return astResType 返回分析信息结构体
+//	@return AstResType 返回分析信息结构体
 //	@author KevinMatt 2021-07-29 19:49:37
 //	@function_mark  PASS
-func antlrAnalysis(diffText string, langMode string) (result astResType) {
+func antlrAnalysis(diffText string, langMode string) (result AstResType) {
 	defer myRecover()
 	switch langMode {
 	case "c":
@@ -111,7 +131,7 @@ func antlrAnalysis(diffText string, langMode string) (result astResType) {
 }
 
 // 进行 C 语言语法解析，获取函数相关信息
-func ExecuteC(text string) astResType {
+func ExecuteC(text string) AstResType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(text)
 	//	初始化 lexer
@@ -136,13 +156,13 @@ func ExecuteC(text string) astResType {
 	listener := newCTreeShapeListenerPool.Get().(*CTreeShapeListener)
 	defer newCTreeShapeListenerPool.Put(listener)
 	//	初始化置空
-	listener.AstInfoList = astResType{}
+	listener.AstInfoList = AstResType{}
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.AstInfoList
 }
 
-func ExecuteGolang(diffText string) astResType {
+func ExecuteGolang(diffText string) AstResType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
@@ -167,13 +187,13 @@ func ExecuteGolang(diffText string) astResType {
 	listener := newGoTreeShapeListenerPool.Get().(*GoTreeShapeListener)
 	defer newGoTreeShapeListenerPool.Put(listener)
 	// 初始化置空
-	listener.AstInfoList = astResType{}
+	listener.AstInfoList = AstResType{}
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.AstInfoList
 }
 
-func ExecuteCpp(diffText string) astResType {
+func ExecuteCpp(diffText string) AstResType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
@@ -199,13 +219,13 @@ func ExecuteCpp(diffText string) astResType {
 	listener := newCppTreeShapeListenerPool.Get().(*CppTreeShapeListener)
 	defer newCppTreeShapeListenerPool.Put(listener)
 	// 初始化置空
-	listener.AstInfoList = astResType{}
+	listener.AstInfoList = AstResType{}
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.AstInfoList
 }
 
-func ExecuteJavaScript(diffText string) astResType {
+func ExecuteJavaScript(diffText string) AstResType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
@@ -239,7 +259,7 @@ func ExecutePython(diffText string) AnalysisInfoType {
 	return AnalysisInfoType{}
 }
 
-func ExecuteJava(diffText string) astResType {
+func ExecuteJava(diffText string) AstResType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
@@ -264,7 +284,7 @@ func ExecuteJava(diffText string) astResType {
 	listener := newJavaTreeShapeListenerPool.Get().(*JavaTreeShapeListener)
 	defer newJavaTreeShapeListenerPool.Put(listener)
 	// 初始化置空
-	listener.AstInfoList = *new(astResType)
+	listener.AstInfoList = *new(AstResType)
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.AstInfoList
@@ -277,7 +297,7 @@ func ExecuteJava(diffText string) astResType {
 //	@return javaparser.AnalysisInfoType 返回分析结果结构体
 //	@author KevinMatt 2021-07-29 19:51:16
 //	@function_mark PASS
-func ExecuteKotlin(diffText string) astResType {
+func ExecuteKotlin(diffText string) AstResType {
 	//	截取目标文本的输入流
 	input := antlr.NewInputStream(diffText)
 	//	初始化lexer
@@ -302,7 +322,7 @@ func ExecuteKotlin(diffText string) astResType {
 	listener := newKotlinTreeShapeListenerPool.Get().(*KotlinTreeShapeListener)
 	defer newKotlinTreeShapeListenerPool.Put(listener)
 	// 初始化置空
-	listener.AstInfoList = astResType{}
+	listener.AstInfoList = AstResType{}
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 	return listener.AstInfoList
@@ -317,7 +337,7 @@ func ExecuteKotlin(diffText string) astResType {
 //	@return objectInfoType
 //	@author KevinMatt 2021-08-03 19:26:12
 //	@function_mark PASS
-func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineNumber config.ChangeLineType, antlrAnalyzeRes astResType) (newObject config.ObjectInfoType) {
+func addObjectFromChangeLineNumber(commitDiff DiffParsedType, changeLineNumber ChangeLineType, antlrAnalyzeRes AstResType) (newObject ObjectInfoType) {
 	//	寻找变动方法
 	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
 	if changeMethod.MethodName == "" {
@@ -329,7 +349,7 @@ func addObjectFromChangeLineNumber(commitDiff config.DiffParsedType, changeLineN
 	}
 
 	//	TODO Ready for newMethod
-	newObject = config.ObjectInfoType{
+	newObject = ObjectInfoType{
 		CommitHash:       commitDiff.CommitHash, //crypto.Base64Encrypt(commitDiff.CommitHash)
 		ID:               crypto.Base64Encrypt(changeMethod.MethodName),
 		OldID:            crypto.Base64Encrypt(oldMethodName),
@@ -365,12 +385,12 @@ func findFather(methodName string) (oldMethodName string) {
 //	@param antlrAnalyzeRes antlr分析结果
 //	@return changeMethodInfo 类信息
 //	@author Psy 2022-08-17 15:33:33
-func addClass(commitDiff config.DiffParsedType, preMethodName string, antlrAnalyzeRes astResType) {
+func addClass(commitDiff DiffParsedType, preMethodName string, antlrAnalyzeRes AstResType) {
 	idx := strings.LastIndex(preMethodName, ".")
 	if idx == -1 {
 		return
 	}
-	newObj := config.ObjectInfoType{}
+	newObj := ObjectInfoType{}
 	methodName := preMethodName[:idx]
 
 	resIndex := -1
@@ -388,7 +408,7 @@ func addClass(commitDiff config.DiffParsedType, preMethodName string, antlrAnaly
 		newObj.FilePath = crypto.Base64Encrypt(commitDiff.DiffFileName)
 		newObj.StartLine = antlrAnalyzeRes.Classes[resIndex].StartLine
 		newObj.EndLine = antlrAnalyzeRes.Classes[resIndex].EndLine
-		config.ObjectChan <- newObj
+		ObjectChan <- newObj
 		if oldMethodName != "" {
 			addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
 		}
@@ -403,7 +423,7 @@ func addClass(commitDiff config.DiffParsedType, preMethodName string, antlrAnaly
 //	@return changeMethodInfo 变动方法信息
 //	@author KevinMatt 2021-07-29 19:38:19
 //	@function_mark PASS
-func findChangedMethod(changeLineNumber config.ChangeLineType, antlrAnalyzeRes astResType) (changeMethodInfo MethodInfoType) {
+func findChangedMethod(changeLineNumber ChangeLineType, antlrAnalyzeRes AstResType) (changeMethodInfo MethodInfoType) {
 	var lineRangeList []LineRangeType
 	//	遍历匹配到的方法列表，存储其首行
 	for index := range antlrAnalyzeRes.Methods {
