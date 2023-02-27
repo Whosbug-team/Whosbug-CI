@@ -13,10 +13,13 @@ import (
 //	@author kevineluo
 //	@update 2023-02-28 12:44:18
 type CAstParser struct {
-	astInfo AstInfo
+	AstInfo AstInfo
 }
 
-var _ c.CListener = &CAstParser{}
+var (
+	_ c.CListener = &CAstParser{}
+	_ AstParser   = &CAstParser{}
+)
 
 var (
 	cLexerPool = &sync.Pool{New: func() any {
@@ -29,6 +32,17 @@ var (
 		return new(CAstParser)
 	}}
 )
+
+// Init 初始化AstParser
+//
+//	@receiver s *CAstParser
+//	@author kevineluo
+//	@update 2023-02-28 03:13:43
+func (s *CAstParser) Init() (err error) {
+	s.AstInfo.Classes = make([]Class, 0)
+	s.AstInfo.Methods = make([]Method, 0)
+	return
+}
 
 // AstParse main parse process for c language
 //
@@ -61,10 +75,10 @@ func (s *CAstParser) AstParse(input string) AstInfo {
 	listener := newAstParserPool.Get().(*CAstParser)
 	defer newAstParserPool.Put(listener)
 	//	初始化置空
-	listener.astInfo = AstInfo{}
+	listener.AstInfo = AstInfo{}
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.astInfo
+	return listener.AstInfo
 }
 
 // @Description: 获取 C 语言函数的方法名
@@ -119,7 +133,7 @@ func (s *CAstParser) ExitFunctionDefinition(ctx *c.FunctionDefinitionContext) {
 		Name:       matchCMethodName(ctx),
 		Parameters: matchCMethodParams(ctx),
 	}
-	s.astInfo.Methods = append(s.astInfo.Methods, methodInfo)
+	s.AstInfo.Methods = append(s.AstInfo.Methods, methodInfo)
 }
 
 // EnterStructOrUnionSpecifier is called when production structOrUnionSpecifier is entered.

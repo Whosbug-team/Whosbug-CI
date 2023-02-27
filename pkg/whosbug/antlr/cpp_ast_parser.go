@@ -14,10 +14,13 @@ import (
 //	@author kevineluo
 //	@update 2023-02-28 12:57:34
 type CppAstParser struct {
-	astInfo AstInfo
+	AstInfo AstInfo
 }
 
-var _ cpp.CPP14ParserListener = &CppAstParser{}
+var (
+	_ cpp.CPP14ParserListener = &CppAstParser{}
+	_ AstParser               = &CppAstParser{}
+)
 
 var (
 	cppLexerPool = &sync.Pool{New: func() any {
@@ -30,6 +33,17 @@ var (
 		return new(CppAstParser)
 	}}
 )
+
+// Init 初始化AstParser
+//
+//	@receiver s *CAstParser
+//	@author kevineluo
+//	@update 2023-02-28 03:13:43
+func (s *CppAstParser) Init() (err error) {
+	s.AstInfo.Classes = make([]Class, 0)
+	s.AstInfo.Methods = make([]Method, 0)
+	return
+}
 
 // AstParse main parse process for c++ language
 //
@@ -55,7 +69,7 @@ func (s *CppAstParser) AstParse(diffText string) AstInfo {
 	p.SetTokenStream(stream)
 	//	构建语法解析树
 	p.BuildParseTrees = true
-	// //	启用SLL两阶段加速解析模式
+	// // 启用SLL两阶段加速解析模式
 	// p.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
 	//	解析模式->每个编译单位
 	tree := p.TranslationUnit()
@@ -64,10 +78,10 @@ func (s *CppAstParser) AstParse(diffText string) AstInfo {
 	listener := newCppAstParserPool.Get().(*CppAstParser)
 	defer newCppAstParserPool.Put(listener)
 	// 初始化置空
-	listener.astInfo = AstInfo{}
+	listener.AstInfo = AstInfo{}
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.astInfo
+	return listener.AstInfo
 }
 
 // EnterClassSpecifier is called when production classSpecifier is entered.
@@ -82,7 +96,7 @@ func (s *CppAstParser) EnterClassSpecifier(ctx *cpp.ClassSpecifierContext) {
 		Extends:   getCppClassExtends(ctx),
 	}
 	util.ForDebug()
-	s.astInfo.Classes = append(s.astInfo.Classes, classInfo)
+	s.AstInfo.Classes = append(s.AstInfo.Classes, classInfo)
 }
 
 func getCppClassExtends(ctx *cpp.ClassSpecifierContext) (extends string) {
@@ -160,7 +174,7 @@ func (s *CppAstParser) ExitFunctionDefinition(ctx *cpp.FunctionDefinitionContext
 		Parameters: matchMethodParams(ctx),
 	}
 	// TODO 没有对参数进行区分
-	s.astInfo.Methods = append(s.astInfo.Methods, methodInfo)
+	s.AstInfo.Methods = append(s.AstInfo.Methods, methodInfo)
 }
 
 // EnterNoPointerDeclarator is called when production noPointerDeclarator is entered.

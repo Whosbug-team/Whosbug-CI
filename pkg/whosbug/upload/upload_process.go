@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"git.woa.com/bkdevops/whosbug-ci/internal/util"
-	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr"
+	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/analyze"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/config"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/logging"
@@ -30,9 +30,9 @@ const ObjectBufferQueueLength = 1000
 func ProcessObjectUpload() {
 	UploadWaitGroup.Add(1)
 	// object缓冲队列，满的时候再统一上传
-	var objects []antlr.ObjectInfoType
+	var objects []analyze.ObjectInfo
 	// 在objectChan关闭且objectChan为空后会自然退出
-	for object := range antlr.ObjectChan {
+	for object := range analyze.ObjectChan {
 		if len(objects) > 0 && object.Equals(objects[len(objects)-1]) {
 			// 队列中没有新增，暂停100ms后维持循环
 			time.Sleep(time.Millisecond * 100)
@@ -61,7 +61,7 @@ func ProcessObjectUpload() {
 //	@param objects
 //	@author KevinMatt 2021-08-07 16:22:27
 //	@function_mark
-func processUpload(objects []antlr.ObjectInfoType) {
+func processUpload(objects []analyze.ObjectInfo) {
 	err := PostObjects(objects)
 	sendCount++
 	if len(objects) > 0 {
@@ -81,7 +81,7 @@ func processUpload(objects []antlr.ObjectInfoType) {
 //	@return error 返回错误信息
 //	@author KevinMatt 2021-08-10 13:02:37
 //	@function_mark PASS
-func PostObjects(objects []antlr.ObjectInfoType) error {
+func PostObjects(objects []analyze.ObjectInfo) error {
 	token, err := crypto.GenToken()
 	if err != nil {
 		log.Println(err)
@@ -132,7 +132,7 @@ func PostCommitsInfo(commitPath string) error {
 		if err == io.EOF {
 			break
 		}
-		CommitInfo := antlr.GetCommitInfo(string(line))
+		CommitInfo := analyze.GetCommitInfo(string(line))
 		FinMessage.Commit = append(FinMessage.Commit, CommitInfo)
 	}
 	commitFd.Close()

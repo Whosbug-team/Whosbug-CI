@@ -5,5 +5,6 @@ package antlr
 //	@author kevineluo
 //	@update 2023-02-27 09:15:02
 type AstParser interface {
+	Init() error
 	AstParse(input string) AstInfo
 }

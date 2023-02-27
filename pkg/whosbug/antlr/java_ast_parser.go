@@ -12,10 +12,13 @@ import (
 //	@author kevineluo
 //	@update 2023-02-28 01:09:55
 type JavaAstParser struct {
-	astInfo AstInfo
+	AstInfo AstInfo
 }
 
-var _ java.JavaParserListener = &JavaAstParser{}
+var (
+	_ java.JavaParserListener = &JavaAstParser{}
+	_ AstParser               = &JavaAstParser{}
+)
 
 var (
 	javaLexerPool = &sync.Pool{New: func() any {
@@ -28,6 +31,17 @@ var (
 		return new(JavaAstParser)
 	}}
 )
+
+// Init 初始化AstParser
+//
+//	@receiver s *CAstParser
+//	@author kevineluo
+//	@update 2023-02-28 03:13:43
+func (s *JavaAstParser) Init() (err error) {
+	s.AstInfo.Classes = make([]Class, 0)
+	s.AstInfo.Methods = make([]Method, 0)
+	return
+}
 
 // AstParse main parse process for java language
 //
@@ -61,10 +75,10 @@ func (s *JavaAstParser) AstParse(diffText string) AstInfo {
 	listener := newJavaAstParserPool.Get().(*JavaAstParser)
 	defer newJavaAstParserPool.Put(listener)
 	// 初始化置空
-	listener.astInfo = *new(AstInfo)
+	listener.AstInfo = *new(AstInfo)
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.astInfo
+	return listener.AstInfo
 }
 
 func findExtendsClass(ctx *java.ClassDeclarationContext) (extendsClass string) {
@@ -117,7 +131,7 @@ func (s *JavaAstParser) EnterClassDeclaration(ctx *java.ClassDeclarationContext)
 		EndLine:   ctx.ClassBody().GetStop().GetLine(),
 		Extends:   findExtendsClass(ctx),
 	}
-	s.astInfo.Classes = append(s.astInfo.Classes, classInfo)
+	s.AstInfo.Classes = append(s.AstInfo.Classes, classInfo)
 }
 
 // ExitMethodDeclaration 获取方法声明/定义链
@@ -131,7 +145,7 @@ func (s *JavaAstParser) ExitMethodDeclaration(ctx *java.MethodDeclarationContext
 		Name:       findJavaDeclarationChain(ctx) + ctx.IDENTIFIER().GetText(),
 		Parameters: getParamsOfMethod(ctx),
 	}
-	s.astInfo.Methods = append(s.astInfo.Methods, methodInfo)
+	s.AstInfo.Methods = append(s.AstInfo.Methods, methodInfo)
 }
 
 // EnterLocalVariableDeclaration

@@ -12,10 +12,13 @@ import (
 //	@author kevineluo
 //	@update 2023-02-28 01:15:09
 type JSAstParser struct {
-	astInfo AstInfo
+	AstInfo AstInfo
 }
 
-var _ js.JavaScriptParserListener = &JSAstParser{}
+var (
+	_ js.JavaScriptParserListener = &JSAstParser{}
+	_ AstParser                   = &JSAstParser{}
+)
 
 var (
 	javascriptLexerPool = &sync.Pool{New: func() any {
@@ -28,6 +31,17 @@ var (
 		return new(JSAstParser)
 	}}
 )
+
+// Init 初始化AstParser
+//
+//	@receiver s *CAstParser
+//	@author kevineluo
+//	@update 2023-02-28 03:13:43
+func (s *JSAstParser) Init() (err error) {
+	s.AstInfo.Classes = make([]Class, 0)
+	s.AstInfo.Methods = make([]Method, 0)
+	return
+}
 
 // AstParse main parse process for javascript language
 //
@@ -62,7 +76,7 @@ func (s *JSAstParser) AstParse(input string) AstInfo {
 	defer newJavaScriptAstParserPool.Put(listener)
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.astInfo
+	return listener.AstInfo
 }
 
 func getExtendIdentifier(ctx *js.ClassDeclarationContext) (extend string) {
@@ -110,7 +124,7 @@ func (s *JSAstParser) EnterClassDeclaration(ctx *js.ClassDeclarationContext) {
 		Name:      findJsDeclChain(ctx) + ctx.Identifier().GetText(),
 		Extends:   getExtendIdentifier(ctx),
 	}
-	s.astInfo.Classes = append(s.astInfo.Classes, classInfo)
+	s.AstInfo.Classes = append(s.AstInfo.Classes, classInfo)
 }
 
 // ExitFunctionDeclaration is called when production functionDeclaration is exited.
@@ -123,7 +137,7 @@ func (s *JSAstParser) ExitFunctionDeclaration(ctx *js.FunctionDeclarationContext
 	if ctx.FormalParameterList() != nil {
 		methodInfo.Parameters = ctx.FormalParameterList().GetText()
 	}
-	s.astInfo.Methods = append(s.astInfo.Methods, methodInfo)
+	s.AstInfo.Methods = append(s.AstInfo.Methods, methodInfo)
 }
 
 // VisitTerminal is called when a terminal node is visited.

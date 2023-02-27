@@ -15,10 +15,13 @@ import (
 //	@author kevineluo
 //	@update 2023-02-28 01:23:41
 type KotlinAstParser struct {
-	astInfo AstInfo
+	AstInfo AstInfo
 }
 
-var _ kotlin.KotlinParserListener = &KotlinAstParser{}
+var (
+	_ kotlin.KotlinParserListener = &KotlinAstParser{}
+	_ AstParser                   = &KotlinAstParser{}
+)
 
 var (
 	kotlinLexerPool = &sync.Pool{New: func() any {
@@ -31,6 +34,17 @@ var (
 		return new(KotlinAstParser)
 	}}
 )
+
+// Init 初始化AstParser
+//
+//	@receiver s *CAstParser
+//	@author kevineluo
+//	@update 2023-02-28 03:13:43
+func (s *KotlinAstParser) Init() (err error) {
+	s.AstInfo.Classes = make([]Class, 0)
+	s.AstInfo.Methods = make([]Method, 0)
+	return
+}
 
 // AstParse main parse process for kotlin language
 //
@@ -64,10 +78,10 @@ func (s *KotlinAstParser) AstParse(input string) AstInfo {
 	listener := newKotlinAstParserPool.Get().(*KotlinAstParser)
 	defer newKotlinAstParserPool.Put(listener)
 	// 初始化置空
-	listener.astInfo = AstInfo{}
+	listener.AstInfo = AstInfo{}
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.astInfo
+	return listener.AstInfo
 }
 
 // EnterFunctionDeclaration is called when production functionDeclaration is entered.
@@ -81,7 +95,7 @@ func (s *KotlinAstParser) EnterFunctionDeclaration(ctx *kotlin.FunctionDeclarati
 		Name:       findKotlinDeclarationChain(ctx) + ctx.Identifier().GetText(),
 		Parameters: "",
 	}
-	s.astInfo.Methods = append(s.astInfo.Methods, methodInfo)
+	s.AstInfo.Methods = append(s.AstInfo.Methods, methodInfo)
 }
 
 // EnterClassDeclaration is called when production classDeclaration is entered.
@@ -92,7 +106,7 @@ func (s *KotlinAstParser) EnterClassDeclaration(ctx *kotlin.ClassDeclarationCont
 		Name:      findKotlinDeclarationChain(ctx) + ctx.SimpleIdentifier().GetText(),
 		Extends:   findKotlinClassExtends(ctx),
 	}
-	s.astInfo.Classes = append(s.astInfo.Classes, classInfo)
+	s.AstInfo.Classes = append(s.AstInfo.Classes, classInfo)
 }
 
 func findKotlinClassExtends(ctx *kotlin.ClassDeclarationContext) (extends string) {

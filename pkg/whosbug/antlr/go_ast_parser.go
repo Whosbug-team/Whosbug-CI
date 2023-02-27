@@ -12,10 +12,13 @@ import (
 //	@author kevineluo
 //	@update 2023-02-28 01:06:15
 type GoAstParser struct {
-	astInfo AstInfo
+	AstInfo AstInfo
 }
 
-var _ _go.GoParserListener = &GoAstParser{}
+var (
+	_ _go.GoParserListener = &GoAstParser{}
+	_ AstParser            = &GoAstParser{}
+)
 
 var (
 	goLexerPool = &sync.Pool{New: func() any {
@@ -28,6 +31,17 @@ var (
 		return new(GoAstParser)
 	}}
 )
+
+// Init 初始化AstParser
+//
+//	@receiver s *CAstParser
+//	@author kevineluo
+//	@update 2023-02-28 03:13:43
+func (s *GoAstParser) Init() (err error) {
+	s.AstInfo.Classes = make([]Class, 0)
+	s.AstInfo.Methods = make([]Method, 0)
+	return
+}
 
 // AstParse main parse process for go language
 //
@@ -61,10 +75,10 @@ func (s *GoAstParser) AstParse(input string) AstInfo {
 	listener := newGoAstParserPool.Get().(*GoAstParser)
 	defer newGoAstParserPool.Put(listener)
 	// 初始化置空
-	listener.astInfo = AstInfo{}
+	listener.AstInfo = AstInfo{}
 	//	执行分析
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
-	return listener.astInfo
+	return listener.AstInfo
 }
 
 // EnterFunctionDecl 解析常规函数定义
@@ -79,7 +93,7 @@ func (s *GoAstParser) EnterFunctionDecl(ctx *_go.FunctionDeclContext) {
 		Name:       ctx.IDENTIFIER().GetText(),
 		Parameters: getFunctionAndMethodParams(ctx),
 	}
-	s.astInfo.Methods = append(s.astInfo.Methods, methodInfo)
+	s.AstInfo.Methods = append(s.AstInfo.Methods, methodInfo)
 }
 
 func getFunctionAndMethodParams(ctx antlr.ParseTree) (params string) {
@@ -121,7 +135,7 @@ func (s *GoAstParser) EnterMethodDecl(ctx *_go.MethodDeclContext) {
 			Name:       temp[0] + "." + ctx.IDENTIFIER().GetText(),
 			Parameters: getFunctionAndMethodParams(ctx),
 		}
-		s.astInfo.Methods = append(s.astInfo.Methods, methodInfo)
+		s.AstInfo.Methods = append(s.AstInfo.Methods, methodInfo)
 	}
 }
 
@@ -148,7 +162,7 @@ func (s *GoAstParser) EnterTypeDecl(ctx *_go.TypeDeclContext) {
 		StartLine: ctx.GetStart().GetLine(),
 		EndLine:   ctx.GetStop().GetLine(),
 	}
-	s.astInfo.Classes = append(s.astInfo.Classes, structInfo)
+	s.AstInfo.Classes = append(s.AstInfo.Classes, structInfo)
 }
 
 // ? GoParserStdMethods

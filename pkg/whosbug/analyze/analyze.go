@@ -1,4 +1,4 @@
-package antlr
+package analyze
 
 import (
 	"fmt"
@@ -9,6 +9,7 @@ import (
 
 	"git.woa.com/bkdevops/whosbug-ci/internal/util"
 	"git.woa.com/bkdevops/whosbug-ci/internal/zaplog"
+	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/antlr"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/crypto"
 	"git.woa.com/bkdevops/whosbug-ci/pkg/whosbug/logging"
 
@@ -19,44 +20,47 @@ var (
 	// processDiffs 已处理的commit数
 	processDiffs int
 	// AntlrAnalysisPool 解析协程池
-	AntlrAnalysisPool, _ = ants.NewPoolWithFunc(runtime.NumCPU()/4, func(commitDiff interface{}) {
-		AnalyzeCommitDiff(commitDiff.(DiffParsedType))
-		// 指示已经处理的diff数量
+	AntlrAnalysisPool, _ = ants.NewPoolWithFunc(runtime.NumCPU()/4, func(commitDiff any) {
+		GenerateObjects(commitDiff.(Diff))
 		processDiffs++
 		log.SetOutput(logging.LogFile)
-		log.Println("Diff No.", processDiffs, " From", commitDiff.(DiffParsedType).CommitHash, " Sent Into Channel.")
+		log.Println("Diff No.", processDiffs, " From", commitDiff.(Diff).CommitHash, " Sent Into Channel.")
 		// if processDiffs%50 == 0 {
 		// runtime.GC()
 		// }
 	})
 )
 
-// AnalyzeCommitDiff //	@Description: 使用antlr分析commitDiff信息
+// GenerateObjects antlr分析commitDiff信息生成objects
 //
-//	@param commitDiff config.DiffParsedType
+//	@param commitDiff Diff
 //	@author kevineluo
-//	@update 2023-02-25 04:23:05
-func AnalyzeCommitDiff(commitDiff DiffParsedType) {
-	//	获取antlr分析结果
-	// TODO: 抽象ast analyzer interface
-	antlrAnalyzeRes := antlrAnalysis(commitDiff.DiffText, commitDiff.TargetLanguage)
+//	@update 2023-02-28 02:45:39
+func GenerateObjects(commitDiff Diff) {
+	// 进行antlr静态解析
+	parser, err := initAstParser(commitDiff.TargetLanguage)
+	if err != nil {
+		zaplog.Logger.Error("[GenerateObjects] error when initAstParser", zaplog.Error(err))
+		return
+	}
+	astInfo := parser.AstParse(commitDiff.DiffText)
 
-	var prevObject ObjectInfoType
+	var prevObject ObjectInfo
 	var countMinus int
 	var countPlus int
-	for _, changeLineNumber := range commitDiff.ChangeLineNumbers {
-		currentObject := addObjectFromChangeLineNumber(commitDiff, changeLineNumber, antlrAnalyzeRes)
-		if currentObject.Equals(ObjectInfoType{}) {
+	for _, changeLine := range commitDiff.ChangeLines {
+		currentObject := addObject(commitDiff, changeLine, astInfo)
+		if currentObject.Equals(ObjectInfo{}) {
 			continue
 		}
-		if prevObject.Equals(ObjectInfoType{}) {
+		if prevObject.Equals(ObjectInfo{}) {
 			prevObject = currentObject
 			continue
 		}
 		if currentObject.Equals(prevObject) {
-			if changeLineNumber.ChangeType == "-" {
+			if changeLine.ChangeType == "-" {
 				countMinus++
-			} else if changeLineNumber.ChangeType == "+" {
+			} else if changeLine.ChangeType == "+" {
 				countPlus++
 			}
 		} else {
@@ -81,55 +85,35 @@ func AnalyzeCommitDiff(commitDiff DiffParsedType) {
 	}
 }
 
-// 防止语法分析识别出错时，程序终止
-func myRecover() {
-	if err := recover(); err != nil {
-		errMsg := fmt.Sprintf("======== Panic ========\nPanic: %v\nTraceBack:\n%s\n======== Panic ========", err, string(debug.Stack()))
-		zaplog.Logger.DPanic(errMsg)
-	}
-}
-
-// antlrAnalysis
-//
-//	@Description: antlr分析过程
-//	@param targetFilePath 分析的目标文件
-//	@param langMode 分析的语言模式
-//	@return AstResType 返回分析信息结构体
-//	@author KevinMatt 2021-07-29 19:49:37
-//	@function_mark  PASS
-func antlrAnalysis(diffText string, langMode string) (result AstInfo) {
-	defer myRecover()
+func initAstParser(langMode string) (parser antlr.AstParser, err error) {
+	defer Recover()
 	switch langMode {
 	case "c":
 		// TODO: C Unsupported
-		// result = ExecuteC(diffText)
+		parser = new(antlr.CAstParser)
 	case "java":
-		// result = ExecuteJava(diffText)
+		parser = new(antlr.JavaAstParser)
 	case "python":
 		// TODO: Python Unsupported
-		// result = ExecutePython(diffText)
 	case "kotlin":
-		// result = ExecuteKotlin(diffText)
+		parser = new(antlr.KotlinAstParser)
 	case "golang":
-		// result = ExecuteGolang(diffText)
+		parser = new(antlr.GoAstParser)
 	case "javascript":
 		// TODO: Js Unsupported
-		// result = ExecuteJavaScript(diffText)
+		parser = new(antlr.JSAstParser)
 	case "cpp":
 		// TODO: too Slow
-		// result = ExecuteCpp(diffText)
+		parser = new(antlr.CppAstParser)
 	default:
-		break
+		err = ErrUnsupportedLanguage
+		return
 	}
+	err = parser.Init()
 	return
 }
 
-func ExecutePython(diffText string) AstInfo {
-	util.ForDebug(diffText)
-	return AstInfo{}
-}
-
-// addObjectFromChangeLineNumber
+// addObject
 //
 //	@Description: 传入的参数较多，大致功能是构建object的map
 //	@param commitDiff
@@ -138,19 +122,19 @@ func ExecutePython(diffText string) AstInfo {
 //	@return objectInfoType
 //	@author KevinMatt 2021-08-03 19:26:12
 //	@function_mark PASS
-func addObjectFromChangeLineNumber(commitDiff DiffParsedType, changeLineNumber ChangeLineType, antlrAnalyzeRes AstInfo) (newObject ObjectInfoType) {
+func addObject(commitDiff Diff, changeLine ChangeLine, astInfo antlr.AstInfo) (newObject ObjectInfo) {
 	//	寻找变动方法
-	changeMethod := findChangedMethod(changeLineNumber, antlrAnalyzeRes)
+	changeMethod := findChangedMethod(changeLine, astInfo)
 	if changeMethod.Name == "" {
 		return
 	}
 	oldMethodName := findFather(changeMethod.Name)
 	if oldMethodName != "" {
-		addClass(commitDiff, oldMethodName, antlrAnalyzeRes)
+		addClass(commitDiff, oldMethodName, astInfo)
 	}
 
 	//	TODO Ready for newMethod
-	newObject = ObjectInfoType{
+	newObject = ObjectInfo{
 		CommitHash:       commitDiff.CommitHash, //crypto.Base64Encrypt(commitDiff.CommitHash)
 		ID:               crypto.Base64Encrypt(changeMethod.Name),
 		OldID:            crypto.Base64Encrypt(oldMethodName),
@@ -179,19 +163,19 @@ func findFather(methodName string) (oldMethodName string) {
 	return
 }
 
-// adddClass
+// addClass
 //
 //	@Description: 寻找类的起始行
 //	@param oldMethodName 类的定义链
 //	@param antlrAnalyzeRes antlr分析结果
 //	@return changeMethodInfo 类信息
 //	@author Psy 2022-08-17 15:33:33
-func addClass(commitDiff DiffParsedType, preMethodName string, antlrAnalyzeRes AstInfo) {
+func addClass(commitDiff Diff, preMethodName string, antlrAnalyzeRes antlr.AstInfo) {
 	idx := strings.LastIndex(preMethodName, ".")
 	if idx == -1 {
 		return
 	}
-	newObj := ObjectInfoType{}
+	newObj := ObjectInfo{}
 	methodName := preMethodName[:idx]
 
 	resIndex := -1
@@ -216,41 +200,39 @@ func addClass(commitDiff DiffParsedType, preMethodName string, antlrAnalyzeRes A
 	}
 }
 
-// findChangedMethod
+// findChangedMethod 寻找变动了的方法
 //
-//	@Description: 寻找变动了的方法
-//	@param changeLineNumber 变动行
-//	@param antlrAnalyzeRes antlr分析结果
-//	@return changeMethodInfo 变动方法信息
-//	@author KevinMatt 2021-07-29 19:38:19
-//	@function_mark PASS
-func findChangedMethod(changeLineNumber ChangeLineType, antlrAnalyzeRes AstInfo) (changeMethodInfo Method) {
-	var lineRangeList []LineRange
+//	@param changeLineNumber ChangeLine
+//	@param astInfo antlr.AstInfo
+//	@return changeMethodInfo antlr.Method
+//	@author kevineluo
+//	@update 2023-02-28 03:00:19
+func findChangedMethod(changeLineNumber ChangeLine, astInfo antlr.AstInfo) (changeMethodInfo antlr.Method) {
+	var lineRangeList []antlr.LineRange
 	//	遍历匹配到的方法列表，存储其首行
-	for index := range antlrAnalyzeRes.Methods {
-		lineRangeList = append(lineRangeList, LineRange{
-			StartLine: antlrAnalyzeRes.Methods[index].StartLine,
-			EndLine:   antlrAnalyzeRes.Methods[index].EndLine,
+	for index := range astInfo.Methods {
+		lineRangeList = append(lineRangeList, antlr.LineRange{
+			StartLine: astInfo.Methods[index].StartLine,
+			EndLine:   astInfo.Methods[index].EndLine,
 		})
 	}
 	//	寻找方法行所在的范围位置
-	resIndex := FindIntervalIndex(lineRangeList, changeLineNumber.LineNumber)
+	resIndex := findIntervalIndex(lineRangeList, changeLineNumber.LineNumber)
 	//	判断是否有位置插入
 	if resIndex > -1 {
-		changeMethodInfo = antlrAnalyzeRes.Methods[resIndex]
+		changeMethodInfo = astInfo.Methods[resIndex]
 	}
 	return
 }
 
-// FindIntervalIndex
+// findIntervalIndex 寻找可插入位置
 //
-//	@Description: 寻找可插入位置
-//	@param nums 传入的行号切片
-//	@param target 要插入的目标行号
+//	@param lineRangeList []antlr.LineRange
+//	@param target float64
 //	@return int 返回插入位置，-1代表无法插入
-//	@author KevinMatt 2021-07-29 19:42:18
-//	@function_mark PASS
-func FindIntervalIndex(lineRangeList []LineRange, target float64) int {
+//	@author kevineluo
+//	@update 2023-02-28 02:59:57
+func findIntervalIndex(lineRangeList []antlr.LineRange, target float64) int {
 	if len(lineRangeList) == 0 {
 		return -1
 	}
@@ -291,3 +273,14 @@ func FindIntervalIndex(lineRangeList []LineRange, target float64) int {
 // 	}
 // 	return -1
 // }
+
+// Recover 防止语法分析识别出错时，程序终止
+//
+//	@author kevineluo
+//	@update 2023-02-28 03:03:26
+func Recover() {
+	if err := recover(); err != nil {
+		errMsg := fmt.Sprintf("======== Panic ========\nPanic: %v\nTraceBack:\n%s\n======== Panic ========", err, string(debug.Stack()))
+		zaplog.Logger.DPanic(errMsg)
+	}
+}

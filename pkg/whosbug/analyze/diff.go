@@ -1,4 +1,4 @@
-package antlr
+package analyze
 
 import (
 	"bufio"
@@ -15,22 +15,22 @@ import (
 	"github.com/pkg/errors"
 )
 
-// DiffParsedType 解析后的diff信息
-type DiffParsedType struct {
-	CommitterEmail    string
-	CommitTime        string
-	CommitAuthor      string
-	DiffFileName      string
-	ChangeLineNumbers []ChangeLineType
-	CommitHash        string
-	DiffText          string
-	OldLineCount      int
-	NewLineCount      int
-	TargetLanguage    string
+// Diff 解析后的diff信息
+type Diff struct {
+	CommitterEmail string
+	CommitTime     string
+	CommitAuthor   string
+	DiffFileName   string
+	ChangeLines    []ChangeLine
+	CommitHash     string
+	DiffText       string
+	OldLineCount   int
+	NewLineCount   int
+	TargetLanguage string
 }
 
-// ChangeLineType 存储单个改变行的信息
-type ChangeLineType struct {
+// ChangeLine 存储单个改变行的信息
+type ChangeLine struct {
 	// +0.5用于标识移除行位置(避免移出对象范围)
 	LineNumber float64
 	ChangeType string
@@ -196,7 +196,7 @@ func parseDiff(data string, commitInfo CommitInfoType) {
 			replaceLines(lines)
 			util.ForDebug()
 			// 填入到结构体中，准备送入协程
-			var diffParsed = DiffParsedType{
+			var diffParsed = Diff{
 				CommitterEmail: commitInfo.CommitterEmail,
 				CommitTime:     commitInfo.CommitTime,
 				CommitAuthor:   commitInfo.CommitAuthor,
@@ -207,7 +207,7 @@ func parseDiff(data string, commitInfo CommitInfoType) {
 				NewLineCount:   NewlineCount,
 				TargetLanguage: targetLanguage,
 			}
-			diffParsed.ChangeLineNumbers = append(diffParsed.ChangeLineNumbers, changeLineNumbers...)
+			diffParsed.ChangeLines = append(diffParsed.ChangeLines, changeLineNumbers...)
 			// 上传任务到Antlr解析协程池
 			err := AntlrAnalysisPool.Invoke(diffParsed)
 			if err != nil {
@@ -223,7 +223,7 @@ func parseDiff(data string, commitInfo CommitInfoType) {
 //	@return changeLineNumbers []config.ChangeLineType
 //	@author kevineluo
 //	@update 2023-02-27 11:10:16
-func findAllChangedLineNumbers(lines []string) (changeLineNumbers []ChangeLineType) {
+func findAllChangedLineNumbers(lines []string) (changeLineNumbers []ChangeLine) {
 	var lineNumber float64
 	var recordLineNumber float64
 	for index, line := range lines {
@@ -233,7 +233,7 @@ func findAllChangedLineNumbers(lines []string) (changeLineNumbers []ChangeLineTy
 			// 若不是删去行，记录最新行号
 			recordLineNumber = lineNumber
 			if res == "+" {
-				changeLine := ChangeLineType{
+				changeLine := ChangeLine{
 					LineNumber: recordLineNumber,
 					ChangeType: res,
 				}
@@ -241,7 +241,7 @@ func findAllChangedLineNumbers(lines []string) (changeLineNumbers []ChangeLineTy
 			}
 		} else {
 			// 若是删去行，记录为连续删去行前的最新行号
-			changeLine := ChangeLineType{
+			changeLine := ChangeLine{
 				LineNumber: recordLineNumber + 0.5,
 				ChangeType: res,
 			}
