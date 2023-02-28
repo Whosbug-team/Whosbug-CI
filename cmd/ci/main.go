@@ -43,7 +43,6 @@ func main() {
 	zaplog.Logger.Info("get whosbug config", zaplog.Any("config", _config))
 
 	whosbug.Analysis(_config)
-
 }
 
 // initConfig 初始化配置
